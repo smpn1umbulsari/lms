@@ -368,6 +368,12 @@
         <button id="btn-as-save" class="btn btn-primary">Simpan & Terbitkan Asesmen</button>
       </div>
       <div class="panel">
+        <h2>Daftar Asesmen Terbit</h2>
+        <div class="table-container">
+          <table id="as-table"><thead><tr><th>Kode</th><th>Judul</th><th>Mode</th><th>Kelas</th><th>Buka</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="panel">
         <h2>Pengaturan Asesmen</h2>
         <div class="row">
           <div><label>Kode Kuis</label><input id="as-code" placeholder="q_ipa_01"></div>
@@ -426,7 +432,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, writeBatch, collection, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, deleteField, writeBatch, collection, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function mediaEmbed(link){
@@ -477,7 +483,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("app-content").classList.remove("hidden");
     document.getElementById("sidebar").classList.remove("hidden");
     document.getElementById("u-display").textContent = user.email;
-    loadMateriTable(); loadTugasTable();
+    loadMateriTable(); loadTugasTable(); loadAsesmenTable();
   } else {
     document.getElementById("sec-auth").classList.remove("hidden");
     document.getElementById("app-content").classList.add("hidden");
@@ -574,6 +580,41 @@ document.getElementById("btn-mat-save").onclick = async () => {
 };
 
 // 2. TUGAS CRUD
+async function loadAsesmenTable() {
+  const snap = await getDocs(collection(db, "quizzes"));
+  const tbody = document.querySelector("#as-table tbody");
+  if (!tbody) return;
+  const now = new Date();
+  tbody.innerHTML = snap.docs.map(d => {
+    const q = d.data();
+    const open = q.openAt ? q.openAt.toDate() : null;
+    const canDel = !open || open > now;
+    const aksi = canDel
+      ? `<button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
+      : `<span style="color:#64748b; font-size:.72rem" title="Sudah dibuka — integritas ujian dijaga">terkunci</span>`;
+    return `<tr>
+      <td><code>${d.id}</code></td>
+      <td>${q.judul || '-'}</td>
+      <td>${q.mode || '-'}</td>
+      <td>${(q.classes || []).join(', ') || '-'}</td>
+      <td>${open ? open.toLocaleDateString('id-ID') : '-'}</td>
+      <td>${aksi}</td>
+    </tr>`;
+  }).join("");
+  window._delAs = async (code, kelasList) => {
+    if (!confirm("Hapus asesmen " + code + "? Kunci & jadwal ikut terhapus.")) return;
+    try {
+      await deleteDoc(doc(db, "quizKeys", code));
+      await deleteDoc(doc(db, "quizzes", code));
+      for (const k of (kelasList ? kelasList.split(',').filter(Boolean) : [])) {
+        try { await updateDoc(doc(db, "classes", k), { ["quizzes." + code]: deleteField() }); } catch (e) {}
+      }
+      loadAsesmenTable();
+    } catch (e) {
+      alert("Gagal hapus (sudah dibuka / aturan integritas): " + e.message);
+    }
+  };
+}
 async function loadTugasTable() {
   const snap = await getDocs(collection(db, "assignments"));
   const tbody = document.querySelector("#tug-table tbody");
@@ -747,6 +788,7 @@ document.getElementById("btn-as-save").onclick = async () => {
 
   alert("Asesmen berhasil diterbitkan!");
   log(`Asesmen ${code} tersimpan ke quizzes, quizKeys, dan classes/${kelas}`);
+  loadAsesmenTable();
 };
 
 // 4. KOREKSI & PENILAIAN BATCH
