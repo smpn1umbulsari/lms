@@ -65,6 +65,11 @@
   .embed-link{display:inline-block;word-break:break-all;color:#3b82f6}
   .embed-wrap{margin:.5rem 0}
 
+  .link-row{display:flex;gap:.5rem;margin:.4rem 0}
+  .link-row input{flex:1;min-width:0}
+  .link-rm{padding:.3rem .6rem;background:#334155;color:#fff;border:0;border-radius:8px;cursor:pointer}
+  #btn-add-link{background:var(--surface-2);color:var(--text-hero);border:1px solid var(--surface-3);font-size:.85rem;padding:.4rem .8rem;min-height:36px;margin-bottom:.85rem}
+
   /* Responsive / Mobile styles (<= 640px) */
   @media (max-width: 640px) {
     body {
@@ -296,7 +301,12 @@
         <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur Sel Tumbuhan">
         <div class="row">
           <div><label>Target Kelas</label><input id="m-kelas" placeholder="c1, 7A, 7B"></div>
-          <div><label>Tautan Video/Drive (Opsional)</label><input id="m-link" placeholder="https://youtube.com/watch?v=..."></div>
+          <div>
+            <label>Tautan Video/Drive (Opsional)</label>
+            <input id="m-link" placeholder="https://youtube.com/watch?v=...">
+            <div id="m-links-extra"></div>
+            <button type="button" id="btn-add-link" class="btn">+ Tambah tautan</button>
+          </div>
         </div>
         <div id="m-link-preview" class="embed-wrap"></div>
         <label>Uraian Ringkasan Materi</label>
@@ -424,6 +434,26 @@ function mediaEmbed(link){
   if(/\.pdf($|\?)/i.test(link)) return '<object class="embed-pdf" data="'+escAttr(link)+'" type="application/pdf"><a href="'+escAttr(link)+'" target="_blank" rel="noopener">Buka PDF</a></object>';
   return '<a class="embed-link" href="'+escAttr(link)+'" target="_blank" rel="noopener noreferrer">🔗 '+escAttr(link)+'</a>';
 }
+function urlsOf(item){
+  if(!item) return [];
+  if(Array.isArray(item.links) && item.links.length) return item.links.filter(Boolean);
+  return item.link ? [item.link] : [];
+}
+function embedsHTML(item){
+  return urlsOf(item).map(function(u){ return '<div class="embed-wrap">'+mediaEmbed(u)+'</div>'; }).join('');
+}
+function currentLinkValues(){
+  const mLink = document.getElementById('m-link');
+  const mainVal = mLink ? mLink.value : '';
+  const extraVals = [...document.querySelectorAll('.m-link-extra')].map(i => i.value);
+  return [mainVal, ...extraVals].map(s => s.trim()).filter(Boolean);
+}
+function updateMateriPreview(){
+  const prev = document.getElementById('m-link-preview');
+  if (prev) {
+    prev.innerHTML = embedsHTML({ links: currentLinkValues() });
+  }
+}
 
 const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
@@ -477,7 +507,7 @@ async function loadMateriTable() {
     return `<tr>
       <td><strong>${m.judul}</strong></td>
       <td>${(m.classes||[]).join(", ")}</td>
-      <td style="min-width:240px">${m.link ? `<div class="embed-wrap">${mediaEmbed(m.link)}</div>` : '-'}</td>
+      <td style="min-width:240px">${embedsHTML(m) || '-'}</td>
       <td><button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
@@ -486,26 +516,54 @@ async function loadMateriTable() {
 document.getElementById("btn-mat-new").onclick = () => document.getElementById("mat-form-panel").classList.remove("hidden");
 document.getElementById("btn-mat-cancel").onclick = () => {
   document.getElementById("mat-form-panel").classList.add("hidden");
+  document.getElementById("m-link").value = "";
+  const extraLinks = document.getElementById("m-links-extra");
+  if (extraLinks) extraLinks.innerHTML = "";
   const prev = document.getElementById("m-link-preview");
   if (prev) prev.innerHTML = "";
 };
-document.getElementById("m-link").addEventListener("input", (e) => {
-  const val = e.target.value.trim();
-  const prev = document.getElementById("m-link-preview");
-  if (prev) prev.innerHTML = val ? mediaEmbed(val) : "";
+
+document.getElementById("btn-add-link").onclick = () => {
+  const container = document.getElementById("m-links-extra");
+  const row = document.createElement("div");
+  row.className = "link-row";
+  row.innerHTML = '<input class="m-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">×</button>';
+  container.appendChild(row);
+};
+
+document.getElementById("m-links-extra").addEventListener("click", (e) => {
+  const rm = e.target.closest(".link-rm");
+  if (rm) {
+    const row = rm.closest(".link-row");
+    if (row) row.remove();
+    updateMateriPreview();
+  }
 });
+
+document.getElementById("m-link").addEventListener("input", updateMateriPreview);
+document.getElementById("m-links-extra").addEventListener("input", updateMateriPreview);
+document.getElementById("mat-form-panel").addEventListener("input", (e) => {
+  if (e.target.id === "m-link" || e.target.classList.contains("m-link-extra")) {
+    updateMateriPreview();
+  }
+});
+
 document.getElementById("btn-mat-save").onclick = async () => {
   const judul = document.getElementById("m-judul").value.trim();
   const classes = document.getElementById("m-kelas").value.split(",").map(x => x.trim()).filter(Boolean);
-  const link = document.getElementById("m-link").value.trim();
+  const links = [document.getElementById('m-link').value, ...[...document.querySelectorAll('.m-link-extra')].map(i=>i.value)].map(s=>s.trim()).filter(Boolean);
+  const link = links[0] || '';
   const deskripsi = document.getElementById("m-deskripsi").value.trim();
   if (!judul || !classes.length) return alert("Isi judul dan minimal 1 target kelas!");
   const matId = "mat_" + Date.now();
   await setDoc(doc(db, "materials", matId), {
-    judul, classes, link, deskripsi, version: 1, createdAt: Timestamp.now()
+    judul, classes, link, links, deskripsi, version: 1, createdAt: Timestamp.now()
   });
   log("Materi berhasil diterbitkan: " + judul);
   document.getElementById("mat-form-panel").classList.add("hidden");
+  document.getElementById("m-link").value = "";
+  const extraLinks = document.getElementById("m-links-extra");
+  if (extraLinks) extraLinks.innerHTML = "";
   const prev = document.getElementById("m-link-preview");
   if (prev) prev.innerHTML = "";
   loadMateriTable();

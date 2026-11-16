@@ -20,7 +20,7 @@
   .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: .8rem; border: 2px solid var(--surface-3); }
   
   .tabs { display: flex; gap: .5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-  .tab-btn { background: transparent; border: none; color: var(--text-muted); font: inherit; font-weight: 600; padding: .6rem 1rem; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
+  .tab-btn { background: transparent; border: none; color: var(--text-muted); font: inherit; font-weight: 600; padding: .6rem 1rem; cursor: border-bottom: 2px solid transparent; transition: all .2s; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
   
   .panel { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; }
@@ -78,6 +78,10 @@
   .embed-pdf{width:100%;height:70vh;min-height:360px;border:0;border-radius:8px;background:#0b1220}
   .embed-link{display:inline-block;word-break:break-all;color:#3b82f6}
   .embed-wrap{margin:.5rem 0}
+
+  .link-row{display:flex;gap:.5rem;margin:.4rem 0}
+  .link-row input{flex:1;min-width:0}
+  .link-rm{padding:.3rem .6rem;background:#334155;color:#fff;border:0;border-radius:8px;cursor:pointer}
 
   /* Responsive / Mobile styles (<= 640px) */
   @media (max-width: 640px) {
@@ -380,6 +384,14 @@ function mediaEmbed(link){
   if(/\.pdf($|\?)/i.test(link)) return '<object class="embed-pdf" data="'+escAttr(link)+'" type="application/pdf"><a href="'+escAttr(link)+'" target="_blank" rel="noopener">Buka PDF</a></object>';
   return '<a class="embed-link" href="'+escAttr(link)+'" target="_blank" rel="noopener noreferrer">🔗 '+escAttr(link)+'</a>';
 }
+function urlsOf(item){
+  if(!item) return [];
+  if(Array.isArray(item.links) && item.links.length) return item.links.filter(Boolean);
+  return item.link ? [item.link] : [];
+}
+function embedsHTML(item){
+  return urlsOf(item).map(function(u){ return '<div class="embed-wrap">'+mediaEmbed(u)+'</div>'; }).join('');
+}
 
 const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
@@ -482,12 +494,7 @@ async function loadMateri() {
       <h3>${m.judul}</h3>
       <p style="font-size:.85rem; color:var(--text-muted); margin:.5rem 0">${(m.deskripsi||'').slice(0, 90)}...</p>
     `;
-    if (m.link) {
-      const _m = document.createElement('div');
-      _m.className = 'embed-wrap';
-      _m.innerHTML = mediaEmbed(m.link);
-      if (_m.firstChild) card.appendChild(_m);
-    }
+    const _m=document.createElement('div'); _m.innerHTML=embedsHTML(m); if(_m.innerHTML.trim()) card.appendChild(_m);
     const meta = document.createElement("div");
     meta.className = "card-meta";
     meta.innerHTML = `<span class="badge badge-pg">Materi</span>`;
@@ -515,7 +522,7 @@ async function loadMateri() {
       </head><body style="max-width:700px; margin:0 auto">
       <h1 style="color:#f8fafc">${m.judul}</h1>
       <hr style="border:1px solid #1e293b; margin:1rem 0">
-      ${m.link ? `<div class="embed-wrap">${mediaEmbed(m.link)}</div>` : ''}
+      ${embedsHTML(m)}
       <div style="white-space:pre-wrap; line-height:1.6">${m.deskripsi}</div>
       </body></html>
     `);
@@ -540,12 +547,7 @@ async function loadTugas() {
       <h3>${t.judul}</h3>
       <p style="font-size:.85rem; color:var(--text-muted); margin:.4rem 0">${(t.instruksi||'').slice(0, 80)}...</p>
     `;
-    if (t.link) {
-      const _m = document.createElement('div');
-      _m.className = 'embed-wrap';
-      _m.innerHTML = mediaEmbed(t.link);
-      if (_m.firstChild) card.appendChild(_m);
-    }
+    const _m=document.createElement('div'); _m.innerHTML=embedsHTML(t); if(_m.innerHTML.trim()) card.appendChild(_m);
     const meta = document.createElement("div");
     meta.className = "card-meta";
     meta.innerHTML = `
@@ -577,7 +579,7 @@ function openTugasModal(tugas, subData) {
     tAttach.id = "sub-tugas-attach";
     document.getElementById("sub-instruksi").after(tAttach);
   }
-  tAttach.innerHTML = (tugas && tugas.link) ? `<div class="embed-wrap">${mediaEmbed(tugas.link)}</div>` : "";
+  tAttach.innerHTML = embedsHTML(tugas);
   document.getElementById("sub-teks").value = subData ? (subData.teks || "") : "";
   document.getElementById("sub-link").value = subData ? (subData.link || "") : "";
   document.getElementById("sub-status").textContent = subData ? "Jawaban tersimpan sebelumnya." : "";
