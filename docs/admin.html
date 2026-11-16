@@ -349,6 +349,9 @@
         </div>
       </div>
       <div class="panel">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:.75rem">
+          <button id="btn-export-tugas-csv" class="btn btn-secondary">Unduh Rekap Nilai Tugas</button>
+        </div>
         <div class="table-container">
           <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
@@ -800,6 +803,47 @@ document.getElementById("btn-tug-save").onclick = async () => {
   loadTugasTable();
 };
 
+// Export CSV Rekap Nilai Tugas
+document.getElementById("btn-export-tugas-csv").onclick = async () => {
+  try {
+    const [asgSnap, subSnap] = await Promise.all([
+      getDocs(collection(db, "assignments")),
+      getDocs(collection(db, "submissions"))
+    ]);
+
+    const subsByAsg = new Map();
+    subSnap.docs.forEach(sd => {
+      const sub = sd.data();
+      const aid = sub.assignmentId;
+      if (!subsByAsg.has(aid)) subsByAsg.set(aid, []);
+      subsByAsg.get(aid).push(sub);
+    });
+
+    let csv = "Judul Tugas,Kelas,UID,Nilai\n";
+    asgSnap.docs.forEach(ad => {
+      const asg = ad.data();
+      const aid = ad.id;
+      const subs = subsByAsg.get(aid) || [];
+      const judul = (asg.judul || "").replace(/"/g, '""');
+      const kelas = (Array.isArray(asg.classes) ? asg.classes.join("|") : (asg.classes || "")).replace(/"/g, '""');
+      subs.forEach(s => {
+        const uid = (s.uid || "").replace(/"/g, '""');
+        const nilai = (s.nilai !== undefined && s.nilai !== null) ? s.nilai : "";
+        csv += `"${judul}","${kelas}","${uid}","${nilai}"\n`;
+      });
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Rekap_Nilai_Tugas.csv";
+    link.click();
+    log("Rekap nilai tugas berhasil diunduh.");
+  } catch (e) {
+    alert("Gagal mengunduh rekap tugas: " + e.message);
+  }
+};
+
 // 3. ASESMEN BUILDER 4 TIPE
 let editingQuizCode = null;
 let questionsList = [];
@@ -1003,15 +1047,44 @@ document.getElementById("btn-gr-publish").onclick = async () => {
   log(`Nilai ujian ${code} sukses dipublikasikan.`);
 };
 
-// Export CSV
-document.getElementById("btn-export-csv").onclick = () => {
+// Export CSV Rekap Ujian
+document.getElementById("btn-export-csv").onclick = async () => {
   if (!currentAttempts.length) return alert("Muat lembar jawaban terlebih dahulu!");
-  let csv = "UID,QuizId,AttemptId,Status\n";
-  currentAttempts.forEach(a => { csv += `"${a.uid}","${a.quizId}","${a.id}","Submitted"\n`; });
+  const code = document.getElementById("gr-code").value.trim();
+
+  let resMap = {}, resByUid = {};
+  try {
+    const resSnap = await getDocs(query(collection(db, "results"), where("quizId", "==", code)));
+    resSnap.docs.forEach(d => {
+      const data = d.data();
+      resMap[d.id] = data;
+      if (data.uid) resByUid[data.uid] = data;
+    });
+  } catch (e) {
+    console.error("Gagal memuat results:", e);
+  }
+
+  let csv = "UID,QuizId,AttemptId,Status,Nilai\n";
+  currentAttempts.forEach(a => {
+    const res = resMap[a.id] || resByUid[a.uid];
+    let val = "";
+    if (res && res.totalScore !== undefined && res.totalScore !== null) val = res.totalScore;
+    else if (res && res.score !== undefined && res.score !== null) val = res.score;
+    else if (res && res.nilai !== undefined && res.nilai !== null) val = res.nilai;
+    else if (res && res.total !== undefined && res.total !== null) val = res.total;
+    else if (a.totalScore !== undefined && a.totalScore !== null) val = a.totalScore;
+    else if (a.score !== undefined && a.score !== null) val = a.score;
+    else if (a.nilai !== undefined && a.nilai !== null) val = a.nilai;
+    else if (a.benar !== undefined && a.benar !== null) val = a.benar;
+    else if (a.total !== undefined && a.total !== null) val = a.total;
+
+    csv += `"${a.uid}","${a.quizId}","${a.id}","Submitted","${val}"\n`;
+  });
+
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `Rekap_Ujian_${document.getElementById("gr-code").value}.csv`;
+  link.download = `Rekap_Ujian_${code || document.getElementById("gr-code").value}.csv`;
   link.click();
 };
 </script>
