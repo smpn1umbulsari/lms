@@ -317,6 +317,10 @@
         </div>
       </div>
       <div class="panel">
+        <div class="row" style="margin-bottom:.75rem">
+          <div style="flex:2"><input type="search" id="materi-search" placeholder="Cari judul..."></div>
+          <div style="flex:1"><select id="materi-kelas"><option value="">Semua Kelas</option></select></div>
+        </div>
         <div class="table-container">
           <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
@@ -352,6 +356,10 @@
         <div style="display:flex; justify-content:flex-end; margin-bottom:.75rem">
           <button id="btn-export-tugas-csv" class="btn btn-secondary">Unduh Rekap Nilai Tugas</button>
         </div>
+        <div class="row" style="margin-bottom:.75rem">
+          <div style="flex:2"><input type="search" id="tug-search" placeholder="Cari judul..."></div>
+          <div style="flex:1"><select id="tug-kelas"><option value="">Semua Kelas</option></select></div>
+        </div>
         <div class="table-container">
           <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
@@ -372,6 +380,10 @@
       </div>
       <div class="panel">
         <h2>Daftar Asesmen Terbit</h2>
+        <div class="row" style="margin-bottom:.75rem">
+          <div style="flex:2"><input type="search" id="as-search" placeholder="Cari judul..."></div>
+          <div style="flex:1"><select id="as-kelas"><option value="">Semua Kelas</option></select></div>
+        </div>
         <div class="table-container">
           <table id="as-table"><thead><tr><th>Kode</th><th>Judul</th><th>Mode</th><th>Kelas</th><th>Buka</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
@@ -472,6 +484,32 @@ const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let editingMat = null, editingMatCreated = null, editingAsg = null, editingAsgCreated = null;
+let materiData = [], tugasData = [], asesmenData = [];
+window.materiData = materiData;
+window.tugasData = tugasData;
+window.asesmenData = asesmenData;
+
+function updateClassOptions(selectEl, items) {
+  if (!selectEl) return;
+  const currentVal = selectEl.value;
+  const set = new Set();
+  items.forEach(item => {
+    const d = item.data || item;
+    let cls = d.classes || [];
+    if (typeof cls === "string") cls = cls.split(",").map(x => x.trim());
+    if (Array.isArray(cls)) {
+      cls.forEach(c => {
+        const trimmed = String(c || "").trim();
+        if (trimmed) set.add(trimmed);
+      });
+    }
+  });
+  const sorted = Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+  selectEl.innerHTML = '<option value="">Semua Kelas</option>' + sorted.map(c => `<option value="${escAttr(c)}">${escAttr(c)}</option>`).join("");
+  if (currentVal && set.has(currentVal)) {
+    selectEl.value = currentVal;
+  }
+}
 
 const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
 
@@ -512,12 +550,31 @@ document.querySelectorAll(".nav-btn").forEach((btn) => {
   };
 });
 
+// Filter Event Listeners
+document.getElementById("materi-search")?.addEventListener("input", filterMateri);
+document.getElementById("materi-search")?.addEventListener("change", filterMateri);
+document.getElementById("materi-kelas")?.addEventListener("change", filterMateri);
+document.getElementById("materi-kelas")?.addEventListener("input", filterMateri);
+
+document.getElementById("tug-search")?.addEventListener("input", filterTugas);
+document.getElementById("tug-search")?.addEventListener("change", filterTugas);
+document.getElementById("tug-kelas")?.addEventListener("change", filterTugas);
+document.getElementById("tug-kelas")?.addEventListener("input", filterTugas);
+
+document.getElementById("as-search")?.addEventListener("input", filterAsesmen);
+document.getElementById("as-search")?.addEventListener("change", filterAsesmen);
+const asKelasFilter = document.querySelector("select#as-kelas");
+if (asKelasFilter) {
+  asKelasFilter.addEventListener("change", filterAsesmen);
+  asKelasFilter.addEventListener("input", filterAsesmen);
+}
+
 // 1. MATERI CRUD
-async function loadMateriTable() {
-  const snap = await getDocs(collection(db, "materials"));
+function renderMateriTable(rows) {
   const tbody = document.querySelector("#mat-table tbody");
-  tbody.innerHTML = snap.docs.map(d => {
-    const m = d.data();
+  if (!tbody) return;
+  tbody.innerHTML = rows.map(d => {
+    const m = d.data || d;
     return `<tr>
       <td><strong>${m.judul}</strong></td>
       <td>${(m.classes||[]).join(", ")}</td>
@@ -525,6 +582,47 @@ async function loadMateriTable() {
       <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editMat('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
+}
+const renderMateri = renderMateriTable;
+window.renderMateriTable = renderMateriTable;
+window.renderMateri = renderMateri;
+
+function filterMateri() {
+  const q = (document.getElementById("materi-search")?.value || "").trim().toLowerCase();
+  const k = (document.getElementById("materi-kelas")?.value || "").trim().toLowerCase();
+  const filtered = materiData.filter(item => {
+    const d = item.data || item;
+    if (q) {
+      const judul = String(d.judul || "").toLowerCase();
+      const teks = String(d.deskripsi || "").toLowerCase();
+      const id = String(item.id || "").toLowerCase();
+      if (!judul.includes(q) && !teks.includes(q) && !id.includes(q)) return false;
+    }
+    if (k) {
+      let cls = d.classes || [];
+      if (typeof cls === "string") cls = cls.split(",").map(x => x.trim());
+      if (!Array.isArray(cls)) cls = [];
+      if (!cls.some(c => String(c).trim().toLowerCase() === k)) return false;
+    }
+    return true;
+  });
+  renderMateriTable(filtered);
+}
+window.filterMateri = filterMateri;
+
+async function loadMateriTable() {
+  const snap = await getDocs(collection(db, "materials"));
+  materiData = snap.docs.map(d => ({ id: d.id, data: d.data(), ...d.data() }));
+  window.materiData = materiData;
+  updateClassOptions(document.getElementById("materi-kelas"), materiData);
+  const searchVal = document.getElementById("materi-search")?.value.trim();
+  const kelasVal = document.getElementById("materi-kelas")?.value.trim();
+  if (searchVal || kelasVal) {
+    filterMateri();
+  } else {
+    renderMateriTable(materiData);
+  }
+
   window._delMat = async (id) => { if (confirm("Hapus materi ini?")) { await deleteDoc(doc(db, "materials", id)); loadMateriTable(); } };
   window._editMat = async (id) => {
     const snap = await getDoc(doc(db, "materials", id));
@@ -547,8 +645,8 @@ async function loadMateriTable() {
     document.getElementById("mat-form-panel").classList.remove("hidden");
     document.getElementById("mat-form-panel").scrollIntoView({ behavior: "smooth" });
   };
-
 }
+window.loadMateriTable = loadMateriTable;
 document.getElementById("btn-mat-new").onclick = () => document.getElementById("mat-form-panel").classList.remove("hidden");
 document.getElementById("btn-mat-cancel").onclick = () => {
   document.getElementById("mat-form-panel").classList.add("hidden");
@@ -609,15 +707,14 @@ document.getElementById("btn-mat-save").onclick = async () => {
   loadMateriTable();
 };
 
-// 2. TUGAS CRUD
-async function loadAsesmenTable() {
-  const snap = await getDocs(collection(db, "quizzes"));
+// 2. TUGAS & ASESMEN CRUD
+function renderAsesmenTable(rows) {
   const tbody = document.querySelector("#as-table tbody");
   if (!tbody) return;
   const now = new Date();
-  tbody.innerHTML = snap.docs.map(d => {
-    const q = d.data();
-    const open = q.openAt ? q.openAt.toDate() : null;
+  tbody.innerHTML = rows.map(d => {
+    const q = d.data || d;
+    const open = q.openAt ? (q.openAt.toDate ? q.openAt.toDate() : new Date(q.openAt)) : null;
     const canDel = !open || open > now;
     const aksi = canDel
       ? `<button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAs('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
@@ -631,6 +728,47 @@ async function loadAsesmenTable() {
       <td>${aksi}</td>
     </tr>`;
   }).join("");
+}
+const renderAsesmen = renderAsesmenTable;
+window.renderAsesmenTable = renderAsesmenTable;
+window.renderAsesmen = renderAsesmen;
+
+function filterAsesmen() {
+  const q = (document.getElementById("as-search")?.value || "").trim().toLowerCase();
+  const k = (document.querySelector("select#as-kelas")?.value || "").trim().toLowerCase();
+  const filtered = asesmenData.filter(item => {
+    const d = item.data || item;
+    if (q) {
+      const judul = String(d.judul || "").toLowerCase();
+      const id = String(item.id || "").toLowerCase();
+      if (!judul.includes(q) && !id.includes(q)) return false;
+    }
+    if (k) {
+      let cls = d.classes || [];
+      if (typeof cls === "string") cls = cls.split(",").map(x => x.trim());
+      if (!Array.isArray(cls)) cls = [];
+      if (!cls.some(c => String(c).trim().toLowerCase() === k)) return false;
+    }
+    return true;
+  });
+  renderAsesmenTable(filtered);
+}
+window.filterAsesmen = filterAsesmen;
+
+async function loadAsesmenTable() {
+  const snap = await getDocs(collection(db, "quizzes"));
+  asesmenData = snap.docs.map(d => ({ id: d.id, data: d.data(), ...d.data() }));
+  window.asesmenData = asesmenData;
+  const sel = document.querySelector("select#as-kelas");
+  updateClassOptions(sel, asesmenData);
+  const searchVal = document.getElementById("as-search")?.value.trim();
+  const kelasVal = sel?.value.trim();
+  if (searchVal || kelasVal) {
+    filterAsesmen();
+  } else {
+    renderAsesmenTable(asesmenData);
+  }
+
   window._delAs = async (code, kelasList) => {
     if (!confirm("Hapus asesmen " + code + "? Kunci & jadwal ikut terhapus.")) return;
     try {
@@ -652,7 +790,8 @@ async function loadAsesmenTable() {
 
       document.getElementById("as-code").value = code;
       const classes = qData.classes || [];
-      document.getElementById("as-kelas").value = classes.join(", ");
+      const asKelasInput = document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
+      if (asKelasInput) asKelasInput.value = classes.join(", ");
       document.getElementById("as-mode").value = qData.mode || "latihan";
       document.getElementById("as-judul").value = qData.judul || "";
       document.getElementById("as-durasi").value = qData.duration !== undefined ? qData.duration : 60;
@@ -709,19 +848,61 @@ async function loadAsesmenTable() {
     }
   };
 }
-async function loadTugasTable() {
-  const snap = await getDocs(collection(db, "assignments"));
+window.loadAsesmenTable = loadAsesmenTable;
+
+function renderTugasTable(rows) {
   const tbody = document.querySelector("#tug-table tbody");
-  tbody.innerHTML = snap.docs.map(d => {
-    const t = d.data();
+  if (!tbody) return;
+  tbody.innerHTML = rows.map(d => {
+    const t = d.data || d;
     return `<tr>
       <td><strong>${t.judul}</strong></td>
       <td>${(t.classes||[]).join(", ")}</td>
-      <td>${t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString('id-ID') : '-'}</td>
+      <td>${t.dueAt ? new Date(t.dueAt.toDate ? t.dueAt.toDate() : t.dueAt).toLocaleDateString('id-ID') : '-'}</td>
       <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._viewSub('${d.id}', '${t.judul}')">Lihat Kiriman</button></td>
       <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAsg('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAsg('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
+}
+const renderTugas = renderTugasTable;
+window.renderTugasTable = renderTugasTable;
+window.renderTugas = renderTugas;
+
+function filterTugas() {
+  const q = (document.getElementById("tug-search")?.value || "").trim().toLowerCase();
+  const k = (document.getElementById("tug-kelas")?.value || "").trim().toLowerCase();
+  const filtered = tugasData.filter(item => {
+    const d = item.data || item;
+    if (q) {
+      const judul = String(d.judul || "").toLowerCase();
+      const teks = String(d.instruksi || "").toLowerCase();
+      const id = String(item.id || "").toLowerCase();
+      if (!judul.includes(q) && !teks.includes(q) && !id.includes(q)) return false;
+    }
+    if (k) {
+      let cls = d.classes || [];
+      if (typeof cls === "string") cls = cls.split(",").map(x => x.trim());
+      if (!Array.isArray(cls)) cls = [];
+      if (!cls.some(c => String(c).trim().toLowerCase() === k)) return false;
+    }
+    return true;
+  });
+  renderTugasTable(filtered);
+}
+window.filterTugas = filterTugas;
+
+async function loadTugasTable() {
+  const snap = await getDocs(collection(db, "assignments"));
+  tugasData = snap.docs.map(d => ({ id: d.id, data: d.data(), ...d.data() }));
+  window.tugasData = tugasData;
+  updateClassOptions(document.getElementById("tug-kelas"), tugasData);
+  const searchVal = document.getElementById("tug-search")?.value.trim();
+  const kelasVal = document.getElementById("tug-kelas")?.value.trim();
+  if (searchVal || kelasVal) {
+    filterTugas();
+  } else {
+    renderTugasTable(tugasData);
+  }
 
   window._delAsg = async (id) => { if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) { await deleteDoc(doc(db, "assignments", id)); loadTugasTable(); } };
   window._editAsg = async (id) => {
@@ -732,7 +913,7 @@ async function loadTugasTable() {
     document.getElementById("t-judul").value = t.judul || "";
     document.getElementById("t-kelas").value = (t.classes || []).join(", ");
     document.getElementById("t-instruksi").value = t.instruksi || "";
-    if (t.dueAt) { const d = t.dueAt.toDate(); const p = n => String(n).padStart(2, "0"); document.getElementById("t-due").value = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes()); }
+    if (t.dueAt) { const d = t.dueAt.toDate ? t.dueAt.toDate() : new Date(t.dueAt); const p = n => String(n).padStart(2, "0"); document.getElementById("t-due").value = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes()); }
     const links = (t.links && t.links.length) ? t.links : (t.link ? [t.link] : []);
     document.getElementById("t-link").value = links[0] || "";
     const extra = document.getElementById("t-links-extra"); extra.innerHTML = "";
@@ -769,6 +950,7 @@ async function loadTugasTable() {
     alert("Nilai tugas tersimpan!");
   };
 }
+window.loadTugasTable = loadTugasTable;
 document.getElementById("btn-tug-new").onclick = () => document.getElementById("tug-form-panel").classList.remove("hidden");
 document.getElementById("btn-tug-cancel").onclick = () => { document.getElementById("tug-form-panel").classList.add("hidden"); editingAsg = null; editingAsgCreated = null; document.getElementById("btn-tug-save").textContent = "Terbitkan Tugas"; };
 document.getElementById("btn-add-tlink").onclick = () => {
@@ -904,7 +1086,8 @@ function renderQBuilder() {
 
 document.getElementById("btn-as-save").onclick = async () => {
   const code = editingQuizCode || document.getElementById("as-code").value.trim();
-  const kelas = document.getElementById("as-kelas").value.trim();
+  const asKelasInput = document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
+  const kelas = (asKelasInput ? asKelasInput.value : "").trim();
   const judul = document.getElementById("as-judul").value.trim();
   const mode = document.getElementById("as-mode").value;
   const duration = parseInt(document.getElementById("as-durasi").value, 10);
