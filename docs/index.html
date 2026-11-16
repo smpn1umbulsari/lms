@@ -12,10 +12,14 @@
   #submit { margin-top: 1rem; padding: .6rem 1.4rem; font-size: 1rem; cursor: pointer; }
   #log { font: 12px/1.4 ui-monospace, monospace; color: #666; white-space: pre-wrap; margin-top: 1.5rem; }
   #score { font-size: 1.4rem; font-weight: 700; color: #1a7f37; margin-top: 1rem; }
+  #timer { position: sticky; top: 0; background: #111; color: #fff; padding: .5rem 1rem; border-radius: 8px; font: 700 1.1rem ui-monospace, monospace; }
+  #timer.warn { background: #b42318; }
+  .saved { color: #1a7f37; font-size: .8rem; margin-left: .5rem; }
 </style>
 </head>
 <body>
 <h1>LMS Interaktif</h1>
+<div id="timer" style="display:none"></div>
 <div id="app">Memuat…</div>
 <div id="score"></div>
 <div id="log"></div>
@@ -24,7 +28,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, connectAuthEmulator, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, updateDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
 const exists = async (ref) => { try { return (await getDoc(ref)).exists(); } catch { return false; } };
@@ -37,81 +41,160 @@ if (["localhost","127.0.0.1"].includes(location.hostname)) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }
 
-const QUIZ_ID = "q1";
+const QUIZ_ID = new URLSearchParams(location.search).get("q") || "q1";
+
+// deterministic PRNG seeded by uid -> stable per-student shuffle, 0 server cost
+function seedRand(str) {
+  let h = 2166136261;
+  for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function shuffle(arr, rnd) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+let state = null; // { uid, quiz, answers, submitSeq, deadlineMs, timerId, mode, startId, expireAt, locked }
 
 async function boot() {
-  // 1) auth
   const uid = (await signInAnonymously(auth)).user.uid;
   log("login anon uid=" + uid.slice(0, 8));
 
-  // 2) onboard: users/{uid} (kelas c1) if missing
   const uref = doc(db, "users", uid);
   if (!(await exists(uref))) {
     await setDoc(uref, { nama: "Siswa " + uid.slice(0, 4), kelas: "c1" });
-    log("users/" + uid.slice(0, 8) + " dibuat (kelas c1)");
+    log("users dibuat (kelas c1)");
   }
 
-  // 3) read class metadata (K-BARU-13) -> build start WITHOUT reading quizzes
   const meta = (await getDoc(doc(db, "classes", "c1"))).data().quizzes[QUIZ_ID];
   const closeAt = meta.closeAt;
   const expireAt = new Timestamp(closeAt.seconds + 30 * 86400, closeAt.nanoseconds);
 
-  // 4) create starts/{uid}_q1_1 (serverTimestamp == request.time, window toleransiMulai)
-  const sref = doc(db, "starts", `${uid}_${QUIZ_ID}_1`);
+  const startId = `${uid}_${QUIZ_ID}_1`;
+  const sref = doc(db, "starts", startId);
   if (!(await exists(sref))) {
     await setDoc(sref, {
-      uid, quizId: QUIZ_ID, attemptNo: 1,
-      startedAt: serverTimestamp(),
+      uid, quizId: QUIZ_ID, attemptNo: 1, startedAt: serverTimestamp(),
       duration: meta.duration, closeAt: meta.closeAt, maxAttempts: 1,
       quizVersion: meta.version, keyVersion: 1, expireAt,
     });
-    log("starts dibuat (serverTimestamp, durasi " + meta.duration + "m)");
+    log("starts dibuat (durasi " + meta.duration + "m)");
   }
 
-  // 5) now quizzes read is allowed (starts exists)
-  const quiz = (await getDoc(doc(db, "quizzes", QUIZ_ID))).data();
-  log("quizzes/" + QUIZ_ID + " dimuat: " + quiz.questions.length + " soal");
+  // exact server-timed deadline + resume data (1 read; also powers resume)
+  const start = (await getDoc(sref)).data();
+  const deadlineMs = start.startedAt.toMillis() + start.duration * 60000;
 
-  // 6) render
-  render(quiz, uid, expireAt);
+  const quiz = (await getDoc(doc(db, "quizzes", QUIZ_ID))).data();
+  const mode = quiz.mode || "latihan";
+  log("quizzes dimuat: " + quiz.questions.length + " soal, mode=" + mode);
+
+  // resume: restore any saved answers
+  const aref = doc(db, "attempts", startId);
+  const asnap = await getDoc(aref).catch(() => null);
+  const answers = (asnap && asnap.exists() && asnap.data().answers) ? { ...asnap.data().answers } : {};
+  const submitSeq = (asnap && asnap.exists() && asnap.data().submitSeq) ? asnap.data().submitSeq : 0;
+  if (Object.keys(answers).length) log("resume: " + Object.keys(answers).length + " jawaban dipulihkan");
+
+  // shuffle question order deterministically per uid
+  const rnd = seedRand(uid + "_" + QUIZ_ID);
+  const questions = shuffle(quiz.questions, rnd);
+
+  state = { uid, quiz, questions, answers, submitSeq, deadlineMs, timerId: null, mode, startId, expireAt, locked: false };
+  render();
 }
 
-function render(quiz, uid, expireAt) {
-  const app = document.getElementById("app");
-  app.innerHTML = "<h2>" + quiz.judul + "</h2>" + quiz.questions.map((q) =>
-    `<div class="q" data-qid="${q.id}"><h3>${q.teks}</h3>` +
-    Object.entries(q.pilihan).map(([k, v]) =>
-      `<label><input type="radio" name="ans_${q.id}" value="${k}"> ${k}. ${v}</label>`).join("") +
-    `</div>`).join("") + `<button id="submit">Kirim Jawaban</button>`;
+function render() {
+  const { quiz, questions, answers, deadlineMs, mode } = state;
+  const el = document.getElementById("app");
+  el.innerHTML = "<h2>" + quiz.judul + "</h2>" +
+    questions.map((q, i) =>
+      `<div class="q" data-qid="${q.id}"><h3>${i + 1}. ${q.teks}</h3>` +
+      Object.entries(q.pilihan).map(([k, v]) =>
+        `<label><input type="radio" name="ans_${q.id}" value="${k}"${answers[q.id] === k ? " checked" : ""}> ${k}. ${v}</label>`).join("") +
+      `</div>`).join("") +
+    `<button id="submit">Kirim Jawaban</button><span id="saved" class="saved"></span>`;
 
-  document.getElementById("submit").onclick = async () => {
-    const answers = {};
-    quiz.questions.forEach((q) => {
-      const sel = document.querySelector(`input[name="ans_${q.id}"]:checked`);
-      if (sel) answers[q.id] = sel.value;
-    });
+  // restore answers into state on change + debounced autosave
+  el.querySelectorAll('input[type="radio"]').forEach((r) => {
+    r.onchange = () => { state.answers[r.name.slice(4)] = r.value; autosave(); };
+  });
+  document.getElementById("submit").onclick = submit;
+  startTimer();
+}
 
-    // 7) write attempts/{uid}_q1_1 (create then update; jendela dari starts)
-    const aref = doc(db, "attempts", `${uid}_${QUIZ_ID}_1`);
-    const asnap = await getDoc(aref).catch(() => null);
-    if (asnap && asnap.exists()) {
-      await updateDoc(aref, { answers, updatedAt: serverTimestamp(), submitSeq: asnap.data().submitSeq + 1 });
-    } else {
-      await setDoc(aref, { answers, updatedAt: serverTimestamp(), submitSeq: 1, uid, quizId: QUIZ_ID, attemptNo: 1, expireAt });
+let saveTimer = null;
+function autosave() {
+  document.getElementById("saved").textContent = "menyimpan…";
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { saveAttempt().catch((e) => log("autosave gagal: " + e.message)); }, 800);
+}
+
+async function saveAttempt() {
+  const { uid, quiz, answers, startId, expireAt } = state;
+  const submitSeq = state.submitSeq + 1;
+  await setDoc(doc(db, "attempts", startId), {
+    uid, quizId: QUIZ_ID, attemptNo: 1, answers, submitSeq,
+    updatedAt: serverTimestamp(), expireAt,
+  }, { merge: true });
+  state.submitSeq = submitSeq;
+  const s = document.getElementById("saved");
+  if (s) s.textContent = "tersimpan ✓";
+  return submitSeq;
+}
+
+function startTimer() {
+  const t = document.getElementById("timer");
+  t.style.display = "";
+  const tick = () => {
+    const ms = state.deadlineMs - Date.now();
+    if (ms <= 0) {
+      t.textContent = "⏰ Waktu habis — mengirim…";
+      t.classList.add("warn");
+      clearInterval(state.timerId);
+      if (!state.locked) submit();
+      return;
     }
-    log("attempts dikirim: " + Object.keys(answers).length + "/" + quiz.questions.length + " dijawab");
-
-    // 8) grade in-browser (practice) + write progress/{uid}
-    let benar = 0;
-    quiz.questions.forEach((q) => { if (answers[q.id] === q.kunci) benar++; });
-    const pct = Math.round((benar / quiz.questions.length) * 100);
-    await setDoc(doc(db, "progress", uid), { xp: pct, quizScores: { [QUIZ_ID]: pct }, updatedAt: serverTimestamp() }, { merge: true });
-    log("progress/" + uid.slice(0, 8) + " ditulis (xp=" + pct + ")");
-
-    document.getElementById("score").textContent = `Skor: ${benar}/${quiz.questions.length} (${pct}%)`;
-    document.getElementById("submit").disabled = true;
-    window.__sliceDone = { benar, total: quiz.questions.length, pct };
+    const s = Math.floor(ms / 1000), m = Math.floor(s / 60), ss = s % 60;
+    t.textContent = "⏱ " + m + ":" + String(ss).padStart(2, "0") + " tersisa";
+    t.classList.toggle("warn", ms < 60000);
   };
+  tick();
+  state.timerId = setInterval(tick, 1000);
+}
+
+async function submit() {
+  if (state.locked) return;
+  state.locked = true;
+  clearInterval(state.timerId);
+  clearTimeout(saveTimer);
+  document.getElementById("submit").disabled = true;
+  try {
+    await saveAttempt();
+    log("attempts dikirim: " + Object.keys(state.answers).length + "/" + state.questions.length + " dijawab");
+
+    if (state.mode === "ujian") {
+      // official exam: teacher grades; no key on client, no instant score
+      document.getElementById("score").textContent = "Jawaban terkirim — menunggu penilaian guru.";
+      window.__sliceDone = { submitted: true, mode: "ujian", answered: Object.keys(state.answers).length };
+      return;
+    }
+    // practice: instant grade against inline keys
+    let benar = 0;
+    state.questions.forEach((q) => { if (state.answers[q.id] === q.kunci) benar++; });
+    const pct = Math.round((benar / state.questions.length) * 100);
+    await setDoc(doc(db, "progress", state.uid), { xp: pct, quizScores: { [QUIZ_ID]: pct }, updatedAt: serverTimestamp() }, { merge: true });
+    log("progress ditulis (xp=" + pct + ")");
+    document.getElementById("score").textContent = `Skor: ${benar}/${state.questions.length} (${pct}%)`;
+    window.__sliceDone = { benar, total: state.questions.length, pct, mode: "latihan" };
+  } catch (e) {
+    state.locked = false;
+    document.getElementById("submit").disabled = false;
+    log("GAGAL kirim: " + e.message);
+    document.getElementById("score").textContent = "Gagal kirim: " + e.message;
+    throw e;
+  }
 }
 
 boot().catch((e) => { log("ERROR: " + e.message); document.getElementById("app").textContent = "Gagal: " + e.message; });

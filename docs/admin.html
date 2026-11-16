@@ -37,6 +37,7 @@
       <label>Kelas <input id="kelas" size="6" value="c1"></label>
     </div>
     <label>Judul <input id="judul" size="40"></label>
+    <label>Mode <select id="mode"><option value="latihan">Latihan (nilai instan)</option><option value="ujian">Ujian resmi (dinilai guru)</option></select></label>
     <div class="row">
       <label>Durasi (menit) <input id="durasi" type="number" value="60" size="4"></label>
       <label>Toleransi mulai (menit) <input id="tol" type="number" value="120" size="4"></label>
@@ -54,6 +55,14 @@
   </fieldset>
 
   <button id="save">Simpan Kuis</button>
+
+  <fieldset>
+    <legend>Nilai Ujian (dari quizKeys)</legend>
+    <div class="row">
+      <label>Kode kuis <input id="gcode" size="10"></label>
+      <button id="grade">Nilai semua attempt</button>
+    </div>
+  </fieldset>
 </div>
 
 <div id="log"></div>
@@ -62,7 +71,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const log = (m, cls) => { const el = document.getElementById("log"); const s = document.createElement("div"); if (cls) s.className = cls; s.textContent = m; el.appendChild(s); };
 const $ = (id) => document.getElementById(id);
@@ -143,17 +152,52 @@ $("save").onclick = async () => {
     if (!questions.length) throw new Error("Minimal 1 soal valid");
 
     const version = 1;
-    const quiz = { judul, version, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions };
-    await setDoc(doc(db, "quizzes", code), quiz);
+    const mode = $("mode").value;
+    if (mode === "ujian") {
+      // official exam: keys -> admin-only quizKeys, stripped from student-readable quiz
+      const keys = {};
+      const stripped = questions.map((q) => { keys[q.id] = q.kunci; const { kunci, ...rest } = q; return rest; });
+      await setDoc(doc(db, "quizzes", code), { judul, version, mode, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions: stripped });
+      await setDoc(doc(db, "quizKeys", code), { keys, closeAt, version });
+    } else {
+      await setDoc(doc(db, "quizzes", code), { judul, version, mode, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions });
+    }
 
     const meta = { openAt, closeAt, duration, version, toleransiMulai, classes: [kelas] };
     await setDoc(doc(db, "classes", kelas), { quizzes: { [code]: meta } }, { merge: true });
 
-    log("Tersimpan: quizzes/" + code + " (" + questions.length + " soal) + classes/" + kelas + ".quizzes." + code, "ok");
+    log("Tersimpan: quizzes/" + code + " (" + questions.length + " soal, mode=" + mode + ")" + (mode === "ujian" ? " + quizKeys" : "") + " + classes/" + kelas + ".quizzes." + code, "ok");
   } catch (e) {
     log("Gagal simpan: " + e.message, "err");
   } finally {
     $("save").disabled = false;
+  }
+};
+
+$("grade").onclick = async () => {
+  $("grade").disabled = true;
+  try {
+    const code = $("gcode").value.trim();
+    if (!code) throw new Error("Isi kode kuis");
+    const keysSnap = await getDoc(doc(db, "quizKeys", code));
+    if (!keysSnap.exists()) throw new Error("quizKeys/" + code + " tidak ada (bukan ujian?)");
+    const keys = keysSnap.data().keys;
+    const total = Object.keys(keys).length;
+    const snap = await getDocs(query(collection(db, "attempts"), where("quizId", "==", code)));
+    let n = 0;
+    for (const d of snap.docs) {
+      const a = d.data();
+      let benar = 0;
+      for (const qid in keys) if (a.answers && a.answers[qid] === keys[qid]) benar++;
+      const pct = total ? Math.round((benar / total) * 100) : 0;
+      await setDoc(doc(db, "results", d.id), { uid: a.uid, quizId: code, benar, total, pct, gradedAt: Timestamp.now(), revisionNo: 1 });
+      n++;
+    }
+    log("Dinilai: " + n + " attempt → results/" + code, "ok");
+  } catch (e) {
+    log("Gagal nilai: " + e.message, "err");
+  } finally {
+    $("grade").disabled = false;
   }
 };
 </script>
