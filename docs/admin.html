@@ -31,6 +31,13 @@
 <div id="editor" style="display:none">
   <div id="who"></div>
   <fieldset>
+    <legend>Ganti Password</legend>
+    <div class="row">
+      <label>Password baru <input id="npw" type="password" autocomplete="new-password" size="20"></label>
+      <button id="chpw">Simpan password</button>
+    </div>
+  </fieldset>
+  <fieldset>
     <legend>Kuis</legend>
     <div class="row">
       <label>Kode <input id="code" size="10"></label>
@@ -70,7 +77,7 @@
 <script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const log = (m, cls) => { const el = document.getElementById("log"); const s = document.createElement("div"); if (cls) s.className = cls; s.textContent = m; el.appendChild(s); };
@@ -198,6 +205,21 @@ $("grade").onclick = async () => {
     log("Gagal nilai: " + e.message, "err");
   } finally {
     $("grade").disabled = false;
+  }
+};
+
+$("chpw").onclick = async () => {
+  const np = $("npw").value;
+  if (np.length < 6) return log("Password minimal 6 karakter", "err");
+  $("chpw").disabled = true;
+  try {
+    await updatePassword(auth.currentUser, np);
+    log("Password diganti. Login ulang pakai password baru.", "ok");
+    $("npw").value = "";
+  } catch (e) {
+    log("Gagal ganti password: " + e.message + (e.code === "auth/requires-recent-login" ? " — logout, login lagi, ulangi." : ""), "err");
+  } finally {
+    $("chpw").disabled = false;
   }
 };
 </script>
