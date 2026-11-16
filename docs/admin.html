@@ -617,7 +617,7 @@ async function loadAsesmenTable() {
     const open = q.openAt ? q.openAt.toDate() : null;
     const canDel = !open || open > now;
     const aksi = canDel
-      ? `<button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
+      ? `<button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAs('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
       : `<span style="color:#64748b; font-size:.72rem" title="Sudah dibuka — integritas ujian dijaga">terkunci</span>`;
     return `<tr>
       <td><code>${d.id}</code></td>
@@ -639,6 +639,70 @@ async function loadAsesmenTable() {
       loadAsesmenTable();
     } catch (e) {
       alert("Gagal hapus (sudah dibuka / aturan integritas): " + e.message);
+    }
+  };
+  window._editAs = async (code) => {
+    try {
+      const snap = await getDoc(doc(db, "quizzes", code));
+      if (!snap.exists()) return alert("Asesmen tidak ditemukan!");
+      const qData = snap.data();
+
+      document.getElementById("as-code").value = code;
+      const classes = qData.classes || [];
+      document.getElementById("as-kelas").value = classes.join(", ");
+      document.getElementById("as-mode").value = qData.mode || "latihan";
+      document.getElementById("as-judul").value = qData.judul || "";
+      document.getElementById("as-durasi").value = qData.duration !== undefined ? qData.duration : 60;
+      document.getElementById("as-tol").value = qData.toleransiMulai !== undefined ? qData.toleransiMulai : 120;
+
+      const toDTLocal = (ts) => {
+        if (!ts) return "";
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        const p = (n) => String(n).padStart(2, "0");
+        return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes());
+      };
+
+      document.getElementById("as-open").value = toDTLocal(qData.openAt);
+      document.getElementById("as-close").value = toDTLocal(qData.closeAt);
+
+      const cloned = JSON.parse(JSON.stringify(qData.questions || []));
+
+      if (qData.mode === "ujian") {
+        const keySnap = await getDoc(doc(db, "quizKeys", code));
+        const keys = (keySnap.exists() && keySnap.data().keys) ? keySnap.data().keys : {};
+        cloned.forEach(q => {
+          const kVal = keys[q.id];
+          if (kVal && typeof kVal === "object" && !Array.isArray(kVal)) {
+            q.kiri = Object.keys(kVal);
+            q.kanan = Object.values(kVal);
+          } else if (kVal !== undefined) {
+            q.kunci = kVal;
+          }
+        });
+      }
+
+      cloned.forEach(q => {
+        if (!q.pilihan || typeof q.pilihan !== "object") q.pilihan = { A: "", B: "", C: "", D: "" };
+        else q.pilihan = { A: q.pilihan.A || "", B: q.pilihan.B || "", C: q.pilihan.C || "", D: q.pilihan.D || "" };
+        if (!Array.isArray(q.kiri)) q.kiri = ["", ""];
+        if (!Array.isArray(q.kanan)) q.kanan = ["", ""];
+        if (q.bobot === undefined) q.bobot = 25;
+        if (q.kunci === undefined || q.kunci === null) q.kunci = "";
+        else q.kunci = String(q.kunci);
+        if (q.teks === undefined) q.teks = "";
+      });
+
+      questionsList = cloned;
+      renderQBuilder();
+
+      editingQuizCode = code;
+      document.getElementById("btn-as-save").textContent = "Update Asesmen";
+
+      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === "sec-asesmen"));
+      document.querySelectorAll(".tab-pane").forEach((p) => p.classList.toggle("hidden", p.id !== "sec-asesmen"));
+      document.getElementById("as-code").scrollIntoView({ behavior: "smooth" });
+    } catch (e) {
+      alert("Gagal memuat asesmen: " + e.message);
     }
   };
 }
@@ -737,6 +801,7 @@ document.getElementById("btn-tug-save").onclick = async () => {
 };
 
 // 3. ASESMEN BUILDER 4 TIPE
+let editingQuizCode = null;
 let questionsList = [];
 window._addQ = (type) => {
   const qid = "q" + (questionsList.length + 1);
@@ -794,7 +859,7 @@ function renderQBuilder() {
 }
 
 document.getElementById("btn-as-save").onclick = async () => {
-  const code = document.getElementById("as-code").value.trim();
+  const code = editingQuizCode || document.getElementById("as-code").value.trim();
   const kelas = document.getElementById("as-kelas").value.trim();
   const judul = document.getElementById("as-judul").value.trim();
   const mode = document.getElementById("as-mode").value;
@@ -808,38 +873,44 @@ document.getElementById("btn-as-save").onclick = async () => {
   const closeAt = Timestamp.fromDate(new Date(closeVal));
   const version = 1;
 
-  if (mode === "ujian") {
-    const keysMap = {};
-    const strippedQuestions = questionsList.map(q => {
-      if (q.tipe === "match") {
-        keysMap[q.id] = {};
-        (q.kiri||[]).forEach((k, i) => { keysMap[q.id][k] = (q.kanan||[])[i] || ""; });
-      } else if (q.kunci) {
-        keysMap[q.id] = q.kunci;
-      }
-      const { kunci, ...clean } = q;
-      return clean;
-    });
+  try {
+    if (mode === "ujian") {
+      const keysMap = {};
+      const strippedQuestions = questionsList.map(q => {
+        if (q.tipe === "match") {
+          keysMap[q.id] = {};
+          (q.kiri||[]).forEach((k, i) => { keysMap[q.id][k] = (q.kanan||[])[i] || ""; });
+        } else if (q.kunci) {
+          keysMap[q.id] = q.kunci;
+        }
+        const { kunci, ...clean } = q;
+        return clean;
+      });
 
-    await setDoc(doc(db, "quizzes", code), {
-      judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: strippedQuestions
-    });
-    await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt });
-  } else {
-    // Mode latihan: inline keys
-    await setDoc(doc(db, "quizzes", code), {
-      judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: questionsList
-    });
+      await setDoc(doc(db, "quizzes", code), {
+        judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: strippedQuestions
+      });
+      await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt });
+    } else {
+      // Mode latihan: inline keys
+      await setDoc(doc(db, "quizzes", code), {
+        judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: questionsList
+      });
+    }
+
+    // Write schedule to classes
+    await setDoc(doc(db, "classes", kelas), {
+      quizzes: { [code]: { openAt, closeAt, duration, toleransiMulai, version, classes: [kelas] } }
+    }, { merge: true });
+
+    alert(editingQuizCode ? "Asesmen berhasil diperbarui!" : "Asesmen berhasil diterbitkan!");
+    log(`Asesmen ${code} tersimpan ke quizzes, quizKeys, dan classes/${kelas}`);
+    editingQuizCode = null;
+    document.getElementById("btn-as-save").textContent = "Simpan & Terbitkan Asesmen";
+    loadAsesmenTable();
+  } catch (e) {
+    alert("Gagal menyimpan asesmen: " + e.message);
   }
-
-  // Write schedule to classes
-  await setDoc(doc(db, "classes", kelas), {
-    quizzes: { [code]: { openAt, closeAt, duration, toleransiMulai, version, classes: [kelas] } }
-  }, { merge: true });
-
-  alert("Asesmen berhasil diterbitkan!");
-  log(`Asesmen ${code} tersimpan ke quizzes, quizKeys, dan classes/${kelas}`);
-  loadAsesmenTable();
 };
 
 // 4. KOREKSI & PENILAIAN BATCH
