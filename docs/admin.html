@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Kuis — LMS</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+  fieldset { border: 1px solid #ddd; border-radius: 8px; margin: 1rem 0; padding: .75rem 1rem; }
+  label { display: block; margin: .4rem 0; }
+  input, textarea, select { font: inherit; padding: .3rem .5rem; }
+  .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .row > label { margin: 0; }
+  .qrow { border-top: 1px dashed #ccc; padding: .5rem 0; }
+  .qrow textarea { width: 100%; }
+  button { font: inherit; padding: .5rem 1rem; cursor: pointer; margin-top: .5rem; }
+  #log { font: 12px/1.4 ui-monospace, monospace; color: #666; white-space: pre-wrap; margin-top: 1rem; }
+  .err { color: #b42318; }
+  .ok { color: #1a7f37; }
+</style>
+</head>
+<body>
+<h1>Admin Kuis</h1>
+
+<div id="auth">
+  <label>Email <input id="email" type="email" autocomplete="username"></label>
+  <label>Password <input id="pw" type="password" autocomplete="current-password"></label>
+  <button id="login">Login</button>
+</div>
+
+<div id="editor" style="display:none">
+  <div id="who"></div>
+  <fieldset>
+    <legend>Kuis</legend>
+    <div class="row">
+      <label>Kode <input id="code" size="10"></label>
+      <label>Kelas <input id="kelas" size="6" value="c1"></label>
+    </div>
+    <label>Judul <input id="judul" size="40"></label>
+    <div class="row">
+      <label>Durasi (menit) <input id="durasi" type="number" value="60" size="4"></label>
+      <label>Toleransi mulai (menit) <input id="tol" type="number" value="120" size="4"></label>
+    </div>
+    <div class="row">
+      <label>Buka <input id="open" type="datetime-local"></label>
+      <label>Tutup <input id="close" type="datetime-local"></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Soal</legend>
+    <div id="qs"></div>
+    <button id="addq">+ Soal</button>
+  </fieldset>
+
+  <button id="save">Simpan Kuis</button>
+</div>
+
+<div id="log"></div>
+
+<script src="firebase-config.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const log = (m, cls) => { const el = document.getElementById("log"); const s = document.createElement("div"); if (cls) s.className = cls; s.textContent = m; el.appendChild(s); };
+const $ = (id) => document.getElementById(id);
+
+const app = initializeApp(window.FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db = getFirestore(app);
+if (["localhost","127.0.0.1"].includes(location.hostname)) {
+  connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
+
+$("login").onclick = async () => {
+  $("login").disabled = true;
+  try {
+    const cred = await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pw").value);
+    const uid = cred.user.uid;
+    try {
+      await getDoc(doc(db, "admins", uid));
+    } catch {
+      log("Bukan admin (tidak ada admins/" + uid.slice(0,8) + "). Minta admin menambahkan.", "err");
+      await signOut(auth); $("login").disabled = false; return;
+    }
+    $("auth").style.display = "none";
+    $("editor").style.display = "";
+    $("who").textContent = "Login: " + cred.user.email + " (uid " + uid.slice(0,8) + ")";
+    $("code").value = "q" + Date.now().toString(36);
+    addQuestion();
+  } catch (e) {
+    log("Login gagal: " + e.message, "err");
+    $("login").disabled = false;
+  }
+};
+
+function addQuestion() {
+  const wrap = document.createElement("div");
+  wrap.className = "qrow";
+  wrap.innerHTML =
+    '<textarea rows="2" class="teks" placeholder="Teks soal"></textarea>' +
+    '<div class="row">' +
+      ["A","B","C","D"].map((k) => `<label>${k} <input class="opt" data-k="${k}" size="18"></label>`).join("") +
+      '<label>Kunci <select class="kunci">' + ["A","B","C","D"].map((k)=>`<option>${k}</option>`).join("") + '</select></label>' +
+    '</div>';
+  $("qs").appendChild(wrap);
+}
+$("addq").onclick = addQuestion;
+
+function readQuestions() {
+  const out = [];
+  document.querySelectorAll("#qs .qrow").forEach((r, i) => {
+    const teks = r.querySelector(".teks").value.trim();
+    if (!teks) return;
+    const pilihan = {};
+    r.querySelectorAll(".opt").forEach((o) => { const v = o.value.trim(); if (v) pilihan[o.dataset.k] = v; });
+    if (Object.keys(pilihan).length < 2) return;
+    const kunci = r.querySelector(".kunci").value;
+    if (!(kunci in pilihan)) { throw new Error("Soal #" + (i+1) + ": kunci " + kunci + " tidak punya pilihan terisi"); }
+    out.push({ id: "s" + (out.length + 1), teks, pilihan, kunci });
+  });
+  return out;
+}
+
+$("save").onclick = async () => {
+  $("save").disabled = true;
+  try {
+    const code = $("code").value.trim();
+    const kelas = $("kelas").value.trim();
+    const judul = $("judul").value.trim();
+    const duration = parseInt($("durasi").value, 10);
+    const toleransiMulai = parseInt($("tol").value, 10);
+    if (!code || !kelas || !judul) throw new Error("Kode, kelas, judul wajib diisi");
+    if (!(duration > 0) || !(toleransiMulai >= 0)) throw new Error("Durasi/toleransi tidak valid");
+    if (!$("open").value || !$("close").value) throw new Error("Isi jam buka & tutup");
+    const openAt = Timestamp.fromDate(new Date($("open").value));
+    const closeAt = Timestamp.fromDate(new Date($("close").value));
+    if (closeAt.seconds <= openAt.seconds) throw new Error("Tutup harus setelah buka");
+    const questions = readQuestions();
+    if (!questions.length) throw new Error("Minimal 1 soal valid");
+
+    const version = 1;
+    const quiz = { judul, version, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions };
+    await setDoc(doc(db, "quizzes", code), quiz);
+
+    const meta = { openAt, closeAt, duration, version, toleransiMulai, classes: [kelas] };
+    await setDoc(doc(db, "classes", kelas), { quizzes: { [code]: meta } }, { merge: true });
+
+    log("Tersimpan: quizzes/" + code + " (" + questions.length + " soal) + classes/" + kelas + ".quizzes." + code, "ok");
+  } catch (e) {
+    log("Gagal simpan: " + e.message, "err");
+  } finally {
+    $("save").disabled = false;
+  }
+};
+</script>
+</body>
+</html>
