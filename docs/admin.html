@@ -77,6 +77,12 @@
   .stat-val { font-size: 2.25rem; font-weight: 700; color: var(--text-hero); line-height: 1.2; margin-bottom: .25rem; }
   .stat-lbl { font-size: .85rem; color: var(--text-muted); font-weight: 600; }
 
+  /* Chips / Filter Buttons */
+  .chip-group { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+  .chip { display: inline-flex; align-items: center; justify-content: center; font: inherit; background: var(--surface-2); color: var(--text-body); border: 1px solid var(--surface-3); border-radius: 9999px; padding: .25rem .75rem; font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; min-height: 32px; user-select: none; }
+  .chip:hover { border-color: var(--accent); color: var(--text-hero); }
+  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
   /* Responsive / Mobile styles (<= 640px) */
   @media (max-width: 640px) {
     body {
@@ -284,7 +290,7 @@
     <button class="nav-btn active" data-tab="sec-ringkasan">📊 Ringkasan</button>
     <button class="nav-btn" data-tab="sec-materi">📖 Kelola Materi</button>
     <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
-    <button class="nav-btn" data-tab="sec-asesmen">✍️ Asesmen Builder</button>
+    <button class="nav-btn" data-tab="sec-asesmen">✍️ Buat Ulangan</button>
     <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
     <div class="sidebar-user" style="margin-top:auto; font-size:.8rem; color:var(--text-muted)">
       <div id="u-display">-</div>
@@ -297,11 +303,14 @@
   <!-- AUTH BOX -->
   <div id="sec-auth" class="panel" style="max-width:380px; margin:4rem auto">
     <h2>Login Guru</h2>
-    <label>Email Admin</label>
-    <input id="l-email" type="email" placeholder="guru@sekolah.sch.id">
+    <label>Email Guru</label>
+    <input id="l-email" type="email" placeholder="guru@sekolah.sch.id" value="" autocomplete="off">
     <label>Kata Sandi</label>
-    <input id="l-pass" type="password" placeholder="••••••••">
+    <input id="l-pass" type="password" placeholder="Kata sandi" value="" autocomplete="off">
     <button id="btn-login" class="btn btn-primary" style="width:100%">Masuk</button>
+    <div style="text-align:center; margin-top:.75rem">
+      <a href="javascript:void(0)" onclick="alert('Hubungi admin sekolah untuk reset kata sandi.')" style="font-size:.8rem; color:var(--text-muted); text-decoration:underline; cursor:pointer">Lupa sandi?</a>
+    </div>
   </div>
 
   <!-- MAIN APP CONTAINER -->
@@ -323,11 +332,11 @@
         </div>
         <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
           <div id="rk-asesmen" class="stat-val">–</div>
-          <div class="stat-lbl">✍️ Asesmen</div>
+          <div class="stat-lbl">✍️ Ulangan</div>
         </div>
         <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
           <div id="rk-kiriman" class="stat-val">–</div>
-          <div class="stat-lbl">⚖️ Kiriman Masuk</div>
+          <div class="stat-lbl">⚖️ Tugas Masuk</div>
         </div>
       </div>
     </div>
@@ -360,9 +369,12 @@
         </div>
       </div>
       <div class="panel">
-        <div class="row" style="margin-bottom:.75rem">
-          <div style="flex:2"><input type="search" id="materi-search" placeholder="Cari judul..."></div>
-          <div style="flex:1"><select id="materi-kelas"><option value="">Semua Kelas</option></select></div>
+        <div class="row" style="margin-bottom:.75rem; align-items:center">
+          <div style="flex:1; min-width:220px"><input type="search" id="materi-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
+          <div style="flex:2">
+            <select id="materi-kelas" style="display:none"><option value="">Semua Kelas</option></select>
+            <div id="materi-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+          </div>
         </div>
         <div class="table-container">
           <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
@@ -399,9 +411,12 @@
         <div style="display:flex; justify-content:flex-end; margin-bottom:.75rem">
           <button id="btn-export-tugas-csv" class="btn btn-secondary">Unduh Rekap Nilai Tugas</button>
         </div>
-        <div class="row" style="margin-bottom:.75rem">
-          <div style="flex:2"><input type="search" id="tug-search" placeholder="Cari judul..."></div>
-          <div style="flex:1"><select id="tug-kelas"><option value="">Semua Kelas</option></select></div>
+        <div class="row" style="margin-bottom:.75rem; align-items:center">
+          <div style="flex:1; min-width:220px"><input type="search" id="tug-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
+          <div style="flex:2">
+            <select id="tug-kelas" style="display:none"><option value="">Semua Kelas</option></select>
+            <div id="tug-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+          </div>
         </div>
         <div class="table-container">
           <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th><th>Aksi</th></tr></thead><tbody></tbody></table>
@@ -421,11 +436,25 @@
         <h2>Pembuat Asesmen (4 Tipe Soal)</h2>
         <button id="btn-as-save" class="btn btn-primary">Simpan & Terbitkan Asesmen</button>
       </div>
+
+      <div class="panel" style="margin-bottom:1.5rem; border:1px solid var(--accent); background:rgba(59,130,246,0.05)">
+        <h2 style="font-size:1.1rem; color:var(--text-hero); margin-bottom:.75rem">Tulis Soal</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:.5rem">
+          <button type="button" class="btn btn-secondary" onclick="window._addQ('pg')">+ Pilihan Ganda</button>
+          <button type="button" class="btn btn-secondary" onclick="window._addQ('bs')">+ Benar/Salah</button>
+          <button type="button" class="btn btn-secondary" onclick="window._addQ('match')">+ Mencocokkan</button>
+          <button type="button" class="btn btn-secondary" onclick="window._addQ('essay')">+ Essay</button>
+        </div>
+      </div>
+
       <div class="panel">
         <h2>Daftar Asesmen Terbit</h2>
-        <div class="row" style="margin-bottom:.75rem">
-          <div style="flex:2"><input type="search" id="as-search" placeholder="Cari judul..."></div>
-          <div style="flex:1"><select id="as-kelas"><option value="">Semua Kelas</option></select></div>
+        <div class="row" style="margin-bottom:.75rem; align-items:center">
+          <div style="flex:1; min-width:220px"><input type="search" id="as-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
+          <div style="flex:2">
+            <select id="as-kelas" style="display:none"><option value="">Semua Kelas</option></select>
+            <div id="as-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+          </div>
         </div>
         <div class="table-container">
           <table id="as-table"><thead><tr><th>Kode</th><th>Judul</th><th>Mode</th><th>Kelas</th><th>Buka</th><th>Aksi</th></tr></thead><tbody></tbody></table>
@@ -434,7 +463,7 @@
       <div class="panel">
         <h2>Pengaturan Asesmen</h2>
         <div class="row">
-          <div><label>Kode Kuis</label><input id="as-code" placeholder="q_ipa_01"></div>
+          <div><label>Kode soal (opsional — otomatis bila kosong)</label><input id="as-code" placeholder="q_ipa_01"></div>
           <div><label>Kelas Target</label><input id="as-kelas" value="c1"></div>
           <div><label>Mode</label><select id="as-mode"><option value="latihan">Latihan (Auto-Nilai Instan)</option><option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option></select></div>
         </div>
@@ -451,12 +480,6 @@
       <div class="panel">
         <div class="header-bar">
           <h2>Daftar Butir Soal</h2>
-          <div style="display:flex; gap:.5rem">
-            <button class="btn btn-secondary" onclick="window._addQ('pg')">+ Pilihan Ganda</button>
-            <button class="btn btn-secondary" onclick="window._addQ('bs')">+ Benar/Salah</button>
-            <button class="btn btn-secondary" onclick="window._addQ('match')">+ Mencocokkan</button>
-            <button class="btn btn-secondary" onclick="window._addQ('essay')">+ Essay</button>
-          </div>
         </div>
         <div id="as-questions-list"></div>
       </div>
@@ -552,6 +575,27 @@ function updateClassOptions(selectEl, items) {
   if (currentVal && set.has(currentVal)) {
     selectEl.value = currentVal;
   }
+
+  const chipContainer = document.getElementById(selectEl.id + "-chips");
+  if (chipContainer) {
+    const activeVal = selectEl.value || "";
+    let html = `<button type="button" class="chip ${!activeVal ? 'active' : ''}" data-val="">Semua</button>`;
+    sorted.forEach(c => {
+      html += `<button type="button" class="chip ${activeVal.toLowerCase() === c.toLowerCase() ? 'active' : ''}" data-val="${escAttr(c)}">${escAttr(c)}</button>`;
+    });
+    chipContainer.innerHTML = html;
+    chipContainer.onclick = (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      const val = btn.dataset.val || "";
+      selectEl.value = val;
+      chipContainer.querySelectorAll(".chip").forEach(b => b.classList.toggle("active", (b.dataset.val || "") === val));
+      selectEl.dispatchEvent(new Event("change"));
+      if (selectEl.id === "materi-kelas") filterMateri();
+      else if (selectEl.id === "tug-kelas") filterTugas();
+      else filterAsesmen();
+    };
+  }
 }
 
 const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
@@ -595,6 +639,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("sidebar").classList.add("hidden");
   }
 });
+
+const elEmail = document.getElementById("l-email");
+if (elEmail) elEmail.value = "";
+const elPass = document.getElementById("l-pass");
+if (elPass) elPass.value = "";
 
 document.getElementById("btn-login").onclick = async () => {
   const email = document.getElementById("l-email").value.trim();
@@ -1148,7 +1197,11 @@ function renderQBuilder() {
 }
 
 document.getElementById("btn-as-save").onclick = async () => {
-  const code = editingQuizCode || document.getElementById("as-code").value.trim();
+  let code = editingQuizCode || document.getElementById("as-code").value.trim();
+  if (!code) {
+    code = 'q_' + Date.now().toString(36);
+    document.getElementById("as-code").value = code;
+  }
   const asKelasInput = document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
   const kelas = (asKelasInput ? asKelasInput.value : "").trim();
   const judul = document.getElementById("as-judul").value.trim();
