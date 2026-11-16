@@ -108,6 +108,42 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ---- materials: admin write; semua login baca ----
+    match /materials/{id} {
+      allow read: if request.auth != null;
+      allow create, update: if isAdmin()
+        && request.resource.data.judul.size() <= 150
+        && request.resource.data.deskripsi.size() <= 20000
+        && request.resource.data.link.size() <= 500;
+      allow delete: if isAdmin();
+    }
+
+    // ---- assignments: admin write; semua login baca ----
+    match /assignments/{id} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ---- submissions: siswa tulis miliknya sendiri, admin baca semua ----
+    match /submissions/{subId} {
+      allow read: if request.auth != null && resource != null
+        && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && subId == request.auth.uid + '__' + request.resource.data.assignmentId
+        && request.resource.data.keys().hasOnly(['uid','assignmentId','teks','link','submittedAt','updatedAt'])
+        && request.resource.data.teks.size() <= 20000
+        && request.resource.data.link.size() <= 500;
+      allow update: if request.auth != null && (
+        (resource.data.uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teks','link','updatedAt'])
+          && request.resource.data.teks.size() <= 20000
+          && request.resource.data.link.size() <= 500)
+        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nilai','catatanGuru','updatedAt']))
+      );
+      allow delete: if false;
+    }
+
     // ---- certificates: admin write, publik read (verifikasi) ----
     match /certificates/{id} {
       allow read: if true;

@@ -3,224 +3,538 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Kuis — LMS</title>
+<title>Panel Guru & Admin — LMS SITURI</title>
 <style>
-  body { font: 16px/1.5 system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
-  fieldset { border: 1px solid #ddd; border-radius: 8px; margin: 1rem 0; padding: .75rem 1rem; }
-  label { display: block; margin: .4rem 0; }
-  input, textarea, select { font: inherit; padding: .3rem .5rem; }
-  .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
-  .row > label { margin: 0; }
-  .qrow { border-top: 1px dashed #ccc; padding: .5rem 0; }
-  .qrow textarea { width: 100%; }
-  button { font: inherit; padding: .5rem 1rem; cursor: pointer; margin-top: .5rem; }
-  #log { font: 12px/1.4 ui-monospace, monospace; color: #666; white-space: pre-wrap; margin-top: 1rem; }
-  .err { color: #b42318; }
-  .ok { color: #1a7f37; }
+  :root {
+    --bg: #090d16; --surface-1: #0f172a; --surface-2: #1e293b; --surface-3: #334155;
+    --border: #1e293b; --text-hero: #f8fafc; --text-body: #cbd5e1; --text-muted: #64748b;
+    --accent: #3b82f6; --ok: #10b981; --warn: #f59e0b; --danger: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 14px/1.5 system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-body); display: flex; min-height: 100vh; }
+  
+  /* Sidebar */
+  aside { width: 230px; background: var(--surface-1); border-right: 1px solid var(--border); padding: 1.25rem; display: flex; flex-direction: column; }
+  .brand { font-size: 1.15rem; font-weight: 700; color: var(--text-hero); margin-bottom: 2rem; }
+  .nav-btn { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .65rem .85rem; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font: inherit; font-weight: 600; cursor: pointer; text-align: left; margin-bottom: .4rem; }
+  .nav-btn:hover { background: var(--surface-2); color: var(--text-body); }
+  .nav-btn.active { background: var(--surface-2); color: var(--accent); border-left: 3px solid var(--accent); }
+  
+  /* Main */
+  main { flex: 1; padding: 2rem; overflow-y: auto; }
+  .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .panel { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .panel h2 { font-size: 1.15rem; color: var(--text-hero); margin-bottom: 1rem; }
+  
+  label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .35rem; }
+  input, textarea, select { width: 100%; font: inherit; background: var(--surface-2); border: 1px solid var(--surface-3); border-radius: 8px; color: var(--text-hero); padding: .55rem .75rem; margin-bottom: .85rem; outline: none; }
+  textarea { resize: vertical; min-height: 70px; }
+  .row { display: flex; gap: .75rem; }
+  .row > div { flex: 1; }
+  
+  .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 600; padding: .6rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--surface-2); color: var(--text-hero); border: 1px solid var(--surface-3); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .9rem; }
+  th, td { padding: .75rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-muted); font-weight: 600; }
+  
+  /* Question Builder Card */
+  .q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; position: relative; }
+  .badge { display: inline-block; padding: .2rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 700; text-transform: uppercase; }
+  .badge-danger { background: rgba(239,68,68,.15); color: #fca5a5; }
+  .badge-ok { background: rgba(16,185,129,.15); color: #86efac; }
+  
+  .hidden { display: none !important; }
+  #log { font: 12px ui-monospace, monospace; color: var(--text-muted); background: var(--surface-2); padding: .75rem; border-radius: 8px; margin-top: 1rem; max-height: 120px; overflow-y: auto; }
 </style>
 </head>
 <body>
-<h1>Admin Kuis</h1>
 
-<div id="auth">
-  <label>Email <input id="email" type="email" autocomplete="username"></label>
-  <label>Password <input id="pw" type="password" autocomplete="current-password"></label>
-  <button id="login">Login</button>
-</div>
+<aside>
+  <div class="brand">LMS SITURI · Guru</div>
+  <button class="nav-btn active" data-tab="sec-materi">📖 Kelola Materi</button>
+  <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
+  <button class="nav-btn" data-tab="sec-asesmen">✍️ Asesmen Builder</button>
+  <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
+  <div style="margin-top:auto; font-size:.8rem; color:var(--text-muted)">
+    <div id="u-display">-</div>
+    <button id="btn-logout" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-top:.5rem">Logout</button>
+  </div>
+</aside>
 
-<div id="editor" style="display:none">
-  <div id="who"></div>
-  <fieldset>
-    <legend>Ganti Password</legend>
-    <div class="row">
-      <label>Password baru <input id="npw" type="password" autocomplete="new-password" size="20"></label>
-      <button id="chpw">Simpan password</button>
+<main>
+  <!-- AUTH BOX -->
+  <div id="sec-auth" class="panel" style="max-width:380px; margin:4rem auto">
+    <h2>Login Guru</h2>
+    <label>Email Admin</label>
+    <input id="l-email" type="email" placeholder="guru@sekolah.sch.id">
+    <label>Kata Sandi</label>
+    <input id="l-pass" type="password" placeholder="••••••••">
+    <button id="btn-login" class="btn btn-primary" style="width:100%">Masuk</button>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app-content" class="hidden">
+    
+    <!-- SECTION 1: MATERI -->
+    <div id="sec-materi" class="tab-pane">
+      <div class="header-bar">
+        <h2>Materi Pembelajaran</h2>
+        <button id="btn-mat-new" class="btn btn-primary">+ Tambah Materi</button>
+      </div>
+      <div id="mat-form-panel" class="panel hidden">
+        <h2 id="mat-form-title">Materi Baru</h2>
+        <label>Judul Materi</label>
+        <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur Sel Tumbuhan">
+        <div class="row">
+          <div><label>Target Kelas</label><input id="m-kelas" placeholder="c1, 7A, 7B"></div>
+          <div><label>Tautan Video/Drive (Opsional)</label><input id="m-link" placeholder="https://youtube.com/watch?v=..."></div>
+        </div>
+        <label>Uraian Ringkasan Materi</label>
+        <textarea id="m-deskripsi" rows="5" placeholder="Ketik ringkasan modul / materi di sini..."></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:.5rem">
+          <button id="btn-mat-cancel" class="btn btn-secondary">Batal</button>
+          <button id="btn-mat-save" class="btn btn-primary">Simpan Materi</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+      </div>
     </div>
-  </fieldset>
-  <fieldset>
-    <legend>Kuis</legend>
-    <div class="row">
-      <label>Kode <input id="code" size="10"></label>
-      <label>Kelas <input id="kelas" size="6" value="c1"></label>
-    </div>
-    <label>Judul <input id="judul" size="40"></label>
-    <label>Mode <select id="mode"><option value="latihan">Latihan (nilai instan)</option><option value="ujian">Ujian resmi (dinilai guru)</option></select></label>
-    <div class="row">
-      <label>Durasi (menit) <input id="durasi" type="number" value="60" size="4"></label>
-      <label>Toleransi mulai (menit) <input id="tol" type="number" value="120" size="4"></label>
-    </div>
-    <div class="row">
-      <label>Buka <input id="open" type="datetime-local"></label>
-      <label>Tutup <input id="close" type="datetime-local"></label>
-    </div>
-  </fieldset>
 
-  <fieldset>
-    <legend>Soal</legend>
-    <div id="qs"></div>
-    <button id="addq">+ Soal</button>
-  </fieldset>
-
-  <button id="save">Simpan Kuis</button>
-
-  <fieldset>
-    <legend>Nilai Ujian (dari quizKeys)</legend>
-    <div class="row">
-      <label>Kode kuis <input id="gcode" size="10"></label>
-      <button id="grade">Nilai semua attempt</button>
+    <!-- SECTION 2: TUGAS -->
+    <div id="sec-tugas" class="tab-pane hidden">
+      <div class="header-bar">
+        <h2>Penugasan Siswa</h2>
+        <button id="btn-tug-new" class="btn btn-primary">+ Buat Tugas Baru</button>
+      </div>
+      <div id="tug-form-panel" class="panel hidden">
+        <h2>Tugas Baru</h2>
+        <label>Judul Tugas</label>
+        <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan">
+        <div class="row">
+          <div><label>Target Kelas</label><input id="t-kelas" placeholder="c1, 7A"></div>
+          <div><label>Batas Waktu Pengumpulan (Due Date)</label><input id="t-due" type="datetime-local"></div>
+        </div>
+        <label>Instruksi Pengerjaan</label>
+        <textarea id="t-instruksi" rows="4" placeholder="Jelaskan petunjuk pengumpulan tugas..."></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:.5rem">
+          <button id="btn-tug-cancel" class="btn btn-secondary">Batal</button>
+          <button id="btn-tug-save" class="btn btn-primary">Terbitkan Tugas</button>
+        </div>
+      </div>
+      <div class="panel">
+        <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div id="tug-sub-panel" class="panel hidden">
+        <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
+        <table id="tug-sub-table"><thead><tr><th>UID Siswa</th><th>Teks Jawaban</th><th>Link Tugas</th><th>Nilai</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+      </div>
     </div>
-  </fieldset>
-</div>
 
-<div id="log"></div>
+    <!-- SECTION 3: ASESMEN BUILDER (4 TIPE) -->
+    <div id="sec-asesmen" class="tab-pane hidden">
+      <div class="header-bar">
+        <h2>Pembuat Asesmen (4 Tipe Soal)</h2>
+        <button id="btn-as-save" class="btn btn-primary">Simpan & Terbitkan Asesmen</button>
+      </div>
+      <div class="panel">
+        <h2>Pengaturan Asesmen</h2>
+        <div class="row">
+          <div><label>Kode Kuis</label><input id="as-code" placeholder="q_ipa_01"></div>
+          <div><label>Kelas Target</label><input id="as-kelas" value="c1"></div>
+          <div><label>Mode</label><select id="as-mode"><option value="latihan">Latihan (Auto-Nilai Instan)</option><option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option></select></div>
+        </div>
+        <label>Judul Asesmen</label>
+        <input id="as-judul" placeholder="Penilaian Harian Bab 3 Sistem Gerak">
+        <div class="row">
+          <div><label>Durasi (Menit)</label><input id="as-durasi" type="number" value="60"></div>
+          <div><label>Toleransi Masuk (Menit)</label><input id="as-tol" type="number" value="120"></div>
+          <div><label>Waktu Buka</label><input id="as-open" type="datetime-local"></div>
+          <div><label>Waktu Tutup</label><input id="as-close" type="datetime-local"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="header-bar">
+          <h2>Daftar Butir Soal</h2>
+          <div style="display:flex; gap:.5rem">
+            <button class="btn btn-secondary" onclick="window._addQ('pg')">+ Pilihan Ganda</button>
+            <button class="btn btn-secondary" onclick="window._addQ('bs')">+ Benar/Salah</button>
+            <button class="btn btn-secondary" onclick="window._addQ('match')">+ Mencocokkan</button>
+            <button class="btn btn-secondary" onclick="window._addQ('essay')">+ Essay</button>
+          </div>
+        </div>
+        <div id="as-questions-list"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: KOREKSI UJIAN & GRADING -->
+    <div id="sec-grading" class="tab-pane hidden">
+      <div class="header-bar">
+        <h2>Penilaian & Koreksi Ujian</h2>
+        <button id="btn-export-csv" class="btn btn-secondary">Unduh Rekap CSV</button>
+      </div>
+      <div class="panel">
+        <div class="row">
+          <div><label>Pilih Kode Kuis</label><input id="gr-code" placeholder="q_ipa_01"></div>
+          <div style="display:flex; align-items:flex-end"><button id="btn-gr-fetch" class="btn btn-primary" style="width:100%">Muat Lembar Jawaban</button></div>
+        </div>
+      </div>
+
+      <div id="gr-eval-panel" class="panel hidden">
+        <h2>Lembar Koreksi Siswa</h2>
+        <div id="gr-cards"></div>
+        <button id="btn-gr-publish" class="btn btn-primary" style="margin-top:1rem; width:100%">Publikasikan Nilai Batch ke Siswa</button>
+      </div>
+    </div>
+
+    <div id="log">Sistem siap.</div>
+  </div>
+</main>
 
 <script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-const log = (m, cls) => { const el = document.getElementById("log"); const s = document.createElement("div"); if (cls) s.className = cls; s.textContent = m; el.appendChild(s); };
-const $ = (id) => document.getElementById(id);
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, writeBatch, collection, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
-if (["localhost","127.0.0.1"].includes(location.hostname)) {
-  connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-  connectFirestoreEmulator(db, "localhost", 8080);
-}
 
-$("login").onclick = async () => {
-  $("login").disabled = true;
-  try {
-    const cred = await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pw").value);
-    const uid = cred.user.uid;
-    try {
-      await getDoc(doc(db, "admins", uid));
-    } catch {
-      log("Bukan admin (tidak ada admins/" + uid.slice(0,8) + "). Minta admin menambahkan.", "err");
-      await signOut(auth); $("login").disabled = false; return;
+const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
+
+// Auth verification
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
+    if (!adminSnap || !adminSnap.exists()) {
+      alert("Akun ini bukan admin/guru (tidak terdaftar di koleksi admins).");
+      await signOut(auth); return;
     }
-    $("auth").style.display = "none";
-    $("editor").style.display = "";
-    $("who").textContent = "Login: " + cred.user.email + " (uid " + uid.slice(0,8) + ")";
-    $("code").value = "q" + Date.now().toString(36);
-    addQuestion();
-  } catch (e) {
-    log("Login gagal: " + e.message, "err");
-    $("login").disabled = false;
+    document.getElementById("sec-auth").classList.add("hidden");
+    document.getElementById("app-content").classList.remove("hidden");
+    document.getElementById("u-display").textContent = user.email;
+    loadMateriTable(); loadTugasTable();
+  } else {
+    document.getElementById("sec-auth").classList.remove("hidden");
+    document.getElementById("app-content").classList.add("hidden");
   }
+});
+
+document.getElementById("btn-login").onclick = async () => {
+  const email = document.getElementById("l-email").value.trim();
+  const pass = document.getElementById("l-pass").value;
+  try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert("Login gagal: " + e.message); }
 };
+document.getElementById("btn-logout").onclick = () => signOut(auth);
 
-function addQuestion() {
-  const wrap = document.createElement("div");
-  wrap.className = "qrow";
-  wrap.innerHTML =
-    '<textarea rows="2" class="teks" placeholder="Teks soal"></textarea>' +
-    '<div class="row">' +
-      ["A","B","C","D"].map((k) => `<label>${k} <input class="opt" data-k="${k}" size="18"></label>`).join("") +
-      '<label>Kunci <select class="kunci">' + ["A","B","C","D"].map((k)=>`<option>${k}</option>`).join("") + '</select></label>' +
-    '</div>';
-  $("qs").appendChild(wrap);
+// Nav Router
+document.querySelectorAll(".nav-btn").forEach((btn) => {
+  btn.onclick = () => {
+    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".tab-pane").forEach((p) => p.classList.add("hidden"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.remove("hidden");
+  };
+});
+
+// 1. MATERI CRUD
+async function loadMateriTable() {
+  const snap = await getDocs(collection(db, "materials"));
+  const tbody = document.querySelector("#mat-table tbody");
+  tbody.innerHTML = snap.docs.map(d => {
+    const m = d.data();
+    return `<tr>
+      <td><strong>${m.judul}</strong></td>
+      <td>${(m.classes||[]).join(", ")}</td>
+      <td>${m.link ? `<a href="${m.link}" target="_blank" style="color:var(--accent)">Buka</a>` : '-'}</td>
+      <td><button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
+    </tr>`;
+  }).join("");
+  window._delMat = async (id) => { if (confirm("Hapus materi ini?")) { await deleteDoc(doc(db, "materials", id)); loadMateriTable(); } };
 }
-$("addq").onclick = addQuestion;
-
-function readQuestions() {
-  const out = [];
-  document.querySelectorAll("#qs .qrow").forEach((r, i) => {
-    const teks = r.querySelector(".teks").value.trim();
-    if (!teks) return;
-    const pilihan = {};
-    r.querySelectorAll(".opt").forEach((o) => { const v = o.value.trim(); if (v) pilihan[o.dataset.k] = v; });
-    if (Object.keys(pilihan).length < 2) return;
-    const kunci = r.querySelector(".kunci").value;
-    if (!(kunci in pilihan)) { throw new Error("Soal #" + (i+1) + ": kunci " + kunci + " tidak punya pilihan terisi"); }
-    out.push({ id: "s" + (out.length + 1), teks, pilihan, kunci });
+document.getElementById("btn-mat-new").onclick = () => document.getElementById("mat-form-panel").classList.remove("hidden");
+document.getElementById("btn-mat-cancel").onclick = () => document.getElementById("mat-form-panel").classList.add("hidden");
+document.getElementById("btn-mat-save").onclick = async () => {
+  const judul = document.getElementById("m-judul").value.trim();
+  const classes = document.getElementById("m-kelas").value.split(",").map(x => x.trim()).filter(Boolean);
+  const link = document.getElementById("m-link").value.trim();
+  const deskripsi = document.getElementById("m-deskripsi").value.trim();
+  if (!judul || !classes.length) return alert("Isi judul dan minimal 1 target kelas!");
+  const matId = "mat_" + Date.now();
+  await setDoc(doc(db, "materials", matId), {
+    judul, classes, link, deskripsi, version: 1, createdAt: Timestamp.now()
   });
-  return out;
+  log("Materi berhasil diterbitkan: " + judul);
+  document.getElementById("mat-form-panel").classList.add("hidden");
+  loadMateriTable();
+};
+
+// 2. TUGAS CRUD
+async function loadTugasTable() {
+  const snap = await getDocs(collection(db, "assignments"));
+  const tbody = document.querySelector("#tug-table tbody");
+  tbody.innerHTML = snap.docs.map(d => {
+    const t = d.data();
+    return `<tr>
+      <td><strong>${t.judul}</strong></td>
+      <td>${(t.classes||[]).join(", ")}</td>
+      <td>${t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString('id-ID') : '-'}</td>
+      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._viewSub('${d.id}', '${t.judul}')">Lihat Kiriman</button></td>
+    </tr>`;
+  }).join("");
+
+  window._viewSub = async (assignmentId, title) => {
+    document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
+    const sSnap = await getDocs(query(collection(db, "submissions"), where("assignmentId", "==", assignmentId)));
+    const stbody = document.querySelector("#tug-sub-table tbody");
+    stbody.innerHTML = sSnap.docs.map(sd => {
+      const s = sd.data();
+      return `<tr>
+        <td><code>${s.uid.slice(0, 8)}</code></td>
+        <td style="max-width:200px; white-space:pre-wrap">${s.teks || '-'}</td>
+        <td>${s.link ? `<a href="${s.link}" target="_blank" style="color:var(--accent)">Lihat Dokumen Drive ↗</a>` : '-'}</td>
+        <td><input id="score_${sd.id}" type="number" style="width:60px" value="${s.nilai !== undefined ? s.nilai : ''}" placeholder="0-100"></td>
+        <td><button class="btn btn-primary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._gradeSub('${sd.id}')">Simpan Nilai</button></td>
+      </tr>`;
+    }).join("");
+    document.getElementById("tug-sub-panel").classList.remove("hidden");
+    document.getElementById("tug-sub-panel").scrollIntoView({ behavior: 'smooth' });
+  };
+  window._gradeSub = async (subId) => {
+    const scoreVal = parseInt(document.getElementById(`score_${subId}`).value, 10);
+    await setDoc(doc(db, "submissions", subId), { nilai: scoreVal, updatedAt: Timestamp.now() }, { merge: true });
+    alert("Nilai tugas tersimpan!");
+  };
+}
+document.getElementById("btn-tug-new").onclick = () => document.getElementById("tug-form-panel").classList.remove("hidden");
+document.getElementById("btn-tug-cancel").onclick = () => document.getElementById("tug-form-panel").classList.add("hidden");
+document.getElementById("btn-tug-save").onclick = async () => {
+  const judul = document.getElementById("t-judul").value.trim();
+  const classes = document.getElementById("t-kelas").value.split(",").map(x => x.trim()).filter(Boolean);
+  const dueVal = document.getElementById("t-due").value;
+  const instruksi = document.getElementById("t-instruksi").value.trim();
+  if (!judul || !classes.length || !dueVal) return alert("Lengkapi data penugasan!");
+  const id = "asg_" + Date.now();
+  await setDoc(doc(db, "assignments", id), {
+    judul, classes, instruksi, dueAt: Timestamp.fromDate(new Date(dueVal)), createdAt: Timestamp.now()
+  });
+  log("Tugas baru diterbitkan: " + judul);
+  document.getElementById("tug-form-panel").classList.add("hidden");
+  loadTugasTable();
+};
+
+// 3. ASESMEN BUILDER 4 TIPE
+let questionsList = [];
+window._addQ = (type) => {
+  const qid = "q" + (questionsList.length + 1);
+  questionsList.push({ id: qid, tipe: type, teks: "", bobot: 25, pilihan: { A:"", B:"", C:"", D:"" }, kunci: "", kiri: ["",""], kanan: ["",""] });
+  renderQBuilder();
+};
+function renderQBuilder() {
+  const el = document.getElementById("as-questions-list");
+  el.innerHTML = questionsList.map((q, idx) => {
+    let specFields = "";
+    if (q.tipe === "pg") {
+      specFields = `
+        <div class="row">
+          <div><label>Opsi A</label><input value="${q.pilihan.A||''}" oninput="questionsList[${idx}].pilihan.A=this.value"></div>
+          <div><label>Opsi B</label><input value="${q.pilihan.B||''}" oninput="questionsList[${idx}].pilihan.B=this.value"></div>
+          <div><label>Opsi C</label><input value="${q.pilihan.C||''}" oninput="questionsList[${idx}].pilihan.C=this.value"></div>
+          <div><label>Opsi D</label><input value="${q.pilihan.D||''}" oninput="questionsList[${idx}].pilihan.D=this.value"></div>
+          <div><label>Kunci</label><select onchange="questionsList[${idx}].kunci=this.value">
+            ${["A","B","C","D"].map(o => `<option value="${o}" ${q.kunci===o?'selected':''}>${o}</option>`).join("")}
+          </select></div>
+        </div>
+      `;
+    } else if (q.tipe === "bs") {
+      specFields = `
+        <label>Kunci Jawaban Benar / Salah</label>
+        <select onchange="questionsList[${idx}].kunci=this.value">
+          <option value="true" ${q.kunci==='true'?'selected':''}>Benar</option>
+          <option value="false" ${q.kunci==='false'?'selected':''}>Salah</option>
+        </select>
+      `;
+    } else if (q.tipe === "match") {
+      specFields = `
+        <label>Pasangan Kiri ↔ Kanan (Pisahkan koma jika jamak)</label>
+        <div class="row">
+          <div><input placeholder="Item Kiri: Ibukota RI, Mata Uang" value="${(q.kiri||[]).join(', ')}" oninput="questionsList[${idx}].kiri=this.value.split(',').map(x=>x.trim())"></div>
+          <div><input placeholder="Pasangan Kanan: Nusantara, Rupiah" value="${(q.kanan||[]).join(', ')}" oninput="questionsList[${idx}].kanan=this.value.split(',').map(x=>x.trim())"></div>
+        </div>
+      `;
+    } else if (q.tipe === "essay") {
+      specFields = `<div class="badge badge-danger">Dinilai Manual Guru (Tanpa Kunci Otomatis)</div>`;
+    }
+
+    return `
+      <div class="q-card">
+        <div style="display:flex; justify-content:space-between">
+          <strong>No. ${idx + 1} (${q.tipe.toUpperCase()})</strong>
+          <button class="btn btn-danger" style="padding:.2rem .4rem; font-size:.75rem" onclick="questionsList.splice(${idx},1); renderQBuilder()">Hapus</button>
+        </div>
+        <label style="margin-top:.5rem">Teks Soal</label>
+        <textarea rows="2" oninput="questionsList[${idx}].teks=this.value">${q.teks}</textarea>
+        ${specFields}
+      </div>
+    `;
+  }).join("");
 }
 
-$("save").onclick = async () => {
-  $("save").disabled = true;
-  try {
-    const code = $("code").value.trim();
-    const kelas = $("kelas").value.trim();
-    const judul = $("judul").value.trim();
-    const duration = parseInt($("durasi").value, 10);
-    const toleransiMulai = parseInt($("tol").value, 10);
-    if (!code || !kelas || !judul) throw new Error("Kode, kelas, judul wajib diisi");
-    if (!(duration > 0) || !(toleransiMulai >= 0)) throw new Error("Durasi/toleransi tidak valid");
-    if (!$("open").value || !$("close").value) throw new Error("Isi jam buka & tutup");
-    const openAt = Timestamp.fromDate(new Date($("open").value));
-    const closeAt = Timestamp.fromDate(new Date($("close").value));
-    if (closeAt.seconds <= openAt.seconds) throw new Error("Tutup harus setelah buka");
-    const questions = readQuestions();
-    if (!questions.length) throw new Error("Minimal 1 soal valid");
+document.getElementById("btn-as-save").onclick = async () => {
+  const code = document.getElementById("as-code").value.trim();
+  const kelas = document.getElementById("as-kelas").value.trim();
+  const judul = document.getElementById("as-judul").value.trim();
+  const mode = document.getElementById("as-mode").value;
+  const duration = parseInt(document.getElementById("as-durasi").value, 10);
+  const toleransiMulai = parseInt(document.getElementById("as-tol").value, 10);
+  const openVal = document.getElementById("as-open").value;
+  const closeVal = document.getElementById("as-close").value;
+  if (!code || !kelas || !judul || !questionsList.length || !openVal || !closeVal) return alert("Lengkapi metadata dan butir soal!");
 
-    const version = 1;
-    const mode = $("mode").value;
-    if (mode === "ujian") {
-      // official exam: keys -> admin-only quizKeys, stripped from student-readable quiz
-      const keys = {};
-      const stripped = questions.map((q) => { keys[q.id] = q.kunci; const { kunci, ...rest } = q; return rest; });
-      await setDoc(doc(db, "quizzes", code), { judul, version, mode, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions: stripped });
-      await setDoc(doc(db, "quizKeys", code), { keys, closeAt, version });
-    } else {
-      await setDoc(doc(db, "quizzes", code), { judul, version, mode, openAt, closeAt, duration, toleransiMulai, classes: [kelas], questions });
-    }
+  const openAt = Timestamp.fromDate(new Date(openVal));
+  const closeAt = Timestamp.fromDate(new Date(closeVal));
+  const version = 1;
 
-    const meta = { openAt, closeAt, duration, version, toleransiMulai, classes: [kelas] };
-    await setDoc(doc(db, "classes", kelas), { quizzes: { [code]: meta } }, { merge: true });
+  if (mode === "ujian") {
+    const keysMap = {};
+    const strippedQuestions = questionsList.map(q => {
+      if (q.tipe === "match") {
+        keysMap[q.id] = {};
+        (q.kiri||[]).forEach((k, i) => { keysMap[q.id][k] = (q.kanan||[])[i] || ""; });
+      } else if (q.kunci) {
+        keysMap[q.id] = q.kunci;
+      }
+      const { kunci, ...clean } = q;
+      return clean;
+    });
 
-    log("Tersimpan: quizzes/" + code + " (" + questions.length + " soal, mode=" + mode + ")" + (mode === "ujian" ? " + quizKeys" : "") + " + classes/" + kelas + ".quizzes." + code, "ok");
-  } catch (e) {
-    log("Gagal simpan: " + e.message, "err");
-  } finally {
-    $("save").disabled = false;
+    await setDoc(doc(db, "quizzes", code), {
+      judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: strippedQuestions
+    });
+    await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt });
+  } else {
+    // Mode latihan: inline keys
+    await setDoc(doc(db, "quizzes", code), {
+      judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: questionsList
+    });
   }
+
+  // Write schedule to classes
+  await setDoc(doc(db, "classes", kelas), {
+    quizzes: { [code]: { openAt, closeAt, duration, toleransiMulai, version, classes: [kelas] } }
+  }, { merge: true });
+
+  alert("Asesmen berhasil diterbitkan!");
+  log(`Asesmen ${code} tersimpan ke quizzes, quizKeys, dan classes/${kelas}`);
 };
 
-$("grade").onclick = async () => {
-  $("grade").disabled = true;
-  try {
-    const code = $("gcode").value.trim();
-    if (!code) throw new Error("Isi kode kuis");
-    const keysSnap = await getDoc(doc(db, "quizKeys", code));
-    if (!keysSnap.exists()) throw new Error("quizKeys/" + code + " tidak ada (bukan ujian?)");
-    const keys = keysSnap.data().keys;
-    const total = Object.keys(keys).length;
-    const snap = await getDocs(query(collection(db, "attempts"), where("quizId", "==", code)));
-    let n = 0;
-    for (const d of snap.docs) {
-      const a = d.data();
-      let benar = 0;
-      for (const qid in keys) if (a.answers && a.answers[qid] === keys[qid]) benar++;
-      const pct = total ? Math.round((benar / total) * 100) : 0;
-      await setDoc(doc(db, "results", d.id), { uid: a.uid, quizId: code, benar, total, pct, gradedAt: Timestamp.now(), revisionNo: 1 });
-      n++;
-    }
-    log("Dinilai: " + n + " attempt → results/" + code, "ok");
-  } catch (e) {
-    log("Gagal nilai: " + e.message, "err");
-  } finally {
-    $("grade").disabled = false;
-  }
+// 4. KOREKSI & PENILAIAN BATCH
+let currentAttempts = [], loadedKeys = {}, activeQuizDoc = null;
+document.getElementById("btn-gr-fetch").onclick = async () => {
+  const code = document.getElementById("gr-code").value.trim();
+  if (!code) return alert("Masukkan kode kuis!");
+  
+  const [keySnap, qSnap, attSnap] = await Promise.all([
+    getDoc(doc(db, "quizKeys", code)),
+    getDoc(doc(db, "quizzes", code)),
+    getDocs(query(collection(db, "attempts"), where("quizId", "==", code)))
+  ]);
+
+  if (!keySnap.exists()) return alert("quizKeys tidak ditemukan untuk kuis ini!");
+  loadedKeys = keySnap.data().keys || {};
+  activeQuizDoc = qSnap.data();
+  currentAttempts = attSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const container = document.getElementById("gr-cards");
+  if (!currentAttempts.length) { container.innerHTML = "<p>Belum ada siswa yang mengirimkan ujian ini.</p>"; return; }
+
+  container.innerHTML = currentAttempts.map((att, aIdx) => {
+    let autoScore = 0, essayInputs = "";
+    activeQuizDoc.questions.forEach(q => {
+      const studentAns = (att.answers || {})[q.id];
+      if (q.tipe === "pg" && studentAns === loadedKeys[q.id]) autoScore += 25;
+      if (q.tipe === "bs" && studentAns === loadedKeys[q.id]) autoScore += 25;
+      if (q.tipe === "match") {
+        const correctM = loadedKeys[q.id] || {};
+        const isMatchAll = Object.keys(correctM).length && Object.keys(correctM).every(k => (studentAns||{})[k] === correctM[k]);
+        if (isMatchAll) autoScore += 25;
+      }
+      if (q.tipe === "essay") {
+        essayInputs += `
+          <div style="margin-top:.75rem; padding:.75rem; background:var(--surface-1); border-radius:8px">
+            <strong>Soal Essay:</strong> ${q.teks}<br>
+            <strong>Jawaban Siswa:</strong> <span style="color:#f8fafc">${studentAns || '<em>Tidak dijawab</em>'}</span>
+            <div style="margin-top:.5rem">
+              <label>Skor Essay (0 - 25)</label>
+              <input type="number" id="essay_${att.id}_${q.id}" value="20" style="width:80px">
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    return `
+      <div class="q-card" style="margin-bottom:1.5rem">
+        <h3>Siswa: <code>${att.uid.slice(0, 8)}</code> (Attempt No. ${att.attemptNo})</h3>
+        <p>Subtotal Auto-Graded (PG/BS/Match): <span class="badge badge-ok">${autoScore} Poin</span></p>
+        ${essayInputs}
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("gr-eval-panel").classList.remove("hidden");
 };
 
-$("chpw").onclick = async () => {
-  const np = $("npw").value;
-  if (np.length < 6) return log("Password minimal 6 karakter", "err");
-  $("chpw").disabled = true;
-  try {
-    await updatePassword(auth.currentUser, np);
-    log("Password diganti. Login ulang pakai password baru.", "ok");
-    $("npw").value = "";
-  } catch (e) {
-    log("Gagal ganti password: " + e.message + (e.code === "auth/requires-recent-login" ? " — logout, login lagi, ulangi." : ""), "err");
-  } finally {
-    $("chpw").disabled = false;
-  }
+document.getElementById("btn-gr-publish").onclick = async () => {
+  const code = document.getElementById("gr-code").value.trim();
+  const batch = writeBatch(db);
+
+  currentAttempts.forEach(att => {
+    let autoScore = 0, essayTotal = 0;
+    activeQuizDoc.questions.forEach(q => {
+      const studentAns = (att.answers || {})[q.id];
+      if (q.tipe === "pg" && studentAns === loadedKeys[q.id]) autoScore += 25;
+      if (q.tipe === "bs" && studentAns === loadedKeys[q.id]) autoScore += 25;
+      if (q.tipe === "match") {
+        const correctM = loadedKeys[q.id] || {};
+        if (Object.keys(correctM).length && Object.keys(correctM).every(k => (studentAns||{})[k] === correctM[k])) autoScore += 25;
+      }
+      if (q.tipe === "essay") {
+        const el = document.getElementById(`essay_${att.id}_${q.id}`);
+        essayTotal += el ? (parseInt(el.value, 10) || 0) : 0;
+      }
+    });
+
+    const totalScore = autoScore + essayTotal;
+    const resRef = doc(db, "results", att.id);
+    batch.set(resRef, {
+      uid: att.uid, quizId: code, totalScore, autoGradedScore: autoScore,
+      essayScore: essayTotal, isFullyGraded: true, gradedAt: Timestamp.now(), revisionNo: 1
+    });
+  });
+
+  await batch.commit();
+  alert(`Berhasil menerbitkan nilai batch untuk ${currentAttempts.length} siswa!`);
+  log(`Nilai ujian ${code} sukses dipublikasikan.`);
+};
+
+// Export CSV
+document.getElementById("btn-export-csv").onclick = () => {
+  if (!currentAttempts.length) return alert("Muat lembar jawaban terlebih dahulu!");
+  let csv = "UID,QuizId,AttemptId,Status\n";
+  currentAttempts.forEach(a => { csv += `"${a.uid}","${a.quizId}","${a.id}","Submitted"\n`; });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Rekap_Ujian_${document.getElementById("gr-code").value}.csv`;
+  link.click();
 };
 </script>
 </body>

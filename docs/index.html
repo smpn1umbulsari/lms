@@ -3,201 +3,563 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LMS Interaktif</title>
+<title>LMS Siswa — SITURI</title>
 <style>
-  body { font: 16px/1.5 system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
-  .q { border: 1px solid #ddd; border-radius: 8px; padding: .75rem 1rem; margin: 1rem 0; }
-  .q h3 { margin: 0 0 .5rem; font-size: 1rem; }
-  label { display: block; padding: .15rem 0; }
-  #submit { margin-top: 1rem; padding: .6rem 1.4rem; font-size: 1rem; cursor: pointer; }
-  #log { font: 12px/1.4 ui-monospace, monospace; color: #666; white-space: pre-wrap; margin-top: 1.5rem; }
-  #score { font-size: 1.4rem; font-weight: 700; color: #1a7f37; margin-top: 1rem; }
-  #timer { position: sticky; top: 0; background: #111; color: #fff; padding: .5rem 1rem; border-radius: 8px; font: 700 1.1rem ui-monospace, monospace; }
-  #timer.warn { background: #b42318; }
-  .saved { color: #1a7f37; font-size: .8rem; margin-left: .5rem; }
+  :root {
+    --bg: #090d16; --surface-1: #0f172a; --surface-2: #1e293b; --surface-3: #334155;
+    --border: #1e293b; --border-focus: #3b82f6; --text-hero: #f8fafc; --text-body: #cbd5e1;
+    --text-muted: #64748b; --accent: #3b82f6; --ok: #10b981; --warn: #f59e0b; --danger: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 14px/1.5 system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-body); min-height: 100vh; padding: 1rem; }
+  .container { max-width: 980px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .brand { font-size: 1.25rem; font-weight: 700; color: var(--text-hero); display: flex; align-items: center; gap: .5rem; }
+  .user-badge { display: flex; align-items: center; gap: .75rem; background: var(--surface-1); padding: .35rem .75rem; border-radius: 999px; border: 1px solid var(--surface-3); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: .8rem; border: 2px solid var(--surface-3); }
+  
+  .tabs { display: flex; gap: .5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab-btn { background: transparent; border: none; color: var(--text-muted); font: inherit; font-weight: 600; padding: .6rem 1rem; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  
+  .panel { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; }
+  .panel h2 { font-size: 1.15rem; color: var(--text-hero); margin-bottom: 1rem; }
+  
+  /* Form & Inputs */
+  label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .35rem; color: var(--text-body); }
+  input, textarea, select { width: 100%; font: inherit; background: var(--surface-2); border: 1px solid var(--surface-3); border-radius: 8px; color: var(--text-hero); padding: .55rem .75rem; margin-bottom: .85rem; outline: none; }
+  input:focus, textarea:focus, select:focus { border-color: var(--border-focus); }
+  textarea { resize: vertical; min-height: 80px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font: inherit; font-weight: 600; padding: .6rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: .9; }
+  .btn-secondary { background: var(--surface-2); color: var(--text-hero); border: 1px solid var(--surface-3); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  
+  /* Cards Grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: transform .15s, border-color .15s; }
+  .card:hover { border-color: var(--surface-3); transform: translateY(-2px); }
+  .card h3 { font-size: 1rem; color: var(--text-hero); margin-bottom: .35rem; }
+  .card-meta { font-size: .75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: .75rem; }
+  
+  /* Badges */
+  .badge { display: inline-block; padding: .2rem .55rem; border-radius: 4px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+  .badge-pg { background: rgba(59,130,246,.15); color: #93c5fd; }
+  .badge-bs { background: rgba(16,185,129,.15); color: #86efac; }
+  .badge-match { background: rgba(245,158,11,.15); color: #fcd34d; }
+  .badge-essay { background: rgba(239,68,68,.15); color: #fca5a5; border-left: 2px solid var(--danger); }
+  .badge-ok { background: rgba(16,185,129,.2); color: var(--ok); }
+  .badge-warn { background: rgba(245,158,11,.2); color: var(--warn); }
+  
+  /* Exam Runner */
+  #timer-hero { display: flex; justify-content: space-between; align-items: center; background: var(--surface-1); border: 1px solid var(--surface-3); border-radius: 12px; padding: .85rem 1.25rem; margin-bottom: 1.25rem; position: sticky; top: 1rem; z-index: 10; }
+  .timer-clock { font: 700 1.8rem ui-monospace, monospace; color: var(--text-hero); }
+  .timer-clock.warn { color: var(--danger); }
+  .q-item { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .q-item.essay-border { border-left: 3px solid var(--danger); }
+  .opt-label { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: 6px; background: var(--surface-2); margin-bottom: .4rem; cursor: pointer; }
+  .opt-label:hover { background: var(--surface-3); }
+  .opt-label input { width: auto; margin-bottom: 0; }
+  .bs-group { display: flex; gap: 1rem; margin-top: .5rem; }
+  .bs-btn { flex: 1; padding: .65rem; border-radius: 8px; font-weight: 700; text-align: center; cursor: pointer; background: var(--surface-2); border: 1px solid var(--surface-3); }
+  .bs-btn.active-benar { background: var(--ok); color: #fff; border-color: var(--ok); }
+  .bs-btn.active-salah { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .match-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; align-items: center; margin-bottom: .5rem; }
+  
+  .notice { padding: .75rem 1rem; border-radius: 8px; font-size: .85rem; margin-bottom: 1rem; }
+  .notice-warn { background: rgba(245,158,11,.1); border: 1px solid var(--warn); color: #fde68a; }
+  .notice-ok { background: rgba(16,185,129,.1); border: 1px solid var(--ok); color: #a7f3d0; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
-<h1>LMS Interaktif</h1>
-<div id="timer" style="display:none"></div>
-<div id="app">Memuat…</div>
-<div id="score"></div>
-<div id="log"></div>
+<div class="container">
+  <header>
+    <div class="brand">🎓 SMP Digital <span>· SITURI</span></div>
+    <div id="user-info" class="user-badge hidden">
+      <div id="u-avatar" class="avatar">S</div>
+      <div><span id="u-name" style="font-weight:600; color:var(--text-hero)">-</span> <span id="u-class" style="color:var(--text-muted); font-size:.8rem">(-)</span></div>
+      <button id="btn-logout" style="background:none; border:none; color:var(--text-muted); cursor:pointer; margin-left:.5rem; font-size:.8rem">Keluar</button>
+    </div>
+  </header>
+
+  <!-- LOGIN PANEL -->
+  <div id="sec-login" class="panel" style="max-width: 400px; margin: 3rem auto;">
+    <h2>Masuk Siswa</h2>
+    <p style="color:var(--text-muted); font-size:.85rem; margin-bottom: 1rem">Masukkan akun siswa untuk mengakses materi & ujian.</p>
+    <div id="login-err" class="notice notice-warn hidden"></div>
+    <label>Email Siswa</label>
+    <input id="l-email" type="email" placeholder="siswa@sekolah.sch.id" autocomplete="username">
+    <label>Kata Sandi</label>
+    <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button id="btn-login" class="btn btn-primary" style="width:100%">Masuk ke Portal</button>
+  </div>
+
+  <!-- DASHBOARD PANEL -->
+  <div id="sec-dashboard" class="hidden">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-materi">Materi Pembelajaran</button>
+      <button class="tab-btn" data-tab="tab-tugas">Tugas Mandiri</button>
+      <button class="tab-btn" data-tab="tab-asesmen">Asesmen & Ujian</button>
+    </div>
+
+    <!-- TAB 1: MATERI -->
+    <div id="tab-materi" class="tab-content">
+      <div id="materi-list" class="grid">Memuat materi...</div>
+    </div>
+
+    <!-- TAB 2: TUGAS -->
+    <div id="tab-tugas" class="tab-content hidden">
+      <div id="tugas-list" class="grid">Memuat tugas...</div>
+      
+      <!-- SUBMISSION MODAL / FORM -->
+      <div id="sub-modal" class="panel hidden" style="margin-top: 1.5rem">
+        <h2 id="sub-title">Kumpulkan Tugas</h2>
+        <div id="sub-instruksi" style="font-size:.9rem; color:var(--text-muted); margin-bottom:1rem"></div>
+        <div class="notice notice-warn">
+          <strong>Penting:</strong> Pastikan tautan Google Drive disetel ke <u>"Siapa saja yang memiliki link dapat melihat"</u> sebelum dikumpulkan.
+        </div>
+        <label>Ringkasan Catatan Teks</label>
+        <textarea id="sub-teks" placeholder="Tuliskan jawaban atau catatan tugas di sini (maks 20.000 karakter)..."></textarea>
+        <label>Tautan Berkas Luar (Google Drive / Docs)</label>
+        <input id="sub-link" type="url" placeholder="https://drive.google.com/file/d/...">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:.5rem">
+          <span id="sub-status" style="font-size:.85rem; color:var(--ok)"></span>
+          <div>
+            <button id="btn-sub-cancel" class="btn btn-secondary">Batal</button>
+            <button id="btn-sub-save" class="btn btn-primary">Kirim Tugas Sekarang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ASESMEN -->
+    <div id="tab-asesmen" class="tab-content hidden">
+      <div id="asesmen-list" class="grid">Memuat daftar asesmen...</div>
+    </div>
+  </div>
+
+  <!-- EXAM RUNNER VIEW -->
+  <div id="sec-exam" class="hidden">
+    <div id="timer-hero">
+      <div>
+        <h2 id="ex-title" style="font-size:1.1rem; color:var(--text-hero)">Ujian</h2>
+        <span id="ex-save-indicator" style="font-size:.8rem; color:var(--text-muted)">Menghubungkan...</span>
+      </div>
+      <div class="timer-clock" id="ex-timer">00:00</div>
+    </div>
+    <div id="ex-questions"></div>
+    <div class="panel" style="display:flex; justify-content:space-between; align-items:center">
+      <span style="font-size:.85rem; color:var(--text-muted)">Pastikan semua butir telah terjawab sebelum selesai.</span>
+      <button id="btn-ex-finish" class="btn btn-primary">Selesaikan & Kirim</button>
+    </div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div id="sec-result" class="panel hidden" style="max-width:550px; margin:2rem auto; text-align:center">
+    <h2>Hasil Pengerjaan</h2>
+    <div id="res-score" style="font-size:3rem; font-weight:800; color:var(--ok); margin:1rem 0">0</div>
+    <p id="res-desc" style="color:var(--text-muted); margin-bottom:1.5rem"></p>
+    <button id="btn-res-back" class="btn btn-primary" style="width:100%">Kembali ke Dashboard</button>
+  </div>
+</div>
 
 <script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, connectAuthEmulator, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
-const exists = async (ref) => { try { return (await getDoc(ref)).exists(); } catch { return false; } };
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
-if (["localhost","127.0.0.1"].includes(location.hostname)) {
-  connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-  connectFirestoreEmulator(db, "localhost", 8080);
+
+// Deterministic PRNG: FNV-1a hash + Mulberry32 generator
+function fnv1a(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h;
 }
-
-const QUIZ_ID = new URLSearchParams(location.search).get("q") || "q1";
-
-// deterministic PRNG seeded by uid -> stable per-student shuffle, 0 server cost
-function seedRand(str) {
-  let h = 2166136261;
-  for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
-  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+function mulberry32(a) {
+  return function() {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 function shuffle(arr, rnd) {
   const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]];
+  }
   return a;
 }
 
-let state = null; // { uid, quiz, answers, submitSeq, deadlineMs, timerId, mode, startId, expireAt, locked }
+let currentUser = null, userProfile = null, activeAssignment = null, examState = null, autoSaveTimer = null;
 
-async function boot() {
-  const uid = (await signInAnonymously(auth)).user.uid;
-  log("login anon uid=" + uid.slice(0, 8));
-
-  const uref = doc(db, "users", uid);
-  if (!(await exists(uref))) {
-    await setDoc(uref, { nama: "Siswa " + uid.slice(0, 4), kelas: "c1" });
-    log("users dibuat (kelas c1)");
-  }
-
-  const meta = (await getDoc(doc(db, "classes", "c1"))).data().quizzes[QUIZ_ID];
-  const closeAt = meta.closeAt;
-  const expireAt = new Timestamp(closeAt.seconds + 30 * 86400, closeAt.nanoseconds);
-
-  const startId = `${uid}_${QUIZ_ID}_1`;
-  const sref = doc(db, "starts", startId);
-  if (!(await exists(sref))) {
-    await setDoc(sref, {
-      uid, quizId: QUIZ_ID, attemptNo: 1, startedAt: serverTimestamp(),
-      duration: meta.duration, closeAt: meta.closeAt, maxAttempts: 1,
-      quizVersion: meta.version, keyVersion: 1, expireAt,
-    });
-    log("starts dibuat (durasi " + meta.duration + "m)");
-  }
-
-  // exact server-timed deadline + resume data (1 read; also powers resume)
-  const start = (await getDoc(sref)).data();
-  const deadlineMs = start.startedAt.toMillis() + start.duration * 60000;
-
-  const quiz = (await getDoc(doc(db, "quizzes", QUIZ_ID))).data();
-  const mode = quiz.mode || "latihan";
-  log("quizzes dimuat: " + quiz.questions.length + " soal, mode=" + mode);
-
-  // resume: restore any saved answers
-  const aref = doc(db, "attempts", startId);
-  const asnap = await getDoc(aref).catch(() => null);
-  const answers = (asnap && asnap.exists() && asnap.data().answers) ? { ...asnap.data().answers } : {};
-  const submitSeq = (asnap && asnap.exists() && asnap.data().submitSeq) ? asnap.data().submitSeq : 0;
-  if (Object.keys(answers).length) log("resume: " + Object.keys(answers).length + " jawaban dipulihkan");
-
-  // shuffle question order deterministically per uid
-  const rnd = seedRand(uid + "_" + QUIZ_ID);
-  const questions = shuffle(quiz.questions, rnd);
-
-  state = { uid, quiz, questions, answers, submitSeq, deadlineMs, timerId: null, mode, startId, expireAt, locked: false };
-  render();
-}
-
-function render() {
-  const { quiz, questions, answers, deadlineMs, mode } = state;
-  const el = document.getElementById("app");
-  el.innerHTML = "<h2>" + quiz.judul + "</h2>" +
-    questions.map((q, i) =>
-      `<div class="q" data-qid="${q.id}"><h3>${i + 1}. ${q.teks}</h3>` +
-      Object.entries(q.pilihan).map(([k, v]) =>
-        `<label><input type="radio" name="ans_${q.id}" value="${k}"${answers[q.id] === k ? " checked" : ""}> ${k}. ${v}</label>`).join("") +
-      `</div>`).join("") +
-    `<button id="submit">Kirim Jawaban</button><span id="saved" class="saved"></span>`;
-
-  // restore answers into state on change + debounced autosave
-  el.querySelectorAll('input[type="radio"]').forEach((r) => {
-    r.onchange = () => { state.answers[r.name.slice(4)] = r.value; autosave(); };
-  });
-  document.getElementById("submit").onclick = submit;
-  startTimer();
-}
-
-let saveTimer = null;
-function autosave() {
-  document.getElementById("saved").textContent = "menyimpan…";
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { saveAttempt().catch((e) => log("autosave gagal: " + e.message)); }, 800);
-}
-
-async function saveAttempt() {
-  const { uid, quiz, answers, startId, expireAt } = state;
-  const submitSeq = state.submitSeq + 1;
-  await setDoc(doc(db, "attempts", startId), {
-    uid, quizId: QUIZ_ID, attemptNo: 1, answers, submitSeq,
-    updatedAt: serverTimestamp(), expireAt,
-  }, { merge: true });
-  state.submitSeq = submitSeq;
-  const s = document.getElementById("saved");
-  if (s) s.textContent = "tersimpan ✓";
-  return submitSeq;
-}
-
-function startTimer() {
-  const t = document.getElementById("timer");
-  t.style.display = "";
-  const tick = () => {
-    const ms = state.deadlineMs - Date.now();
-    if (ms <= 0) {
-      t.textContent = "⏰ Waktu habis — mengirim…";
-      t.classList.add("warn");
-      clearInterval(state.timerId);
-      if (!state.locked) submit();
-      return;
+// Auth Listener
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const udoc = await getDoc(doc(db, "users", user.uid));
+    if (udoc.exists()) {
+      userProfile = udoc.data();
+    } else {
+      userProfile = { nama: user.email.split("@")[0], kelas: "c1" };
+      await setDoc(doc(db, "users", user.uid), { ...userProfile, createdAt: serverTimestamp() });
     }
-    const s = Math.floor(ms / 1000), m = Math.floor(s / 60), ss = s % 60;
-    t.textContent = "⏱ " + m + ":" + String(ss).padStart(2, "0") + " tersisa";
-    t.classList.toggle("warn", ms < 60000);
+    document.getElementById("u-name").textContent = userProfile.nama;
+    document.getElementById("u-class").textContent = `(${userProfile.kelas})`;
+    document.getElementById("u-avatar").textContent = userProfile.nama.charAt(0).toUpperCase();
+    document.getElementById("user-info").classList.remove("hidden");
+    document.getElementById("sec-login").classList.add("hidden");
+    document.getElementById("sec-dashboard").classList.remove("hidden");
+    loadMateri(); loadTugas(); loadAsesmen();
+  } else {
+    currentUser = null; userProfile = null;
+    document.getElementById("user-info").classList.add("hidden");
+    document.getElementById("sec-login").classList.remove("hidden");
+    document.getElementById("sec-dashboard").classList.add("hidden");
+    document.getElementById("sec-exam").classList.add("hidden");
+  }
+});
+
+// Login & Logout
+document.getElementById("btn-login").onclick = async () => {
+  const email = document.getElementById("l-email").value.trim();
+  const pass = document.getElementById("l-pass").value;
+  const errBox = document.getElementById("login-err");
+  errBox.classList.add("hidden");
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    errBox.textContent = "Login gagal: " + e.message;
+    errBox.classList.remove("hidden");
+  }
+};
+document.getElementById("btn-logout").onclick = () => signOut(auth);
+
+// Tab Navigation
+document.querySelectorAll(".tab-btn").forEach((b) => {
+  b.onclick = () => {
+    document.querySelectorAll(".tab-btn").forEach((t) => t.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach((c) => c.classList.add("hidden"));
+    b.classList.add("active");
+    document.getElementById(b.dataset.tab).classList.remove("hidden");
+  };
+});
+
+// FEATURE 1: MATERI (with localStorage caching)
+async function loadMateri() {
+  const cacheKey = `lms_mat_${userProfile.kelas}`;
+  let list = JSON.parse(localStorage.getItem(cacheKey) || "null");
+  if (!list) {
+    const qSnap = await getDocs(query(collection(db, "materials"), where("classes", "array-contains", userProfile.kelas)));
+    list = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    localStorage.setItem(cacheKey, JSON.stringify(list));
+  }
+  const el = document.getElementById("materi-list");
+  if (!list.length) { el.innerHTML = `<div class="notice notice-warn">Belum ada materi untuk kelas ${userProfile.kelas}.</div>`; return; }
+  el.innerHTML = list.map(m => `
+    <div class="card" onclick="window._openMateri('${m.id}')">
+      <h3>${m.judul}</h3>
+      <p style="font-size:.85rem; color:var(--text-muted); margin:.5rem 0">${(m.deskripsi||'').slice(0, 90)}...</p>
+      <div class="card-meta">
+        <span class="badge badge-pg">Materi</span>
+        ${m.link ? `<span style="color:var(--accent); font-size:.75rem">Tautan Tersemat ↗</span>` : ''}
+      </div>
+    </div>
+  `).join("");
+
+  window._openMateri = (id) => {
+    const m = list.find(x => x.id === id);
+    if (!m) return;
+    let ytEmbed = "";
+    if (m.link && (m.link.includes("youtube.com") || m.link.includes("youtu.be"))) {
+      const vid = m.link.includes("v=") ? m.link.split("v=")[1].split("&")[0] : m.link.split("/").pop();
+      ytEmbed = `<div style="position:relative; padding-bottom:56.25%; height:0; margin:1rem 0"><iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:8px" src="https://www.youtube.com/embed/${vid}" allowfullscreen></iframe></div>`;
+    }
+    const win = window.open("", "_blank");
+    win.document.write(`
+      <html style="background:#090d16; color:#cbd5e1; font:15px system-ui; padding:2rem"><body style="max-width:700px; margin:0 auto">
+      <h1 style="color:#f8fafc">${m.judul}</h1>
+      <hr style="border:1px solid #1e293b; margin:1rem 0">
+      ${ytEmbed}
+      <div style="white-space:pre-wrap; line-height:1.6">${m.deskripsi}</div>
+      ${m.link ? `<p style="margin-top:1.5rem"><a href="${m.link}" target="_blank" style="color:#3b82f6; font-weight:600">Buka Tautan Materi Luar ↗</a></p>` : ''}
+      </body></html>
+    `);
+  };
+}
+
+// FEATURE 2: TUGAS + PENGUMPULAN
+async function loadTugas() {
+  const qSnap = await getDocs(query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas)));
+  const list = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const el = document.getElementById("tugas-list");
+  if (!list.length) { el.innerHTML = `<div class="notice notice-warn">Belum ada penugasan untuk kelas Anda.</div>`; return; }
+  
+  el.innerHTML = "";
+  for (const t of list) {
+    const subDoc = await getDoc(doc(db, "submissions", `${currentUser.uid}__${t.id}`));
+    const isSubmitted = subDoc.exists();
+    const subData = isSubmitted ? subDoc.data() : null;
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${t.judul}</h3>
+      <p style="font-size:.85rem; color:var(--text-muted); margin:.4rem 0">${(t.instruksi||'').slice(0, 80)}...</p>
+      <div class="card-meta">
+        <span class="badge ${isSubmitted ? 'badge-ok' : 'badge-warn'}">${isSubmitted ? 'Sudah Dikumpul' : 'Belum Dikumpul'}</span>
+        <span style="font-size:.75rem; color:var(--text-muted)">Batas: ${t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString('id-ID') : '-'}</span>
+      </div>
+      ${subData && subData.nilai !== undefined ? `<div style="margin-top:.5rem; font-weight:700; color:var(--ok)">Nilai: ${subData.nilai}/100</div>` : ''}
+    `;
+    card.onclick = () => openTugasModal(t, subData);
+    el.appendChild(card);
+  }
+}
+
+function openTugasModal(tugas, subData) {
+  activeAssignment = tugas;
+  document.getElementById("sub-title").textContent = `Tugas: ${tugas.judul}`;
+  document.getElementById("sub-instruksi").textContent = tugas.instruksi;
+  document.getElementById("sub-teks").value = subData ? (subData.teks || "") : "";
+  document.getElementById("sub-link").value = subData ? (subData.link || "") : "";
+  document.getElementById("sub-status").textContent = subData ? "Jawaban tersimpan sebelumnya." : "";
+  document.getElementById("sub-modal").classList.remove("hidden");
+  document.getElementById("sub-modal").scrollIntoView({ behavior: 'smooth' });
+}
+document.getElementById("btn-sub-cancel").onclick = () => document.getElementById("sub-modal").classList.add("hidden");
+document.getElementById("btn-sub-save").onclick = async () => {
+  if (!activeAssignment) return;
+  const teks = document.getElementById("sub-teks").value.trim();
+  const link = document.getElementById("sub-link").value.trim();
+  if (!teks && !link) return alert("Isi minimal catatan teks atau link tugas!");
+  const subId = `${currentUser.uid}__${activeAssignment.id}`;
+  const now = serverTimestamp();
+  await setDoc(doc(db, "submissions", subId), {
+    uid: currentUser.uid, assignmentId: activeAssignment.id,
+    teks, link, submittedAt: now, updatedAt: now
+  }, { merge: true });
+  document.getElementById("sub-status").textContent = "✓ Berhasil disimpan!";
+  setTimeout(() => { document.getElementById("sub-modal").classList.add("hidden"); loadTugas(); }, 1000);
+};
+
+// FEATURE 3: ASESMEN RUNNER (4 Tipe Soal)
+async function loadAsesmen() {
+  const metaSnap = await getDoc(doc(db, "classes", userProfile.kelas));
+  const quizzesMeta = (metaSnap.exists() && metaSnap.data().quizzes) ? metaSnap.data().quizzes : {};
+  const el = document.getElementById("asesmen-list");
+  const keys = Object.keys(quizzesMeta);
+  if (!keys.length) { el.innerHTML = `<div class="notice notice-warn">Belum ada asesmen yang dijadwalkan.</div>`; return; }
+
+  el.innerHTML = keys.map(qid => {
+    const q = quizzesMeta[qid];
+    return `
+      <div class="card">
+        <h3>${qid}</h3>
+        <p style="font-size:.85rem; color:var(--text-muted)">Durasi: ${q.duration} menit · Versi: ${q.version}</p>
+        <div class="card-meta">
+          <span class="badge badge-pg">Asesmen</span>
+          <button class="btn btn-primary" style="padding:.3rem .8rem; font-size:.8rem" onclick="window._startQuiz('${qid}')">Mulai Kerjakan</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  window._startQuiz = async (quizId) => {
+    const meta = quizzesMeta[quizId];
+    const startId = `${currentUser.uid}_${quizId}_1`;
+    const sref = doc(db, "starts", startId);
+    let sSnap = await getDoc(sref).catch(() => null);
+    
+    // Create starts doc if not exists
+    if (!sSnap || !sSnap.exists()) {
+      const closeAt = meta.closeAt;
+      const expireAt = new Timestamp(closeAt.seconds + 30 * 86400, closeAt.nanoseconds);
+      await setDoc(sref, {
+        uid: currentUser.uid, quizId, attemptNo: 1, startedAt: serverTimestamp(),
+        duration: meta.duration, closeAt: meta.closeAt, maxAttempts: 1,
+        quizVersion: meta.version, keyVersion: 1, expireAt
+      });
+      sSnap = await getDoc(sref);
+    }
+    const startData = sSnap.data();
+    const deadlineMs = (startData.startedAt ? startData.startedAt.toMillis() : Date.now()) + (startData.duration * 60000);
+
+    // Fetch quiz doc
+    const qDoc = (await getDoc(doc(db, "quizzes", quizId))).data();
+    const mode = qDoc.mode || "latihan";
+
+    // Restore answers from attempts
+    const aSnap = await getDoc(doc(db, "attempts", startId)).catch(() => null);
+    const savedAnswers = (aSnap && aSnap.exists() && aSnap.data().answers) ? aSnap.data().answers : {};
+    const submitSeq = (aSnap && aSnap.exists() && aSnap.data().submitSeq) ? aSnap.data().submitSeq : 0;
+
+    // PRNG Deterministic Shuffle
+    const seed = fnv1a(`${currentUser.uid}_${quizId}_${meta.version}`);
+    const rnd = mulberry32(seed);
+    const shuffledQuestions = shuffle(qDoc.questions, rnd);
+
+    examState = {
+      quizId, startId, mode, deadlineMs, submitSeq,
+      questions: shuffledQuestions, answers: savedAnswers,
+      expireAt: startData.expireAt, locked: false
+    };
+
+    document.getElementById("sec-dashboard").classList.add("hidden");
+    document.getElementById("sec-exam").classList.remove("hidden");
+    document.getElementById("ex-title").textContent = qDoc.judul || quizId;
+    renderExam();
+    startExamTimer();
+  };
+}
+
+function renderExam() {
+  const container = document.getElementById("ex-questions");
+  container.innerHTML = examState.questions.map((q, idx) => {
+    let qContent = "";
+    if (q.tipe === "pg") {
+      qContent = Object.entries(q.pilihan || {}).map(([k, val]) => `
+        <label class="opt-label">
+          <input type="radio" name="ans_${q.id}" value="${k}" ${examState.answers[q.id] === k ? 'checked' : ''} onchange="window._onAns('${q.id}', '${k}')">
+          <span><strong>${k}.</strong> ${val}</span>
+        </label>
+      `).join("");
+    } else if (q.tipe === "bs") {
+      const cur = examState.answers[q.id];
+      qContent = `
+        <div class="bs-group">
+          <div class="bs-btn ${cur === 'true' ? 'active-benar' : ''}" onclick="window._onAns('${q.id}', 'true')">✓ BENAR</div>
+          <div class="bs-btn ${cur === 'false' ? 'active-salah' : ''}" onclick="window._onAns('${q.id}', 'false')">✕ SALAH</div>
+        </div>
+      `;
+    } else if (q.tipe === "match") {
+      const curMap = examState.answers[q.id] || {};
+      const rnd = mulberry32(fnv1a(q.id));
+      const rightOptions = shuffle(q.kanan || [], rnd);
+      qContent = (q.kiri || []).map(leftItem => `
+        <div class="match-row">
+          <span style="font-weight:600">${leftItem}</span>
+          <select onchange="window._onMatch('${q.id}', '${leftItem}', this.value)">
+            <option value="">-- Pilih Pasangan --</option>
+            ${rightOptions.map(opt => `<option value="${opt}" ${curMap[leftItem] === opt ? 'selected' : ''}>${opt}</option>`).join("")}
+          </select>
+        </div>
+      `).join("");
+    } else if (q.tipe === "essay") {
+      qContent = `
+        <div class="badge badge-essay" style="margin-bottom:.5rem">Dinilai Manual Guru</div>
+        <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." oninput="window._onAns('${q.id}', this.value)">${examState.answers[q.id] || ''}</textarea>
+      `;
+    }
+
+    const badgeClass = `badge-${q.tipe}`;
+    return `
+      <div class="q-item ${q.tipe === 'essay' ? 'essay-border' : ''}">
+        <div style="display:flex; justify-content:space-between; margin-bottom:.75rem">
+          <span style="font-weight:700; color:var(--text-hero)">Soal No. ${idx + 1}</span>
+          <span class="badge ${badgeClass}">${q.tipe.toUpperCase()}</span>
+        </div>
+        <div style="margin-bottom:1rem; line-height:1.6">${q.teks}</div>
+        ${qContent}
+      </div>
+    `;
+  }).join("");
+
+  window._onAns = (qid, val) => {
+    examState.answers[qid] = val;
+    if (examState.questions.find(x => x.id === qid)?.tipe === "bs") renderExam();
+    scheduleAutoSave();
+  };
+  window._onMatch = (qid, leftItem, val) => {
+    if (!examState.answers[qid]) examState.answers[qid] = {};
+    examState.answers[qid][leftItem] = val;
+    scheduleAutoSave();
+  };
+}
+
+function scheduleAutoSave() {
+  document.getElementById("ex-save-indicator").textContent = "Menyimpan jawaban...";
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(saveAttemptToServer, 800);
+}
+
+async function saveAttemptToServer() {
+  if (examState.locked) return;
+  examState.submitSeq++;
+  await setDoc(doc(db, "attempts", examState.startId), {
+    uid: currentUser.uid, quizId: examState.quizId, attemptNo: 1,
+    answers: examState.answers, submitSeq: examState.submitSeq,
+    updatedAt: serverTimestamp(), expireAt: examState.expireAt
+  }, { merge: true });
+  document.getElementById("ex-save-indicator").textContent = "Semua jawaban tersimpan ✓";
+}
+
+function startExamTimer() {
+  const clock = document.getElementById("ex-timer");
+  const tick = () => {
+    const left = examState.deadlineMs - Date.now();
+    if (left <= 0) {
+      clock.textContent = "00:00";
+      clock.classList.add("warn");
+      finishExam(); return;
+    }
+    const s = Math.floor(left / 1000), m = Math.floor(s / 60), ss = s % 60;
+    clock.textContent = `${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+    clock.classList.toggle("warn", left < 60000);
   };
   tick();
-  state.timerId = setInterval(tick, 1000);
+  examState.timerId = setInterval(tick, 1000);
 }
 
-async function submit() {
-  if (state.locked) return;
-  state.locked = true;
-  clearInterval(state.timerId);
-  clearTimeout(saveTimer);
-  document.getElementById("submit").disabled = true;
-  try {
-    await saveAttempt();
-    log("attempts dikirim: " + Object.keys(state.answers).length + "/" + state.questions.length + " dijawab");
+document.getElementById("btn-ex-finish").onclick = () => {
+  if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim ujian ini?")) finishExam();
+};
 
-    if (state.mode === "ujian") {
-      // official exam: teacher grades; no key on client, no instant score
-      document.getElementById("score").textContent = "Jawaban terkirim — menunggu penilaian guru.";
-      window.__sliceDone = { submitted: true, mode: "ujian", answered: Object.keys(state.answers).length };
-      return;
-    }
-    // practice: instant grade against inline keys
-    let benar = 0;
-    state.questions.forEach((q) => { if (state.answers[q.id] === q.kunci) benar++; });
-    const pct = Math.round((benar / state.questions.length) * 100);
-    await setDoc(doc(db, "progress", state.uid), { xp: pct, quizScores: { [QUIZ_ID]: pct }, updatedAt: serverTimestamp() }, { merge: true });
-    log("progress ditulis (xp=" + pct + ")");
-    document.getElementById("score").textContent = `Skor: ${benar}/${state.questions.length} (${pct}%)`;
-    window.__sliceDone = { benar, total: state.questions.length, pct, mode: "latihan" };
-  } catch (e) {
-    state.locked = false;
-    document.getElementById("submit").disabled = false;
-    log("GAGAL kirim: " + e.message);
-    document.getElementById("score").textContent = "Gagal kirim: " + e.message;
-    throw e;
+async function finishExam() {
+  if (examState.locked) return;
+  examState.locked = true;
+  clearInterval(examState.timerId);
+  clearTimeout(autoSaveTimer);
+  await saveAttemptToServer();
+
+  document.getElementById("sec-exam").classList.add("hidden");
+  document.getElementById("sec-result").classList.remove("hidden");
+
+  if (examState.mode === "ujian") {
+    document.getElementById("res-score").textContent = "TERKIRIM";
+    document.getElementById("res-desc").textContent = "Jawaban berhasil dikumpulkan. Soal essay sedang dalam antrean koreksi manual guru.";
+  } else {
+    // Mode Latihan: Instant grading
+    let benar = 0, total = examState.questions.length;
+    examState.questions.forEach(q => {
+      if (q.tipe === "pg" && examState.answers[q.id] === q.kunci) benar++;
+      if (q.tipe === "bs" && examState.answers[q.id] === q.kunci) benar++;
+      if (q.tipe === "match" && q.kunci) {
+        const studentM = examState.answers[q.id] || {};
+        const isAllRight = Object.keys(q.kunci).every(k => q.kunci[k] === studentM[k]);
+        if (isAllRight) benar++;
+      }
+    });
+    const pct = Math.round((benar / total) * 100);
+    document.getElementById("res-score").textContent = `${pct}%`;
+    document.getElementById("res-desc").textContent = `Skor Latihan Mandiri: ${benar} dari ${total} butir benar (PG/BS/Match).`;
+    await setDoc(doc(db, "progress", currentUser.uid), {
+      xp: pct, quizScores: { [examState.quizId]: pct }, updatedAt: serverTimestamp()
+    }, { merge: true });
   }
 }
-
-boot().catch((e) => { log("ERROR: " + e.message); document.getElementById("app").textContent = "Gagal: " + e.message; });
+document.getElementById("btn-res-back").onclick = () => {
+  document.getElementById("sec-result").classList.add("hidden");
+  document.getElementById("sec-dashboard").classList.remove("hidden");
+  loadAsesmen();
+};
 </script>
 </body>
 </html>
