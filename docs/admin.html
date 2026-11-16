@@ -468,6 +468,7 @@ function updateMateriPreview(){
 const app = initializeApp(window.FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
+let editingMat = null, editingMatCreated = null, editingAsg = null, editingAsgCreated = null;
 
 const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
 
@@ -518,10 +519,32 @@ async function loadMateriTable() {
       <td><strong>${m.judul}</strong></td>
       <td>${(m.classes||[]).join(", ")}</td>
       <td style="min-width:240px">${embedsHTML(m) || '-'}</td>
-      <td><button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
+      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editMat('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
   window._delMat = async (id) => { if (confirm("Hapus materi ini?")) { await deleteDoc(doc(db, "materials", id)); loadMateriTable(); } };
+  window._editMat = async (id) => {
+    const snap = await getDoc(doc(db, "materials", id));
+    if (!snap.exists()) return;
+    const m = snap.data();
+    editingMat = id; editingMatCreated = m.createdAt || Timestamp.now();
+    document.getElementById("m-judul").value = m.judul || "";
+    document.getElementById("m-kelas").value = (m.classes || []).join(", ");
+    document.getElementById("m-deskripsi").value = m.deskripsi || "";
+    const links = (m.links && m.links.length) ? m.links : (m.link ? [m.link] : []);
+    document.getElementById("m-link").value = links[0] || "";
+    const extra = document.getElementById("m-links-extra"); extra.innerHTML = "";
+    links.slice(1).forEach(u => {
+      const row = document.createElement("div"); row.className = "link-row";
+      row.innerHTML = '<input class="m-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">\u00d7</button>';
+      row.querySelector("input").value = u; extra.appendChild(row);
+    });
+    const prev = document.getElementById("m-link-preview"); if (prev) prev.innerHTML = embedsHTML({ links });
+    document.getElementById("btn-mat-save").textContent = "Update Materi";
+    document.getElementById("mat-form-panel").classList.remove("hidden");
+    document.getElementById("mat-form-panel").scrollIntoView({ behavior: "smooth" });
+  };
+
 }
 document.getElementById("btn-mat-new").onclick = () => document.getElementById("mat-form-panel").classList.remove("hidden");
 document.getElementById("btn-mat-cancel").onclick = () => {
@@ -531,6 +554,8 @@ document.getElementById("btn-mat-cancel").onclick = () => {
   if (extraLinks) extraLinks.innerHTML = "";
   const prev = document.getElementById("m-link-preview");
   if (prev) prev.innerHTML = "";
+  editingMat = null; editingMatCreated = null;
+  document.getElementById("btn-mat-save").textContent = "Simpan Materi";
 };
 
 document.getElementById("btn-add-link").onclick = () => {
@@ -565,11 +590,13 @@ document.getElementById("btn-mat-save").onclick = async () => {
   const link = links[0] || '';
   const deskripsi = document.getElementById("m-deskripsi").value.trim();
   if (!judul || !classes.length) return alert("Isi judul dan minimal 1 target kelas!");
-  const matId = "mat_" + Date.now();
+  const matId = editingMat || ("mat_" + Date.now());
   await setDoc(doc(db, "materials", matId), {
-    judul, classes, link, links, deskripsi, version: 1, createdAt: Timestamp.now()
+    judul, classes, link, links, deskripsi, version: 1, createdAt: editingMat ? editingMatCreated : Timestamp.now()
   });
-  log("Materi berhasil diterbitkan: " + judul);
+  log((editingMat ? "Materi diperbarui: " : "Materi berhasil diterbitkan: ") + judul);
+  editingMat = null; editingMatCreated = null;
+  document.getElementById("btn-mat-save").textContent = "Simpan Materi";
   document.getElementById("mat-form-panel").classList.add("hidden");
   document.getElementById("m-link").value = "";
   const extraLinks = document.getElementById("m-links-extra");
@@ -625,11 +652,33 @@ async function loadTugasTable() {
       <td>${(t.classes||[]).join(", ")}</td>
       <td>${t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString('id-ID') : '-'}</td>
       <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._viewSub('${d.id}', '${t.judul}')">Lihat Kiriman</button></td>
-      <td><button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAsg('${d.id}')">Hapus</button></td>
+      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAsg('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAsg('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
 
   window._delAsg = async (id) => { if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) { await deleteDoc(doc(db, "assignments", id)); loadTugasTable(); } };
+  window._editAsg = async (id) => {
+    const snap = await getDoc(doc(db, "assignments", id));
+    if (!snap.exists()) return;
+    const t = snap.data();
+    editingAsg = id; editingAsgCreated = t.createdAt || Timestamp.now();
+    document.getElementById("t-judul").value = t.judul || "";
+    document.getElementById("t-kelas").value = (t.classes || []).join(", ");
+    document.getElementById("t-instruksi").value = t.instruksi || "";
+    if (t.dueAt) { const d = t.dueAt.toDate(); const p = n => String(n).padStart(2, "0"); document.getElementById("t-due").value = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes()); }
+    const links = (t.links && t.links.length) ? t.links : (t.link ? [t.link] : []);
+    document.getElementById("t-link").value = links[0] || "";
+    const extra = document.getElementById("t-links-extra"); extra.innerHTML = "";
+    links.slice(1).forEach(u => {
+      const row = document.createElement("div"); row.className = "link-row";
+      row.innerHTML = '<input class="t-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">\u00d7</button>';
+      row.querySelector("input").value = u; extra.appendChild(row);
+    });
+    document.getElementById("btn-tug-save").textContent = "Update Tugas";
+    document.getElementById("tug-form-panel").classList.remove("hidden");
+    document.getElementById("tug-form-panel").scrollIntoView({ behavior: "smooth" });
+  };
+
   window._viewSub = async (assignmentId, title) => {
     document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
     const sSnap = await getDocs(query(collection(db, "submissions"), where("assignmentId", "==", assignmentId)));
@@ -654,7 +703,7 @@ async function loadTugasTable() {
   };
 }
 document.getElementById("btn-tug-new").onclick = () => document.getElementById("tug-form-panel").classList.remove("hidden");
-document.getElementById("btn-tug-cancel").onclick = () => document.getElementById("tug-form-panel").classList.add("hidden");
+document.getElementById("btn-tug-cancel").onclick = () => { document.getElementById("tug-form-panel").classList.add("hidden"); editingAsg = null; editingAsgCreated = null; document.getElementById("btn-tug-save").textContent = "Terbitkan Tugas"; };
 document.getElementById("btn-add-tlink").onclick = () => {
   const container = document.getElementById("t-links-extra");
   const row = document.createElement("div");
@@ -674,11 +723,13 @@ document.getElementById("btn-tug-save").onclick = async () => {
   const links = [document.getElementById("t-link").value, ...[...document.querySelectorAll(".t-link-extra")].map(i=>i.value)].map(s=>s.trim()).filter(Boolean);
   const link = links[0] || "";
   if (!judul || !classes.length || !dueVal) return alert("Lengkapi data penugasan!");
-  const id = "asg_" + Date.now();
+  const id = editingAsg || ("asg_" + Date.now());
   await setDoc(doc(db, "assignments", id), {
-    judul, classes, instruksi, link, links, dueAt: Timestamp.fromDate(new Date(dueVal)), createdAt: Timestamp.now()
+    judul, classes, instruksi, link, links, dueAt: Timestamp.fromDate(new Date(dueVal)), createdAt: editingAsg ? editingAsgCreated : Timestamp.now()
   });
-  log("Tugas baru diterbitkan: " + judul);
+  log((editingAsg ? "Tugas diperbarui: " : "Tugas baru diterbitkan: ") + judul);
+  editingAsg = null; editingAsgCreated = null;
+  document.getElementById("btn-tug-save").textContent = "Terbitkan Tugas";
   document.getElementById("tug-form-panel").classList.add("hidden");
   document.getElementById("t-link").value = "";
   const tExtra = document.getElementById("t-links-extra"); if (tExtra) tExtra.innerHTML = "";
