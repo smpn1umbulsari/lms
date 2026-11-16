@@ -350,7 +350,7 @@
       </div>
       <div class="panel">
         <div class="table-container">
-          <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th></tr></thead><tbody></tbody></table>
+          <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
       <div id="tug-sub-panel" class="panel hidden">
@@ -584,9 +584,11 @@ async function loadTugasTable() {
       <td>${(t.classes||[]).join(", ")}</td>
       <td>${t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString('id-ID') : '-'}</td>
       <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._viewSub('${d.id}', '${t.judul}')">Lihat Kiriman</button></td>
+      <td><button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAsg('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
 
+  window._delAsg = async (id) => { if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) { await deleteDoc(doc(db, "assignments", id)); loadTugasTable(); } };
   window._viewSub = async (assignmentId, title) => {
     document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
     const sSnap = await getDocs(query(collection(db, "submissions"), where("assignmentId", "==", assignmentId)));
