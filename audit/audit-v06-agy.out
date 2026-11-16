@@ -1,0 +1,146 @@
+# Laporan Audit Independen: PRD LMS Interaktif v0.6
+
+Dokumen yang diaudit: [PRD LMS Interaktif v0.6.md](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md)  
+Acuan pembanding: [audit-v05-agy.out](file:///D:/Project/LMS/audit-v05-agy.out) & [audit-v06-instructions.md](file:///D:/Project/LMS/audit-v06-instructions.md)
+
+---
+
+## Bagian A. Vonis
+
+**REJECT (BELUM SIAP IMPLEMENTASI) — Arsitektur kuota Spark sudah lulus batas keras (Read 36%–40%, Write 37%–42%), tetapi blok Security Rules [§12](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315) mengandung cacat fatal evaluasi tipe waktu CEL (`Timestamp + int`), referensi field yang tidak ada pada `attempts` update, ketiadaan akses baca `isAdmin()` untuk penilaian guru, serta hilangnya aturan `match /progress/{uid}` yang membuat alur mulai ujian, kirim jawaban, retry, progress belajar, dan grading massal gagal 100% (`PERMISSION_DENIED`).**
+
+---
+
+## Bagian B. Status 8 Temuan v0.5 (`K-BARU-01` s.d. `K-BARU-08`)
+
+| ID Temuan v0.5 | Status di v0.6 | Alasan Singkat & Bukti Baris |
+| --- | --- | --- |
+| **K-BARU-01** (`request.resource.id` tidak valid, wildcard parsial, path `get()/exists()` tidak penuh) | **TUTUP (Sintaks Path/ID)** *(Bocor baru di ekspresi waktu CEL — lihat Bagian C)* | `request.resource.id` telah diganti variabel wildcard segmen penuh `match /starts/{startId}` ([§12 baris 209, 213](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L209-L213)) dan `match /attempts/{attemptId}` ([baris 254, 257](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L254-L257)), field `uid` sudah masuk skema, dan seluruh `get()`/`exists()` sudah memakai path penuh `/databases/$(database)/documents/...`. |
+| **K-BARU-02** (3.600 *hidden rule-get read* saat create `starts` hilang dari Tabel §13.1 & kuota Read jebol >100%) | **TUTUP** | `get(quizKeys)` dihapus dari validasi `starts`; 2 *rule-get* (`quizzes` di-cache + `users` = **3.600 read**) sudah dianggarkan jujur di Baris 1 Tabel §13.1 ([baris 360, 374](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L360-L374)); browsing kursus/modul/latihan dipindah ke bundle statis GitHub Pages (**0 read**), menurunkan total Read ke **18.012–19.812 (36%–40%)**. |
+| **K-BARU-03** (Baca `results` oleh siswa & *rule-get* `quizExplanations` tidak dianggarkan) | **SEBAGIAN TUTUP (Masih Bocor di Revisi `_v2` & Admin Read)** | Baca `results` siswa (**1.800 read**) sudah masuk Baris 5 ([baris 364, 378](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L364-L378)) dan `quizExplanations/{quizId}` menyimpan `closeAt` sendiri sehingga gerbang baca memakan **0 access-call** ([baris 283](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L283)). **Masih bocor:** (1) Mekanisme revisi `results/{uid}_{quizId}_1_v2` ([§11 baris 180](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L180), [§12 baris 336](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L336)) memaksa klien mengecek dokumen `_1` sekaligus `_1_v2` (potensi +1.800 read); (2) Rules `results` ([baris 276](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L276)) lupa memberi `|| isAdmin()` pada `allow read`, sehingga admin tidak bisa membaca `results` untuk deduplikasi `_v2` maupun ekspor CSV. |
+| **K-BARU-04** (Deadlock logika keamanan `quizKeysLatihan/{quizId}` sebelum submit) | **TUTUP** | Koleksi `quizKeysLatihan` dihapus dari Firestore ([§10 baris 148](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L148), [§11 baris 156, 168](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L156-L168)) dan dijadikan JSON statis di bundle GitHub Pages; syarat mustahil di §17 telah dicabut. |
+| **K-BARU-05** (`attempts` create+update tidak idempoten saat retry & nol anggaran update) | **MASIH BOCOR (KRITIS)** | Walaupun `expireAt` sudah dibuat deterministik (`closeAt + 30 hari`) dan `keys().hasOnly` dipasang di `create`, aturan **`allow update` pada `match /attempts/{attemptId}` ([§12 baris 269–270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L269-L270)) memanggil `resource.data.closeAt`, `resource.data.startedAt`, dan `resource.data.duration`**. Di blok `attempts`, `resource.data` adalah dokumen `attempts` yang **tidak memiliki ketiga field tersebut** (dilarang oleh `keys().hasOnly` di [baris 260](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L260)). Setiap retry `setDoc(..., {merge:true})` atau update jawaban **100% ditolak (`PERMISSION_DENIED`)**. |
+| **K-BARU-06** (`quizLocks/{quizId}` race condition, tidak dicek saat mulai, bisa di-`delete`) | **TUTUP** | Koleksi `quizLocks` dihapus dan diganti penguncian otomatis via `request.time < resource.data.openAt` pada `update, delete` di `quizzes` ([baris 242](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L242)) serta `request.time < get(.../quizzes/$(quizId)).data.openAt` di `quizKeys` ([baris 249–250](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L249-L250)). |
+| **K-BARU-07** (Gerbang baca `quizzes/{id}` tidak punya konteks `attemptNo`) | **TUTUP** | `maxAttempts = 1` ditetapkan permanen untuk ujian resmi ([baris 13, 175](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L13)) sehingga `attemptNo` selalu `1` dan pemeriksaan `exists(.../starts/$(request.auth.uid + '_' + quizId + '_1'))` ([baris 240](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L240)) konsisten dengan ID `starts` dan `attempts`. |
+| **K-BARU-08** (`startedAt == request.time` bertentangan dengan fobia `serverTimestamp()` & pemborosan 1.800 read baca-balik `starts`) | **TUTUP** | `startedAt: serverTimestamp()` diwajibkan saat `setDoc(starts)` ([baris 14, 146, 217](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L14)), baca-balik `starts` dihapus (hemat 1.800 read), dan timer UI klien dihitung dari jam lokal saat promise `setDoc` resolve. |
+
+---
+
+## Bagian C. Verifikasi Sintaks & Semantik Security Rules ([§12 Baris 201–315](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315))
+
+Hasil pemeriksaan baris demi baris terhadap kode Firestore Security Rules di [§12](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315):
+
+1. **Kompilasi Statis vs Kegagalan Evaluasi Tipe Data CEL (`Timestamp + int`):**
+   - **Yang sudah benar:** Struktur `rules_version = '2'`, deklarasi `match /starts/{startId}`, binding `startId == request.auth.uid + '_' + request.resource.data.quizId + '_1'`, path penuh `/databases/$(database)/documents/...` pada `get()`/`exists()`, `request.resource.data.startedAt == request.time`, `request.resource.data.keys().hasOnly([...])` pada `create`, dan `request.resource.data.diff(resource.data).affectedKeys().hasOnly([...])` pada `update` secara sintaksis valid.
+   - **Cacat Fatal #1 — `Timestamp + int` pada `starts` ([baris 228–229](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L228-L229)):**
+     ```cel
+     && request.time <= get(/databases/$(database)/documents/quizzes/$(request.resource.data.quizId)).data.openAt
+          + get(/databases/$(database)/documents/quizzes/$(request.resource.data.quizId)).data.toleransiMulai * 60
+     ```
+     Di Firestore Rules (CEL), `openAt` bertipe `rules.Timestamp`, sedangkan `toleransiMulai` adalah angka menit (`int`, [§11 baris 175](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L175)). Operator `+` pada `rules.Timestamp` **hanya menerima `rules.Duration`**, **bukan `int`**! Menjumlahkan `Timestamp + int` menghasilkan *runtime evaluation error* (`no such overload`) yang membuat `allow create` pada `starts` **100% ditolak (`PERMISSION_DENIED`)**. Catatan di [baris 316](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L316) (*"`duration * 60` mengonversi menit→detik"*) salah kaprah karena hasil perkalian tetap bertipe `int`, bukan `rules.Duration`. Wajib ditulis:
+     `+ duration.value(get(/databases/$(database)/documents/quizzes/$(request.resource.data.quizId)).data.toleransiMulai, 'm')`.
+   - **Cacat Fatal #2 — `Timestamp + int + Duration` pada `attempts` ([baris 263–264 dan 270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L263-L270)):**
+     ```cel
+     && request.time <= get(/databases/$(database)/documents/starts/$(attemptId)).data.startedAt
+          + get(/databases/$(database)/documents/starts/$(attemptId)).data.duration * 60 + duration.value(90,'s');
+     ```
+     Karena operator `+` dievaluasi dari kiri ke kanan, ekspresi ini mencoba menghitung `(Timestamp + int) + Duration` dan gagal dengan *evaluation error* pada `create` maupun `update`. Wajib ditulis:
+     `+ duration.value(get(/databases/$(database)/documents/starts/$(attemptId)).data.duration, 'm') + duration.value(90, 's')`.
+
+2. **Cacat Fatal #3 — Referensi Field Hantu pada `attempts` `allow update` ([baris 269–270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L269-L270)):**
+   ```cel
+   && request.time <= resource.data.closeAt
+   && request.time <= resource.data.startedAt + resource.data.duration * 60 + duration.value(90,'s');
+   ```
+   Di dalam `match /attempts/{attemptId}`, objek `resource.data` merujuk pada dokumen `attempts/{attemptId}` yang sedang di-update. Sesuai [baris 260](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L260) (`keys().hasOnly(['answers','updatedAt','submitSeq','uid','quizId','attemptNo','expireAt'])`), dokumen `attempts` **tidak memiliki field `closeAt`, `startedAt`, maupun `duration`** (ketiganya berada di koleksi `starts/{attemptId}`). Mengakses `resource.data.closeAt` pada `attempts` menghasilkan *property undefined error* → **seluruh operasi `update` / retry `attempts` gagal 100%**.
+
+3. **Cacat Fatal #4 — `isAdmin()` Tidak Memiliki Guard `request.auth != null` ([baris 204–206](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L204-L206)) & Tidak Dipasang pada `allow read` di `attempts`, `results`, `quizzes`, `users`, `starts`:**
+   - Fungsi `isAdmin()` memanggil `exists(/databases/$(database)/documents/admins/$(request.auth.uid))` tanpa memeriksa `request.auth != null` terlebih dahulu.
+   - Ketiadaan `|| isAdmin()` pada `allow read` di `attempts` ([baris 255](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L255)), `results` ([baris 276](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L276)), `quizzes` ([baris 237](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L237)), `users` ([baris 289](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L289)), dan `starts` ([baris 210](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L210)) membuat guru/admin ditolak oleh Firestore saat menilai ujian, melihat pratinjau soal, dan mengekspor CSV.
+
+4. **Cacat Fatal #5 — Tidak Ada Blok `match /progress/{uid}` dan `match /admins/{uid}` di [§12](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315):**
+   - Seluruh baca/tulis ke `progress/{uid}` (modul selesai & XP) serta `admins/{uid}` otomatis ditolak (`PERMISSION_DENIED`).
+
+---
+
+## Bagian D. Verifikasi Aritmetika Kuota ([§13.1 Baris 357–396](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L357-L396))
+
+### 1. Verifikasi Perilaku Cache `get()` dalam Satu Evaluasi Firestore Rules
+Klaim PRD di [§12 baris 197, 218](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L197) dan [§13.1 baris 360](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L360) bahwa pemanggilan `get(/databases/$(database)/documents/quizzes/$(request.resource.data.quizId))` sebanyak 6 kali di dalam satu aturan `allow create` `starts` hanya dihitung **1 access-call (1 read tertagih)** adalah **BENAR** menurut spesifikasi resmi Cloud Firestore: dalam satu evaluasi request, pembacaan berulang ke path dokumen yang persis sama di-cache oleh mesin Rules.
+
+Namun, perlu dicatat:
+- Saat `allow update` pada `attempts` diperbaiki agar memanggil `get(.../starts/$(attemptId))` (bukan `resource.data`), setiap retry/update jawaban akan memakan **1 write + 1 rule-get read** (+180 read dan +180 write pada asumsi retry 10% di [§13.2 #10](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L409)).
+- Pada Baris 4 ([baris 363](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L363)), teks menulis: `baca attempts (1.800) + quizKeys (6) + rule-get admins (1, di-cache) = 1.812 read`. Secara aritmetika `1.800 + 6 + 1 = 1.807` (angka `1.812` adalah sisa v0.5 dari `1.800 + 6 + 6`). Dalam praktiknya, 6 sesi grading mapel memicu `exists(admins)` saat query `attempts` (6×), baca `quizKeys` (6×), dan `writeBatch` `results` (6×) = **18 rule-get read**, sehingga total Baris 4 riil adalah `1.800 + 6 + 18 = 1.824 read` (+12 read).
+
+### 2. Tabel Hitung Ulang Baris demi Baris vs Klaim PRD v0.6
+
+| # | Komponen (1.000 akun, 1.800 sesi ujian) | Klaim Read v0.6 | Hitung Ulang Read Auditor (Riil) | Klaim Write v0.6 | Hitung Ulang Write Auditor (Riil) | Catatan / Selisih |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| 1 | Create `starts` (rule-get `quizzes` [1] + `users` [1]) | 3.600 | 3.600 | 1.800 | 1.800 | Sesuai (`1.800 × 2 read`, `1.800 × 1 write`). |
+| 2 | Muat soal `quizzes` (doc [1] + rule `exists(starts)` [1]) | 3.600 | 3.600 | 0 | 0 | Sesuai (`1.800 × 2 read`). |
+| 3 | Tulis `attempts` create (rule-get `starts` [1]) | 1.800 | 1.800 | 1.800 | 1.800 | Sesuai untuk submit pertama. |
+| 3b | Margin retry/update `attempts` 10% ([§13.2 #10](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L409)) | *(0 di tabel)* | **180** | *(0 di tabel)* | **180** | +10% retry = 180 update × (1 write + 1 rule-get `starts`). |
+| 4 | Grading (`attempts` 1.800 + `quizKeys` 6 + rule `admins`) | 1.812 | **1.824** | 1.800 | 1.800 | Teks `1800+6+1=1807` salah jumlah jadi `1812`; riil 6 mapel × 3 evaluasi `isAdmin()` = 18 (+12 read). |
+| 5 | Baca `results` siswa + tulis `leaderboard` (+ rule `admins` 6) | 1.800 | **1.806** | 6 | 6 | Tulis 6 dok `leaderboard` memicu 6× `isAdmin()` (+6 read). |
+| 6 | Baca `leaderboard` siswa | 1.800 | 1.800 | 0 | 0 | Sesuai. |
+| 7 | Baca/tulis `progress` (modul selesai + XP latihan) | 1.800 | 1.800 | 2.000–3.000 | 2.000–3.000 | Sesuai (asumsi `match /progress/{uid}` ditambahkan). |
+| 8 | Login `users/{uid}` (+ baca `classes/{code}` jadwal) | 1.800 | **1.800–3.600** | 0 | 0 | Jika metadata jadwal ditaruh di `classes/{code}`, tambah 1.800 read (atau di-cache di `dbApp`). |
+| 9 | Pembahasan `quizExplanations` (0 access-call) | 0–1.800 | 0–1.800 | 0 | 0 | Sesuai (`request.time > resource.data.closeAt`). |
+| 10 | Browsing kursus/modul/kuis-latihan (bundle statis) | 0 | 0 | 0 | 0 | Sesuai (0 read Firestore). |
+| — | **TOTAL HARI UJIAN** | **18.012–19.812** *(36,0%–39,6%)* | **18.210–21.810** *(36,4%–43,6%)* | **7.406–8.406** *(37,0%–42,0%)* | **7.586–8.586** *(37,9%–42,9%)* | **Selisih: +198 s.d. +1.998 Read, +180 Write. Tetap AMAN jauh di bawah batas Spark (50k/20k).** |
+| — | **TOTAL EKSTREM** (+Onboarding 1.000 akun & Sertifikat 1.800 di hari H) | *(Tidak dihitung)* | **22.010–25.610** *(44,0%–51,2%)* | **12.206** *(61,0%)* | **11.386–12.386** *(56,9%–61,9%)* | Onboarding `users` create memicu 1.000 rule-get `classes` (+1.000 baca `classes`) + 1.800 baca `certificates` = +3.800 read. **Tetap < 50.000 read & < 20.000 write.** |
+
+### 3. Evaluasi Terhadap 5 Batas Keras Paket Spark
+1. **Read ≤ 50.000/hari:** Hari ujian `18.210–21.810` (**36,4%–43,6%**), Ekstrem `22.010–25.610` (**44,0%–51,2%**) → **LULUS (Headroom > 24.000 read).**
+2. **Write ≤ 20.000/hari:** Hari ujian `7.586–8.586` (**37,9%–42,9%**), Ekstrem `11.386–12.386` (**56,9%–61,9%**) → **LULUS (Headroom > 7.600 write).**
+3. **Delete ≤ 20.000/hari:** TTL `starts` (1.800) + `attempts` (1.800) = **3.600 delete/hari (18,0%)** karena `expireAt = closeAt + 30 hari` bersifat *rolling* mengikuti jadwal ujian → **LULUS.**
+4. **Storage ≤ 1 GiB:** 108.000 dokumen aktif (`starts` + `attempts` 30 hari) + `results` + `users` ≈ **200–350 MB** → **LULUS.**
+5. **Egress ≤ 10 GiB/bulan:** Soal teks (~2,16 GB/bulan) + `results`/`leaderboard`/`quizExplanations` (~0,5–0,9 GB/bulan) ≈ **2,7–3,1 GiB/bulan** (konten belajar disajikan dari CDN GitHub Pages) → **LULUS.**
+
+---
+
+## Bagian E. Temuan Baru di v0.6 (`K-BARU-09` s.d. `S-BARU-09`)
+
+1. **[K-BARU-09] Kegagalan Evaluasi Tipe Data Waktu (`Timestamp + int`) di Security Rules `starts` dan `attempts` (Blokir Total Mulai & Kirim Ujian)**
+   - **Lokasi:** [§12 baris 228–229](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L228-L229), [baris 263–264](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L263-L264), [baris 270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L270), [baris 316](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L316).
+   - **Dampak:** Ekspresi `openAt + toleransiMulai * 60` dan `startedAt + duration * 60` menjumlahkan `rules.Timestamp` dengan `int`. Mesin CEL Firestore Rules menolak operasi ini saat runtime (bukan konversi otomatis ke detik), sehingga **100% siswa gagal membuat `starts` dan gagal mengirim `attempts`**.
+
+2. **[K-BARU-10] `allow update` pada `attempts` Membaca Field `closeAt`, `startedAt`, dan `duration` dari `resource.data` (`attempts`) yang Tidak Ada**
+   - **Lokasi:** [§12 baris 260 vs baris 269–270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L260-L270).
+   - **Dampak:** Dokumen `attempts` dilarang menyimpan `closeAt`, `startedAt`, dan `duration` oleh `keys().hasOnly` saat `create` ([baris 260](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L260)), tetapi `allow update` ([baris 269–270](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L269-L270)) membaca ketiganya dari `resource.data` alih-alih `get(/databases/$(database)/documents/starts/$(attemptId)).data`. Seluruh retry jaringan (`setDoc(..., {merge: true})`) dan pembaruan jawaban **ditolak 100% (`PERMISSION_DENIED`)**.
+
+3. **[K-BARU-11] Admin/Guru Tidak Diberi Akses Baca (`|| isAdmin()`) pada `attempts`, `results`, `quizzes`, `users`, dan `starts` — Fitur Grading Massal (F-11) & Ekspor CSV (F-13) Gagal Total**
+   - **Lokasi:** [§12 baris 210, 237–240, 255, 276, 289](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L210-L289).
+   - **Dampak:** Karena grading dijalankan dari browser guru tanpa Cloud Functions ([§10 baris 146](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L146), [§13.1 baris 363](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L363)), aturan `allow read: if request.auth != null && request.auth.uid == resource.data.uid` pada `attempts` dan `results` memblokir guru saat membaca jawaban siswa untuk dinilai, memblokir pembacaan `results` untuk rekap CSV/leaderboard, dan memblokir guru melihat soal `quizzes` yang dibuatnya sendiri.
+
+4. **[K-BARU-12] Koleksi `progress/{uid}` dan `admins/{uid}` Hilang dari Blok Security Rules §12**
+   - **Lokasi:** [§11 baris 173, 181](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L173-L181) vs [§12 baris 201–315](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315).
+   - **Dampak:** Tanpa blok `match /progress/{uid}` dan `match /admins/{uid}`, Firestore menolak seluruh operasi baca/tulis pada kedua koleksi tersebut, mematikan fitur wajib F-05 (progress modul), F-06 (XP latihan), F-14 (gamifikasi), dan F-18 (kelola admin).
+
+5. **[K-BARU-13] Deadlock Metadata Pra-Mulai Ujian antara `starts` dan `quizzes`**
+   - **Lokasi:** [§10 baris 146](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L146), [§12 baris 219–225 vs baris 236–240](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L219-L240), [§14 baris 440](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L440).
+   - **Dampak:** Siswa tidak bisa membaca `quizzes/{quizId}` sebelum dokumen `starts/{uid}_{quizId}_1` ada ([baris 240](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L240)), tetapi untuk membuat `starts/{uid}_{quizId}_1`, klien wajib mengirimkan nilai `duration`, `closeAt`, dan `quizVersion` yang cocok dengan isi `quizzes/{quizId}` ([baris 219–225](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L219-L225)) serta menampilkan jadwal `[openAt, openAt + toleransiMulai]` di layar ([§14 baris 440](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L440)). PRD belum menetapkan di mana klien membaca metadata jadwal/versi tersebut sebelum `starts` dibuat (mis. di dalam `classes/{code}.mapel`).
+
+6. **[S-BARU-08] `users/{uid}` `allow update` Masih Mengizinkan Siswa Mengubah Field `kelas` Kapan Saja**
+   - **Lokasi:** [§12 baris 292–293](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L292-L293) vs [§11 baris 172](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L172).
+   - **Dampak:** `affectedKeys().hasOnly(['nama','kelas','updatedAt'])` pada `update` mengizinkan siswa mengganti kode `kelas` miliknya sendiri di hari ujian (bahkan tanpa validasi `classes/{code}` ada), sehingga siswa dapat berpindah-pindah kelas untuk mengerjakan seluruh 6 mapel (membengkakkan sesi ujian hingga 6.000 sesi).
+
+7. **[S-BARU-09] Tidak Ada Validasi Nilai `expireAt` pada Rules `starts` dan `attempts`**
+   - **Lokasi:** [§12 baris 211–231, 256–264](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L211-L264).
+   - **Dampak:** `starts` tidak membatasi `keys().hasOnly(...)` dan baik `starts` maupun `attempts` tidak memvalidasi `request.resource.data.expireAt == request.resource.data.closeAt + duration.value(30, 'd')` (atau `is timestamp`). Jika klien mengirim `expireAt` bukan bertipe `Timestamp` atau 10 tahun ke depan, dokumen tidak akan terhapus oleh kebijakan TTL 30 hari.
+
+---
+
+## Bagian F. 3 Rekomendasi Prioritas Tertinggi (Syarat Mutlak Menuju SIAP)
+
+1. **Ganti Blok Security Rules [§12 Baris 201–315](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L201-L315) dengan Spesifikasi yang Valid Secara Tipe Waktu CEL, Lengkap Akses Admin, dan Menyertakan `progress`/`admins`:**
+   - Perbaiki aritmetika waktu dengan `duration.value(..., 'm')` pada `starts` dan `attempts`.
+   - Pada `attempts` `allow update`, ambil `closeAt`, `startedAt`, dan `duration` dari `get(/databases/$(database)/documents/starts/$(attemptId)).data` (atau simpan ketiganya sebagai field immutable di `attempts` saat `create` agar hemat 1 rule-get saat retry).
+   - Tambahkan `|| isAdmin()` pada `allow read` di `attempts`, `results`, `quizzes`, `users`, dan `starts`; tambahkan guard `request.auth != null` di dalam `isAdmin()`; tambahkan blok `match /progress/{uid}` dan `match /admins/{uid}`; serta hapus `'kelas'` dari `affectedKeys()` pada `users` `allow update`.
+
+2. **Tutup Deadlock Metadata Pra-Mulai Ujian (`starts` vs `quizzes`) Tanpa Menambah Read Firestore:**
+   - Tetapkan secara eksplisit di [§11 baris 174](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L174) dan [§10 baris 146](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.6.md#L146) bahwa saat admin membuat/memperbarui jadwal kuis (F-10), metadata jadwal ringkas (`quizId`, `openAt`, `toleransiMulai`, `duration`, `closeAt`, `quizVersion`, `keyVersion`) ditulis ke dalam map `classes/{code}.mapel` (yang sudah dibaca klien saat masuk kelas dan tidak berisi soal ujian). Dengan demikian, klien dapat menampilkan jadwal `[openAt, openAt + toleransiMulai]` dan menyusun payload `setDoc(starts/{uid}_{quizId}_1)` tanpa perlu membaca dokumen `quizzes/{quizId}` sebelum `starts` dibuat.
+
+3. **Kunci Validasi `expireAt` Deterministik di Rules & Rapikan Revisi Nilai (`results`):**
+   - Tambahkan `request.resource.data.expireAt == request.resource.data.closeAt + duration.value(30, 'd')` pada `starts` `allow create`, dan `request.resource.data.expireAt == get(/databases/$(database)/documents/starts/$(attemptId)).data.closeAt + duration.value(30, 'd')` pada `attempts` `allow create` agar retensi TTL 30 hari benar-benar ditegakkan oleh server dan idempotensi retry terjamin 100%.
+   - Untuk menghindari pembacaan ganda (`_1` dan `_1_v2`) oleh 1.800 siswa, izinkan `allow update: if isAdmin();` khusus pada `results/{resultId}` (dengan field audit `revisionNo` dan `updatedAt`), atau cantumkan skor final siswa di dokumen agregat per kelas/kuis.

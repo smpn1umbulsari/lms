@@ -1,0 +1,199 @@
+[0m
+> build · Opencode
+[93m[1m! [0mretrying (attempt 2): upstream connection lost
+> build · Opencode
+# Audit Kritis — PRD LMS Interaktif v0.4
+
+Saya hitung ulang seluruh tabel 13.1, telusuri rumus `closeAt` di 9 tempat, dan uji klaim Spark/Rules. Ringkasnya: **tabel read sebagian besar benar aritmetikanya, tetapi tabel write salah di 3 titik, dan ada 6 cacat arsitektural yang membuat PRD ini belum bisa diimplementasikan apa adanya.**
+
+---
+
+## A. Verifikasi Aritmetika Seksi 13.1 (hitung ulang penuh)
+
+**Kolom Read — Cache-On**
+
+| Baris | Nilai tabel | Hitung ulang | Status |
+|---|---|---|---|
+| 1 | 0 | 0 | OK |
+| 2 | 3.600 | 1.800×2 | OK |
+| 3 | 1.800–3.600 | 1.800 s.d. 1.800+1.800 | OK |
+| 4 | 1.812–3.606 | 1.800+6+6 = 1.812; **1.812+1.800 = 3.612** | **SALAH (−6)** |
+| 5 | 1.800–3.600 | 1.800 + (0 s.d. 1.800) | OK |
+| 6 | 2.800–3.800 | (1.800+1.000) s.d. (1.800+2.000) | OK |
+| 7 | 3.000–6.000 | 1.000×3×1 = 3.000 (+2.000 latihan, cap 6.000) | OK |
+| 8 | 0 | 0 | OK |
+| **Σ min** | **14.812** | 0+3.600+1.800+1.812+1.800+2.800+3.000+0 = **14.812** | **OK** |
+| **Σ max** | **24.206** | 0+3.600+3.600+**3.612**+3.600+3.800+6.000 = **24.212** | **SALAH (−6)** |
+
+**Kolom Read — Cache-Off:** hanya baris 7 berubah (3.000–6.000 → 24.000).
+- min = 14.812 − 3.000 + 24.000 = **35.812 → tabel benar.**
+- max = 24.212 − 6.000 + 24.000 = **42.212 → tabel 42.206 salah (−6).**
+- `1.000 × 3 × 8 = 24.000` → OK. Persentase: 35.812/50.000 = 71,6% (≈72% OK); 42.212/50.000 = 84,4% (84% OK).
+
+**Kolom Write — hari ujian:** 3.600 + 1.800 + (1..6) + (2.000..3.000) = **7.401 – 8.406 → OK.** Persen 37,0% dan 42,0% → OK.
+
+**Kolom Write — "+Onboarding & Sertifikat":** 3.600+1.800+1..6+**3.000**+2.800.
+- max = 11.206 → OK. min seharusnya 3.600+1.800+1+**2.000**+2.800 = **10.201**, bukan 11.201 (baris 6 dipatok 3.000 di kolom ini, padahal rentangnya 2.000–3.000). **SALAH (+1.000, arah aman tapi label "min" bohong).** Persen: 11.206/20.000 = 56,0% OK.
+
+**Baris "TOTAL KHUSUS JALUR UJIAN + PROGRESS (Baris 1–6)":**
+- Read C-On/C-Off 11.812–18.206 → OK (0+3.600+1.800+1.812+1.800+2.800 / +3.600+3.600+3.606+3.600+3.800).
+- Kolom write ke-4 = **11.201–11.206**: padahal baris ini mengaku "Baris 1–6", dan 2.800 dari baris 8 (onboarding+b sertifikat) tidak boleh ikut. Angka yang benar: 7.401+2.800 = **10.201** dan 8.406+2.800 = **10.206**. **SALAH (+1.000).**
+
+**Persentase terhadap batas:** 14.812/50.000 = **29,62%** → ditulis "30%" (pembulatan ke atas, klaim "≥30%" tidak sah secara literal). 24.212/50.000 = 48,4% (48% OK).
+
+**Kesimpulan A:** total Cache-On 14.812–24.206 dan Cache-Off 35.812–42.206 **tidak cocok penjumlahan baris** — masing-masing meleset 6 read akibat baris 4; total write "11.201" meleset 1.000 akibat baris 6/8. Aritmetika *metode* (basis 7 asumsi) sehat; eksekusi penjumlahannya tidak.
+
+---
+
+## B. Temuan Berprioritas
+
+### KRITIS
+
+**K-1. Kontradiksi granularitas `attempts` — mengubah total write 25×**
+Lokasi: Seksi 8 (F-08) "disimpan **per `questionId`**" vs Seksi 11 "`attempts/{uid}_{quizId}_{attemptNo}`: jawaban per `questionId`" (satu dokumen) vs Seksi 13.1 baris 1 "1.800 × 2 = 3.600 write".
+Bukti: jika benar per-`questionId` = 50 dokumen/sesi → 1.800 × 50 = **90.000 write** (450% kuota 20.000) dan `attempts` tidak bisa `create-only` per `attemptNo` (ID-nya jadi `..._{attemptNo}_{questionId}`). Jika 1 dokumen/sesi (yang dipakai tabel), maka **tidak mungkin menyimpan jawaban bertahap** dan **`create-only` membunuh retry**: kiriman pertama sukses tapi ACK hilang → retry kena `permission-denied` (dokumen sudah ada) → UI menampilkan "Gagal terkirim" padahal tersimpan. Retry 3x di Seksi 12/14 jadi teater.
+Perbaikan konkret: tetapkan **satu dokumen `attempts/{uid}_{quizId}_{attemptNo}` berisi map `answers{questionId: optionId}`**, dan ganti aturan menjadi `create` **atau** `update` terbatas (`request.time` dalam jendela, `diff().affectedKeys().hasOnly(['answers','updatedAt'])`, `answers.size() <= 50`) — atau `create-only` + field `submitSeq` dengan dokumen `attempts/{...}_{attemptNo}_{seq}`. Lalu perbaiki baris 1 tabel sesuai pilihan (3.600 vs 90.000 write).
+
+**K-2. Rumus `closeAt`/`startedAt+durasi+90s` tidak dapat dieksekusi Security Rules, dan field snapshot-nya bisa dipalsukan siswa**
+Lokasi: Seksi 12
+[93m[1m! [0mretrying (attempt 3): upstream connection lost
+> build · Opencode
+# Audit Kritis — PRD LMS Interaktif v0.4
+
+Saya mulai dari yang diminta diverifikasi angkanya, lalu cacat logika/keamanan. Ringkas: **penjumlahan baris tabel 13.1 benar, tetapi input minimumnya tidak tercapai, satu kolom mencampur dua skenario berbeda, dan ada 5 lubang Rules yang membatalkan jaminan waktu.**
+
+---
+
+## A. Verifikasi Aritmetika Tabel 13.1 (hitung ulang manual)
+
+| Baris | Cache-On | Cache-Off | Write hari-H | Write ekstrem |
+|---|---|---|---|---|
+| 1 starts+attempts | 0 | 0 | 3.600 | 3.600 |
+| 2 muat soal + rule-get | 3.600 | 3.600 | 0 | 0 |
+| 3 rule-get tulis attempts | 1.800–3.600 | 1.800–3.600 | 0 | 0 |
+| 4 grading + results | 1.812–3.606 | 1.812–3.606 | 1.800 | 1.800 |
+| 5 leaderboard | 1.800–3.600 | 1.800–3.600 | 1–6 | 1–6 |
+| 6 progress | 2.800–3.800 | 2.800–3.800 | 2.000–3.000 | 3.000 |
+| 7 browsing | 3.000–6.000 | 24.000 | 0 | 0 |
+| 8 registrasi+sertifikat | 0 | 0 | 0 | 2.800 |
+| **TOTAL** | **14.812–24.206** | **35.812–42.206** | **7.401–8.406** | **11.201–11.206** |
+
+**Hasil: keempat total itu cocok persis dengan penjumlahan baris.** Persen juga benar terhadap 50.000/20.000: 14.812=29,6% (dibulatkan 30%), 24.206=48,4%, 35.812=71,6%, 42.206=84,4%, 7.401=37,0%, 8.406=42,0%, 11.201/11.206=56,0%. **OK: aritmetika penjumlahan & persen (hal.).** Yang rusak adalah *input* dan *pencampuran skenario*, bukan penjumlahannya.
+
+---
+
+## B. Temuan KRITIS
+
+### K1. Snapshot `starts` tidak divalidasi → timer siswa bisa diperpanjang sendiri (lubang curang terbesar)
+**Lokasi:** Seksi 11 (`starts`), Seksi 12 poin 5, Seksi 13.1 Asumsi 2, Seksi 17.
+**Masalah:** Rules menulis `request.time <= starts.startedAt + duration + 90s`. PRD secara eksplisit menyuruh Rules membaca `duration` **dari `starts`** ("karena duration sudah di-snapshot") — tetapi **tidak pernah mewajibkan Rules memvalidasi isi snapshot itu**. Siswa cukup menulis `starts` dengan `duration: 600` atau `startedAt` = 3 jam ke depan → jendela tulis tak terbatas, `closeAt` pun tak berlaku karena `min(timer, closeAt)` hanya membatasi bila timer benar.
+**Bukti:** Satu-satunya syarat yang disebut untuk `starts` adalah "dibuat saat `request.time in [openAt, openAt+toleransiMulai]`". Tidak ada `request.resource.data.startedAt == request.time`, tidak ada `duration == get(quizzes).duration`, tidak ada `quizVersion/keyVersion == get(quizzes/quizKeys)`.
+**Perbaikan konkret:** di rule `starts` create: `request.resource.data.startedAt == request.time`; `request.resource.data.duration == get(/quizzes/$(quizId)).data.duration`; `request.resource.data.quizVersion == ...data.version`; `keyVersion == get(/quizKeys/$(id)).data.keyVersion`; `closeAt == openAt + toleransiMulai + durasi + 90s` (atau jangan simpan `closeAt` sebagai field bebas). Tambahkan test Emulator: "siswa menulis duration: 600 → DENIED".
+
+### K2. Kolom MIN (30%) tidak mungkin tercapai: baris 3 minimum 1.800 read salah
+**Lokasi:** 13.1 Asumsi 2 & baris 3, "Empat optimasi wajib" #1, Seksi 17.
+**Masalah:** Rule tulis `attempts` butuh (a) `startedAt`+`duration` dari `starts` **dan** (b) `closeAt` **dan** (c) `maxAttempts` — (b) dan (c) hanya ada di `quizzes/{id}` dan **tidak di-snapshot**. Jadi kasus "minimal" = 2 rule-get, bukan 1. Angka "1.800 read (min)" hanya sah bila `closeAt` dan `maxAttempts` ikut di-snapshot.
+**Bukti hitung:** 14.812 + 1.800 = **16.612 (33,2%)**, bukan 30%. Cache-Off min: 35.812 + 1.800 = **37.612 (75,2%)**. Jika ditambah baca-balik `starts` (lihat S5): 18.412 (36,8%).
+**Perbaikan:** snapshot `closeAt` + `maxAttempts` ke `starts` (lalu validasi seperti K1), atau naikkan baris 3 min ke 3.600 dan tulis ulang seluruh total/persen.
+
+### K3. Rentang write "7.401–11.206 (37%–56%)" mencampur dua skenario
+**Lokasi:** 13.1 TOTAL kolom Write + Catatan Analisis, Seksi 17 kriteria 2, Changelog v0.4 butir 1.
+**Masalah:** 7.401 adalah **minimum kolom hari-H**; 11.206 adalah **maksimum kolom ekstrem** (onboarding+sertifikat di hari yang sama). Tidak ada satu skenario pun yang bernilai 7.401–11.206. Persen 37%–56% karena itu menyesatkan.
+**Bukti:** hari-H = 7.401–8.406 (37,0%–42,0%); ekstrem = 11.201–11.206 (56,0%).
+**Perbaikan:** tulis dua rentang terpisah; gate rilis mengacu ke salah satunya (hari-H untuk gate harian, ekstrem untuk uji "hari terburuk").
+
+### K4. Baris 8 kurang 1.000 write → kolom ekstrem menembus gate 12.000
+**Lokasi:** 13.1 Asumsi 6 + baris 8; Seksi 17 gate `<=12.000`.
+**Masalah:** Asumsi 6 menulis "pembuatan `users` + gabung `classes` (**1.000 write**)". Padahal `classes/{code}.anggota[]` adalah dokumen terpisah: 1.000 create `users` **+** 1.000 `arrayUnion` = **2.000 write**. Baris 8 seharusnya 2.000+1.800 = **3.800**, bukan 2.800.
+**Bukti:** total ekstrem = 3.600+1.800+3.000+3.800+(1..6) = **12.201–12.206 = 61,0%** → **gagal gate `<=12.000`** yang PRD klaim lulus 56%. Ironisnya inilah satu-satunya angka yang benar-benar menyentuh batas.
+**Perbaikan:** perbaiki baris 8; atau pindahkan join kelas ke batch admin (tetap 2 write/dokumen, tidak bisa 1), atau nyatakan onboarding/sertifikat **tidak boleh** di hari ujian dan hapus kolom ekstrem.
+
+### K5. "quizKeys/quizzes tidak boleh diedit setelah ada `starts`" tidak bisa diekspresikan di Firestore Rules
+**Lokasi:** Seksi 11 (Immutability), Seksi 12, Seksi 17 ("Siswa tidak bisa mengedit/menimpa quizKeys… setelah ada starts" — kriteria uji wajib).
+**Masalah:** Rules **tidak bisa melakukan query koleksi** (`exists` hanya per dokumen). Tidak ada cara menulis "jika ada ≥1 dokumen `starts` untuk quiz ini". Kriteria uji di Seksi 17 tidak akan pernah lulus seperti tertulis.
+**Perbaikan:** dokumen kunci `quizLocks/{quizId}` (atau field `lockedAt`) yang ditulis admin saat ujian dibuka; rule: `allow update: if isAdmin() && !exists(/quizLocks/$(quizId))`. Test Emulator diubah menjadi menguji lock tersebut.
+
+### K6. ID `starts/{uid}_{quizId}_1` di-hardcode `_1` → skema `attemptNo` pincang
+**Lokasi:** Seksi 12 poin 4 ("`starts/{uid}_{quizId}_1` sudah ada"), Seksi 17 (kalimat sama), 13.1 Asumsi 1 (`get(starts/{uid}_{quizId}_1)`).
+**Masalah:** bertentangan langsung dengan Changelog butir 4 dan F-07/F-08 yang memakai `{attemptNo}`. Untuk `attemptNo=2`, gerbang baca tidak akan pernah terbuka (doc `_1` ada, tapi rule mengecek `_1` untuk attempt 2 → lolos secara tidak sengaja, atau gagal bila `_1` tidak ada). Ini inkonsistensi ID yang paling nyata dari 3 tempat.
+**Perbaikan:** `get(/starts/$(uid + '_' + quizId + '_' + string(attemptNo)))` atau ganti gerbang baca ke `exists(/starts/$(uid_quizId_1))` secara eksplisit hanya untuk attempt 1 dengan catatan `maxAttempts=1` untuk ujian resmi.
+
+### K7. Model data `attempts` ambigu: satu dokumen per attempt vs "per `questionId`" → selisih 88.200 write
+**Lokasi:** Seksi 6, F-08, Seksi 10, Seksi 11 (`attempts` bullet), vs baris 1 tabel (1.800×2).
+**Masalah:** ID `attempts/{uid}_{quizId}_{attemptNo}` tidak memuat `questionId`, dan baris 1 mengasumsikan **1 write per sesi**. Tapi teks berulang menyebut "disimpan **per `questionId`**" dan Changelog v0.1→v0.2 menyebut "`attempts` per-`questionId`". Jika benar per-soal: 1.800 × 50 = **90.000 write** (450% kuota) dan grading 90.000 read.
+**Perbaikan:** tetapkan satu: **satu dokumen per attempt berisi map `answers: {questionId: optionId}`** (≤1 write, konsisten dengan tabel) dan hapus semua frasa "per `questionId`", atau ubah tabel secara drastis.
+
+### K8. `attemptNo > 1` mustahil, padahal dijanjikan
+**Lokasi:** F-08, Seksi 12 (aturan create-only), Seksi 18 baris risiko "ID dokumen bertabrakan".
+**Masalah:** `starts` untuk attempt 2 hanya boleh dibuat dalam `[openAt, openAt+toleransiMulai]`. Setelah attempt 1 selesai, jendela itu sudah tutup → attempt 2 tidak pernah bisa dimulai. Klausa "pembuatan attempt baru … atau pembuatan ulang percobaan apabila sesi awal belum mengirim jawaban" adalah **dead letter** (yang kedua sebenarnya hanya retry dokumen yang sama, dan akan gagal `ALREADY_EXISTS` bila create pertama ternyata sukses).
+**Perbaikan:** hapus `attemptNo>1` (set `maxAttempts=1` permanen untuk ujian resmi) atau buat jendela `starts` khusus attempt berikutnya.
+
+### K9. `attemptNo` di ID tidak bisa diikat ke field → `maxAttempts` bisa dilewati
+**Lokasi:** Seksi 11/12/17 aturan `!exists`, `attemptNo <= maxAttempts`.
+**Masalah:** Rules tidak bisa `split()` string ID. Siswa bisa membuat `attempts/u1_quiz45_A` dengan field `attemptNo: 1` → lolos `<= maxAttempts`, dan bisa mengulang dengan ID lain (`_B`, `_C`) → **attempt tak terbatas**, grading membaca semua (query `quizId`) → siswa memilih nilai terbaik.
+**Perbaikan:** rule `request.resource.id == request.auth.uid + '_' + request.resource.data.quizId + '_' + string(request.resource.data.attemptNo)` (Rules mendukung konkatenasi + `string()`), plus `exists(starts/{id yang sama})`. Test: ID `_B` → DENIED.
+
+---
+
+## C. Temuan SEDANG
+
+- **S1. Jendela larangan DST salah hitung.** Seksi 13.3 melarang mulai "> 60 menit sebelum reset". Padahal satu sesi memakan `toleransiMulai(15) + durasi(90) + 90s` = **106,5 menit**. Sesi mulai 12:59 tetap melintasi reset 14:00. **Perbaikan:** larangan mulai ≥ **107 menit** sebelum reset (≈ tidak ada start setelah 12:13 WIB), atau ≥120 menit agar aman.
+- **S2. Kolom Cache-Off tidak simetris dengan Cache-On.** Cache-On baris 7 memasukkan `+0–2.000` read kuis latihan; Cache-Off 24.000 flat tidak. Mestinya Cache-Off = 24.000–27.000 → total maksimum **45.206 (90%)**, bukan 42.206.
+- **S3. Klaim `serverTimestamp` bertabrakan dengan baris 1.** Jika field transform menambah operasi tertagih, `starts` (yang **wajib** pakai `serverTimestamp`) = 2 write → baris 1 = 5.400, bukan 3.600. PRD melunakkan klaim di `results` tapi tidak konsisten menerapkannya ke `starts`.
+- **S4. `results` create-only + "field `revision`" mustahil.** Create-only berarti tidak ada `update`; jalur revisi hanya `_v2`. Seksi 11 menawarkan dua opsi yang saling meniadakan. Efek lanjutan: dua dokumen `results` untuk attempt yang sama → agregasi leaderboard harus dedupe, tidak dispesifikasikan.
+- **S5. Baris read yang hilang (masing-masing tidak dianggarkan):** (a) baca-balik `starts` untuk mendapatkan `startedAt` guna timer — klien **tidak bisa** tahu `serverTimestamp` tanpa membacanya (+1.800); (b) `users/{uid}` saat login (1.800); (c) `classes/{code}` saat masuk kelas (1.000–1.800); (d) ekspor CSV/rekap guru = baca ulang 1.800 `results`/`attempts` per ekspor; (e) halaman "pembahasan" = 1 read/ siswa. Total understated ≈ **+4.000–6.000 read**, cukup untuk menggeser batas bawah dari 30% ke ~40%.
+- **S6. F-12 "siswa melihat pembahasan" vs "`quizKeys` hanya admin".** Pembahasan butuh kunci/penjelasan yang bisa dibaca siswa — tidak ada koleksi untuk itu. Fitur Wajib yang tidak bisa diimplementasikan dengan skema sekarang.
+- **S7. Kuis latihan "skor instan dihitung lokal" vs `quizKeys` admin-only.** Klien butuh kunci untuk skor lokal; tidak dijelaskan di mana kunci latihan disimpan (kalau di `quizzes`, maka `quizzes` ujian resmi juga ikut membocorkan kunci bila satu skema).
+- **S8. Kuota storage 1 GiB tidak dihitung sama sekali.** `starts`+`attempts` 3.600 dok/hari × TTL 90 hari = **324.000 dokumen** ≈ 650 MB–1 GB sebelum indeks → berisiko menyentuh 1 GiB. `results` tanpa TTL tumbuh ~324.000/tahun. **Saran:** TTL 30 hari untuk `starts`/`attempts` dan hitung ulang; tambahkan baris "storage" ke tabel.
+- **S9. Egress 10 GiB/bulan dan GitHub Pages 100 GB/bulan tidak dimodelkan.** 1.800 sesi × dokumen 50 soal (~40 KB) = 72 MB/hari; jika soal memuat gambar base64 (karena tanpa Storage, ini satu-satunya jalan) → langsung jebol. Tidak ada larangan gambar/base64 di PRD.
+- **S10. Mitigasi "naikkan kuota signup via Firebase Console (gratis)" tanpa sumber dan kemungkinan besar tidak ada.** Tidak ada setelan self-service "Sign-up quota" di Console. Jika klaim ini salah, seluruh rencana onboarding bergantung pada Admin SDK saja — dan itu mengubah prasyarat (butuh service account key, bukan "tanpa server").
+- **S11. Emulator tidak bisa dipakai mengukur kuota maupun 900 concurrent.** Emulator tidak menegakkan batas Spark 50k/20k; "wajib diukur nyata via Firebase Emulator" (Seksi 13, 16, 17) salah metode. Yang bisa diukur di Emulator hanyalah **jumlah operasi**; penegakan kuota harus diuji di project nyata.
+- **S12. Kriteria error < 1% diuji pada pilot 20–30 siswa.** Dengan 30 sesi, 1 kegagalan = 3,3%. Secara statistik tidak bisa memvalidasi <1%. Perlu ≥300 sesi atau ubah definisi.
+- **S13. Gate rilis tidak mencakup delete, storage, egress, dan Auth.** Hanya read/write. Padahal risiko "berhenti mendadak" juga datang dari 20.000 delete (TTL) dan 1 GiB storage.
+- **S14. Tidak ada pertahanan terhadap penghabisan kuota oleh pihak luar.** App Check monitor + signup terbuka + apiKey publik di GitHub Pages = siapa pun bisa membuat akun dan membakar 50.000 read → ujian berhenti (`RESOURCE_EXHAUSTED`) dan tidak ada jalur naik kuota di $0. Tidak ada mitigasi (allowlist domain, verifikasi email wajib, atau pemantauan + kill-switch).
+- **S15. Rules `classes` (join), `results` (baca milik sendiri), `certificates` (verifikasi publik) tidak dispesifikasikan.** `arrayUnion` pada `anggota[]` tanpa batasan elemen memungkinkan siswa menambah/menghapus UID lain bila rule ditulis longgar.
+- **S16. Rumus di F-08 dan Seksi 11 bukan rumus rule.** Ditulis "`startedAt + durasi + 90s <= closeAt`" — itu **tautologi** (dua konstanta), tidak membatasi `request.time` sama sekali. Hanya Seksi 10/12/17 yang benar (`request.time <= … && request.time <= closeAt`). Seksi 14 juga menulis bentuk tautologi ini.
+- **S17. Tidak ada toleransi jaringan pada jendela `starts`.** Klik pada `openAt+toleransiMulai-2s` dengan latensi 5s → `starts` ditolak, siswa kehilangan ujian, masuk hitungan error. Toleransi 90s hanya diberikan untuk tulis jawaban, bukan untuk mulai.
+- **S18. `admins/{uid}` "hanya via Firebase Console" vs F-18 + user story Admin ("mengatur siapa yang menjadi guru").** Kontradiksi fungsional: tidak ada UI pengelolaan peran, tapi kebutuhan Wajib.
+- **S19. Konstanta "8 read per buka" (baris 7 Cache-Off) masih tanpa rincian.** Changelog menghapus 28.000 tapi tidak menjelaskan 8 itu apa (kursus? modul? progress?). Tidak bisa diaudit ulang.
+
+---
+
+## D. Temuan MINOR
+
+- **M1.** Seksi 14 menampilkan timer `startedAt + duration` (tanpa +90s) sedangkan Seksi 10/12 memakai `+90s` → UI bisa memblokir kirim lebih awal dari yang diizinkan Rules (aman) atau sebaliknya; harus disamakan maknanya.
+- **M2.** Istilah "dua instance Firestore" tidak tepat: itu dua `FirebaseApp`/cache client pada **database yang sama**; read yang sama lewat `dbApp` dan `dbExam` tetap dihitung dua kali.
+- **M3.** Baris 6 menghitung read `progress` untuk 1.800 sesi ujian; pada saat ujian siswa tidak membuka progress → potensi dobel dengan sesi belajar.
+- **M4.** Leaderboard (F-15 **Opsional**) dimasukkan ke anggaran gate Wajib (baris 5, 1.800–3.600 read).
+- **M5.** Label "TOTAL KHUSUS JALUR UJIAN (Baris 1-6) … Tanpa Browsing Modul" padahal baris 6 memuat 1.000–2.000 sesi belajar.
+- **M6.** `certificates` adalah Tahap 2 tapi 1.800 write-nya masuk kolom ekstrem hari ujian — sementara label baris 8 menulis "jadwal di luar hari ujian" (kolom bertentangan dengan labelnya sendiri).
+- **M7.** Nama field tidak konsisten: `duration` (model data) vs `durasi` (prosa rumus). Risiko implementasi salah nama field di Rules.
+- **M8.** Rules perlu aritmetika ms eksplisit (`startedAt.toMillis() + duration*60000 + 90000`); rumus prosa seolah bisa menambah Timestamp dengan angka menit.
+- **M9.** Alarm Seksi 15 di 70% (=35.000 read) akan **selalu menyala** pada hari Cache-Off normal (35.812–42.206).
+- **M10.** Angka "3.000 DAU" dan "5 email-link/hari" diberi label "per 16 Nov 2026" tetapi tidak ada URL spesifik; yang lain diakui "dapat berubah", sementara "100/jam/IP terkonfirmasi akurat" tanpa pembeda metode verifikasi.
+- **M11.** Asumsi beban (1.800 sesi, 900 concurrent, 3 buka/hari, 1–2 sesi latihan) tidak diberi sumber data sekolah — masih placeholder seperti `[isi nama]`.
+
+---
+
+## E. Yang benar (OK: hal.)
+
+1. **Penjumlahan seluruh total tabel 13.1** (14.812/24.206/35.812/42.206/7.401/8.406/11.201/11.206) dan **semua persentase** terhadap 50.000/20.000.
+2. **Rumus `closeAt = openAt + toleransiMulai + durasi + 90s` identik** di §8 F-07, §11, §12.3, §13, §16, §17, §18 — dan **aljabarnya benar**: siswa yang mulai paling telat (`openAt+toleransiMulai`) berakhir tepat di `closeAt`, jadi tidak ada write-block per-siswa yang melewati `closeAt`, dan **tidak ada celah read-block** untuk siswa yang timer-nya masih jalan (gerbang baca `[openAt, closeAt]` ⊇ seluruh masa pengerjaan). Klaim ini valid — dengan syarat K1 diperbaiki.
+3. **Batas 500 write/batch** dan **10 access-call (single) / 20 (multi-document, batch, transaction)** — sesuai dokumentasi.
+4. **Klaim caching `get()` ke dokumen yang sama per request = 1 access-call** — benar untuk *batas access-call*; tapi PRD mencampurnya dengan *billing read* (baris 4 tidak menganggarkan rule-get untuk 300 write `results`; bila tidak ter-cache untuk billing, +300 read).
+5. **Batas Spark** (50k read/20k write/20k delete/1 GiB/10 GiB egress), **TTL gratis di Spark dengan delete tetap dihitung**, **reset kuota 00:00 America/Los_Angeles = 14:00/15:00 WIB**, **reCAPTCHA 10.000 assessments/bulan**, **`base:'/nama-repo/'` + `404.html` + build timeout 10 menit**, **soft limit 10 build/jam tidak berlaku untuk custom Actions**.
+6. **Konsistensi ID `{uid}_{quizId}_{attemptNo}`** di §6, §8, §10, §11, §12, §13, §16, §17, §18 — kecuali `_1` hardcode (K6).
+7. **Pemisahan `dbApp` (persist) / `dbExam` (memory)** sebagai solusi write tertahan offline: benar secara mekanisme.
+8. **Penghapusan gate lama `<=30.000 read` tanpa cache**: koreksinya benar — 24.000 + 11.812 = 35.812 > 30.000.
+
+---
+
+## F. Vonis
+
+**BELUM siap dijadikan dasar implementasi.** Tabel kuotanya rapi secara penjumlahan, tetapi tiga dari empat pilar argumennya cacat: kolom minimum tidak tercapai (K2), rentang write mencampur dua skenario (K3), dan kolom ekstrem menembus gate-nya sendiri setelah onboarding dihitung benar (K4). Lebih serius: jaminan waktu yang menjadi inti seluruh Seksi 12/17 **bergantung pada snapshot yang tidak divalidasi** (K1), sehingga seluruh argumen "deadline aman" dan "1.800 read rule-get" bisa dibatalkan oleh satu field yang ditulis siswa.
+
+**Tiga hal terpenting yang harus diperbaiki:**
+
+1. **Tutup lubang Rules pada `starts` (K1 + K2 + K9).** Wajibkan `startedAt == request.time`, validasi `duration`/`quizVersion`/`keyVersion` terhadap `quizzes`/`quizKeys`, snapshot `closeAt` + `maxAttempts`, dan ikat ID dokumen ke field `attemptNo`. Tanpa ini, semua angka tabel dan semua klaim keadilan ujian tidak berlaku.
+2. **Hitung ulang tabel 13.1 dengan input yang benar (K2, K3, K4, S2, S5, S8, S9).** Min realistis ≈ 16.612–18.412 read (33–37%), pisahkan rentang hari-H vs ekstrem, onboarding = 2.000 write (ekstrem jadi 61% → gagal gate), tambahkan baris `users`/`classes`/baca-balik `starts`/ekspor CSV, serta baris storage & egress.
+3. **Tetapkan satu model data `attempts` dan satu mekanisme attempt/lock yang bisa diekspresikan Rules (K5, K7, K8, S16).** Satu dokumen per attempt dengan map `answers`, `maxAttempts=1` untuk ujian resmi, `quizLocks/{quizId}` untuk immutability, dan perbaiki rumus di F-08/§11/§14 menjadi bentuk `request.time <= …` yang konsisten dengan §12/§17.

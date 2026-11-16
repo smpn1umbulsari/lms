@@ -1,0 +1,81 @@
+# Laporan Audit Independen Ronda-3: PRD LMS Interaktif v0.7
+
+Dokumen yang diaudit: [PRD LMS Interaktif v0.7.md](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md)  
+Acuan pembanding: [audit-v06-agy.out](file:///D:/Project/LMS/audit-v06-agy.out) & [audit-v07-instructions.md](file:///D:/Project/LMS/audit-v07-instructions.md)
+
+---
+
+## Bagian A. Verifikasi 8 Tambalan di Blok Security Rules (§12)
+
+| ID Temuan | Status | Bukti & Verifikasi di [PRD LMS Interaktif v0.7.md](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L211-L335) |
+| --- | :---: | --- |
+| **K-BARU-09** | **BENAR** | Nol aritmetika `Timestamp * 60` atau `Timestamp + int`. Seluruh operasi waktu di Rules memakai `duration.value(q(request.resource.data.quizId).toleransiMulai, 'm')` ([baris 238](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L238)), `duration.value(st(attemptId).duration, 'm') + duration.value(90, 's')` ([baris 270, 276](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L270-L276)), dan `duration.value(30, 'd')` ([baris 236, 268](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L236)). |
+| **K-BARU-10** | **BENAR** | Pada `match /attempts/{attemptId}`, `allow update` ([baris 271–276](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L271-L276)) membaca `closeAt`, `startedAt`, dan `duration` melalui fungsi `st(attemptId)` (`get(/databases/$(database)/documents/starts/$(sid)).data` di [baris 221](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L221)), bukan lagi dari `resource.data`. Retry `setDoc(..., {merge: true})` kini idempoten dan valid. |
+| **K-BARU-11** | **BENAR** | Fungsi `isAdmin()` memiliki guard `request.auth != null` ([baris 215–218](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L215-L218)); akses baca admin (`|| isAdmin()`) telah dipasang pada `allow read` di `starts` ([baris 225](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L225)), `quizzes` ([baris 245](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L245)), `attempts` ([baris 261](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L261)), `results` ([baris 282](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L282)), `users` ([baris 295](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L295)), dan `progress` ([baris 305](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L305)). |
+| **K-BARU-12** | **BENAR** | Blok `match /progress/{uid}` ([baris 304–307](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L304-L307)) dan `match /admins/{uid}` ([baris 310–313](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L310-L313)) sudah ditambahkan dengan hak akses yang tepat. |
+| **K-BARU-13** | **BENAR** | Metadata jadwal ringkas (`quizId`, `openAt`, `toleransiMulai`, `duration`, `closeAt`, `version`) disimpan di `classes/{code}.quizzes` ([§10 baris 157](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L157), [§11 baris 185](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L185)) yang dapat dibaca siswa login (`match /classes/{code}` `allow read: if request.auth != null;` di [baris 316–318](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L316-L318)), sehingga siswa dapat menyusun dokumen `starts` tanpa membaca `quizzes` terlebih dahulu. |
+| **S-BARU-08** | **BENAR** | Pada `match /users/{uid}`, `allow update` ([baris 298–300](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L298-L300)) membatasi siswa hanya pada `affectedKeys().hasOnly(['nama','updatedAt'])`, sedangkan perubahan `kelas` hanya bisa dilakukan oleh `isAdmin()`. Karena `allow delete` tidak dibuka (default `false`), siswa juga tidak bisa menghapus lalu membuat ulang dokumen `users/{uid}` untuk mengganti kelas. |
+| **S-BARU-09** | **BENAR** | Validasi TTL 30 hari ditegakkan di server pada `starts` (`request.resource.data.expireAt == request.resource.data.closeAt + duration.value(30, 'd')` di [baris 236](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L236)) dan `attempts` (`request.resource.data.expireAt == st(attemptId).closeAt + duration.value(30, 'd')` di [baris 268](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L268)), serta dikunci dari perubahan saat `update` ([baris 273](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L273)). |
+| **K-BARU-03** | **BENAR** *(di Rules §12)* | Pada `match /results/{resultId}` ([baris 281–285](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L281-L285)), aturan sudah diubah menjadi `allow create, update: if isAdmin();` dan `allow read: if request.auth != null && (request.auth.uid == resource.data.uid || isAdmin());` (revisi in-place tanpa dokumen `_v2`, ditegaskan di [baris 13, 335, 499](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L335)). *(Catatan kosmetik: sisa teks lama `create-only / _v2` masih tertinggal di narasi baris 129, 157, 191, 355, 480, 493 — lihat Bagian B).* |
+
+---
+
+## Bagian B. Pemeriksaan Bug Baru & Validitas Spesifik Firestore Rules v0.7
+
+### 1. Verifikasi 6 Pertanyaan Teknis Rules v0.7
+1. **Apakah `q(qid)` dan `st(sid)` yang mengembalikan `get(...).data` valid di Firestore Rules dan tetap 1 access-call?**
+   - **VALID & TETAP 1 ACCESS-CALL.** Fungsi `q(qid)` dan `st(sid)` dideklarasikan di dalam blok `match /databases/{database}/documents` ([baris 220–221](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L220-L221)) sehingga variabel `$(database)` berada dalam *scope*, interpolasi parameter `$(qid)`/`$(sid)` pada path `get()` sah di Rules v2, dan fungsi CEL boleh mengembalikan `rules.Map` (`.data`). Mesin Firestore Rules melakukan *caching* `get()` berdasarkan path dokumen per evaluasi request: 6 pemanggilan `q(request.resource.data.quizId)` di `starts` dan 4 pemanggilan `st(attemptId)` di `attempts` merujuk ke path dokumen yang identik sehingga hanya memakan **1 access-call (1 read tertagih)**. Jika dokumen target belum ada, `.data` gagal secara *fail-closed* (`PERMISSION_DENIED`).
+2. **Apakah `duration.value(q(...).toleransiMulai, 'm')` dan `duration.value(st(attemptId).duration, 'm')` valid (argumen `int` dari Map)?**
+   - **VALID.** Fungsi `duration.value(int, string)` menerima field bertipe `rules.Integer` yang diambil secara dinamis dari `rules.Map` dengan unit `'m'`, `'d'`, dan `'s'`. *(Catatan implementasi: pastikan saat admin menyimpan `duration` dan `toleransiMulai` dari JS, nilainya bilangan bulat `int`, bukan `float`).*
+3. **Apakah `request.resource.data.answers.size() <= 50` valid untuk Map?**
+   - **VALID.** Tipe `rules.Map` di Firestore Rules memiliki method `.size()` yang mengembalikan jumlah pasangan *key-value* (`int`) di dalam map `answers` ([baris 267, 274](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L267)).
+4. **Apakah `get(.../users/$(request.auth.uid)).data.kelas in q(...).classes` valid untuk Array?**
+   - **VALID.** Operator `in` di CEL mendukung pemeriksaan keanggotaan elemen (`string`) di dalam `rules.List` (`classes[]` pada dokumen `quizzes`, [baris 239](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L239)).
+5. **Apakah ada `allow update` ganda atau konflik di blok Rules?**
+   - **TIDAK ADA.** Seluruh 12 blok `match` di [§12 baris 224–332](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L224-L332) tidak memiliki deklarasi `allow` yang tumpang tindih atau berkonflik.
+6. **Apakah `results` `allow create, update: if isAdmin()` membuka celah keamanan yang tak disengaja?**
+   - **TIDAK.** Hanya `isAdmin()` yang dapat membuat atau memperbarui `results`, sedangkan siswa hanya memiliki akses `read` ke miliknya sendiri (`request.auth.uid == resource.data.uid`) dan `delete` ditutup (`if false`).
+
+### 2. Daftar Bug Baru Pemblokir (Kritis/Sedang)
+- **Tidak ada bug pemblokir (0 Kritis, 0 Sedang).** Seluruh alur autentikasi, onboarding, mulai ujian (`starts`), muat soal (`quizzes`), kirim & retry jawaban (`attempts`), penilaian massal & revisi (`results`), `leaderboard`, `progress`, dan `certificates` dapat dikompilasi dan dieksekusi dengan benar.
+
+### 3. Catatan Non-Pemblokir (Minor / Kosmetik — Boleh Dirapikan Saat Implementasi)
+1. **[Minor — Optimasi Urutan Short-Circuit `||` pada `quizzes` `allow read` ([§12 baris 245–247](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L245-L247))]:**
+   - Pada `starts`, `attempts`, `results`, `users`, dan `progress`, kondisi siswa ditulis **di sebelah kiri** `|| isAdmin()`, sehingga saat siswa mengakses dokumennya sendiri, kondisi kiri bernilai `true` dan `isAdmin()` ter-*short-circuit* (0 rule-get `admins`).
+   - Sebaliknya, pada `match /quizzes/{quizId}` ([baris 245](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L245)), `isAdmin()` ditulis **di sebelah kiri**: `if request.auth != null && (isAdmin() || (request.time >= ... && exists(.../starts/...)))`. Akibatnya, saat 1.800 siswa memuat soal `quizzes`, Firestore mengevaluasi `isAdmin()` (`exists(admins/uid)` → `false`) terlebih dahulu sebelum mengevaluasi `exists(starts)`, yang menambah **+1.800 rule-get read** (tetap aman di 40,0%–43,6% kuota Spark). Cukup balik urutannya menjadi `((request.time >= ... && exists(.../starts/...)) || isAdmin())` saat menyalin ke `firestore.rules` untuk menghemat 1.800 read tersebut.
+2. **[Kosmetik — Sisa Teks `_v2` / `create-only` di Narasi Luar Blok Rules]:**
+   - Blok Rules §12 ([baris 283, 335](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L283)) dan §17 ([baris 499](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L499)) sudah menetapkan `results` `create, update: if isAdmin()`, tetapi narasi di [§8 baris 129](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L129), [§10 baris 157](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L157), [§11 baris 191](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L191), [§12 baris 355](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L355), [§16 baris 480](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L480), dan [§17 baris 493](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L493) masih menyebut `results create-only / _v2` (serta angka lama `12.206` di [baris 510](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L510)). Acuan implementasi tetap menggunakan blok Rules §12.
+
+---
+
+## Bagian C. Hitung Ulang Aritmetika Kuota (§13.1)
+
+### 1. Verifikasi Baris demi Baris (1.000 Akun Siswa, 6 Mapel × 300 = 1.800 Sesi Ujian/Hari)
+
+| # | Komponen ([§13.1 Baris 392–410](file:///D:/Project/LMS/PRD%20LMS%20Interaktif%20v0.7.md#L392-L410)) | Klaim Read v0.7 | Hitung Ulang Read Auditor | Klaim Write v0.7 | Hitung Ulang Write Auditor | Verifikasi Operasi & Hidden Rule-Get |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| 1 | Create `starts` (rule-get `quizzes` + `users`) | 3.600 | **3.600** | 1.800 | **1.800** | **Tepat.** 6× `q(quizId)` di-cache = 1 read + 1 `get(users)` = 2 rule-get × 1.800 sesi = 3.600 read; 1.800 write. |
+| 2 | Muat soal `quizzes` (doc + rule `exists(starts)`) | 3.600 | **3.600** *(atau **5.400** jika `isAdmin()` di kiri)* | 0 | **0** | 1.800 doc read + 1.800 `exists(starts)`. *(Jika urutan `isAdmin() \|\| ...` di baris 245 tidak dibalik, tambah +1.800 `exists(admins)` = 5.400).* |
+| 3 | Create `attempts` (rule-get `starts`) | 1.800 | **1.800** | 1.800 | **1.800** | **Tepat.** 4× `st(attemptId)` di-cache = 1 rule-get × 1.800 = 1.800 read; 1.800 write. |
+| 3b | Margin retry/update `attempts` 10% | 180 | **180** | 180 | **180** | **Tepat.** 180 update × (1 write + 1 rule-get `st(attemptId)` di-cache). |
+| 4 | Grading (`attempts` + `quizKeys` + rule-get `admins`) | 1.824 | **1.824** | 1.800 | **1.800** | **Tepat.** Baca `attempts` (1.800) + `quizKeys` (6) + 6 mapel × 3 evaluasi `isAdmin()` (18) = 1.824 read; 1.800 write `results`. |
+| 5 | Baca `results` siswa + tulis `leaderboard` (+ `admins`) | 1.806 | **1.806** | 6 | **6** | **Tepat.** Baca `results` (1.800; `uid == resource.data.uid` men-*short-circuit* `isAdmin()`) + 6 rule-get `admins` saat tulis 6 `leaderboard`. |
+| 6 | Baca `leaderboard` siswa | 1.800 | **1.800** | 0 | **0** | **Tepat.** 1.800 doc read, 0 rule-get (`request.auth != null`). |
+| 7 | Baca/tulis `progress` (modul + XP) | 1.800 | **1.800** | 2.000–3.000 | **2.000–3.000** | **Tepat.** 1.800 read (`uid == uid` men-*short-circuit* `isAdmin()`); 1.000 write modul + 1.000–2.000 write XP. |
+| 8 | Login `users/{uid}` (+ `classes/{code}` jadwal) | 1.800 *(s.d. 3.600)* | **1.800** *(s.d. **3.600**)* | 0 | **0** | **Tepat.** 1.800 read `users` (0 rule-get); `classes/{code}` di-cache di `dbApp` (atau +1.800 read jika *cache miss*). |
+| 9 | Pembahasan `quizExplanations` (opsional) | 0–1.800 | **0–1.800** | 0 | **0** | **Tepat.** Gerbang `request.time > resource.data.closeAt` = 0 rule-get. |
+| 10 | Browsing kursus/modul/latihan (bundle statis) | 0 | **0** | 0 | **0** | **Tepat.** Disajikan dari JSON statis GitHub Pages (`public/data/`). |
+| — | **TOTAL HARI UJIAN** | **18.210–20.010** *(worst **21.810**)* | **18.210–20.010** *(atau **20.010–23.610**)* | **7.586–8.586** | **7.586–8.586** | **Read: 36,4%–40,0% (worst 43,6% / 47,2%). Write: 37,9%–42,9%.** |
+| — | **TOTAL EKSTREM** (+Onboarding 1.000 & Sertifikat 1.800) | **22.010–25.610** | **22.010–25.610** *(atau **23.810–27.410**)* | **12.386** | **11.386–12.386** | **Read: 44,0%–51,2% (s.d. 54,8%). Write: 56,9%–61,9%.** |
+
+### 2. Verdict Kelulusan Kuota Paket Spark
+- **Read Harian (≤ 50.000/hari):** **18.210–20.010** (36,4%–40,0%), *worst-case* **21.810–23.610** (43,6%–47,2%), ekstrem **22.010–27.410** (44,0%–54,8%) → **LULUS (Headroom > 22.500 read/hari).**
+- **Write Harian (≤ 20.000/hari):** **7.586–8.586** (37,9%–42,9%), ekstrem **12.386** (61,9%) → **LULUS (Headroom > 7.600 write/hari).**
+- **Delete Harian (≤ 20.000/hari):** TTL 30 hari `starts` (1.800) + `attempts` (1.800) = **3.600 delete/hari** (18,0%) → **LULUS.**
+- **Storage (≤ 1 GiB) & Egress (≤ 10 GiB/bulan):** ~200–350 MB storage aktif & ~2,7–3,1 GiB/bulan egress → **LULUS.**
+
+---
+
+## Vonis Akhir
+
+**SIAP IMPLEMENTASI** — Seluruh 8 temuan kritis dan sedang dari audit ronda-2 telah ditambal dengan benar di blok Security Rules §12 tanpa menyisakan bug pemblokir, dan anggaran kuota harian maupun ekstrem lulus dengan margin aman di bawah batas keras Firebase Spark (Read 36,4%–43,6%, Write 37,9%–42,9%, Ekstrem Write 61,9%).

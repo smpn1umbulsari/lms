@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    // get() ke path sama di-cache per evaluasi = 1 access-call walau dipanggil berulang
+    function q(qid) { return get(/databases/$(database)/documents/quizzes/$(qid)).data; }
+    function st(sid) { return get(/databases/$(database)/documents/starts/$(sid)).data; }
+
+    // ---- starts: create divalidasi penuh, immutable setelah dibuat ----
+    match /starts/{startId} {
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
+      allow create: if request.auth != null
+        && startId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.attemptNo == 1
+        && request.resource.data.startedAt == request.time
+        && request.resource.data.keys().hasOnly(['uid','quizId','attemptNo','startedAt','duration','closeAt','maxAttempts','quizVersion','keyVersion','expireAt'])
+        && request.resource.data.duration == q(request.resource.data.quizId).duration
+        && request.resource.data.maxAttempts == 1
+        && request.resource.data.quizVersion == q(request.resource.data.quizId).version
+        && request.resource.data.closeAt == q(request.resource.data.quizId).closeAt
+        && request.resource.data.expireAt == request.resource.data.closeAt + duration.value(30, 'd')
+        && request.time >= q(request.resource.data.quizId).openAt
+        && request.time <= q(request.resource.data.quizId).openAt + duration.value(q(request.resource.data.quizId).toleransiMulai, 'm')
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.kelas in q(request.resource.data.quizId).classes;
+      allow update, delete: if false;
+    }
+
+    // ---- quizzes: admin bebas; siswa baca setelah mulai & dalam jendela; kunci setelah openAt ----
+    match /quizzes/{quizId} {
+      allow read: if request.auth != null && (
+        (request.time >= resource.data.openAt && request.time <= resource.data.closeAt
+            && exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_1')))
+        || isAdmin());
+      allow create: if isAdmin();
+      allow update, delete: if isAdmin() && request.time < resource.data.openAt;
+    }
+
+    // ---- quizKeys: admin-only; terkunci setelah openAt ----
+    match /quizKeys/{quizId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if isAdmin() && request.time < q(quizId).openAt;
+    }
+
+    // ---- attempts: create+update terbatas, idempoten, jendela dari starts ----
+    match /attempts/{attemptId} {
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
+      allow create: if request.auth != null
+        && attemptId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.attemptNo == 1
+        && request.resource.data.keys().hasOnly(['answers','updatedAt','submitSeq','uid','quizId','attemptNo','expireAt'])
+        && request.resource.data.answers.size() <= 50
+        && request.resource.data.expireAt == st(attemptId).closeAt + duration.value(30, 'd')
+        && request.time <= st(attemptId).closeAt
+        && request.time <= st(attemptId).startedAt + duration.value(st(attemptId).duration, 'm') + duration.value(90, 's');
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers','updatedAt','submitSeq'])
+        && request.resource.data.answers.size() <= 50
+        && request.time <= st(attemptId).closeAt
+        && request.time <= st(attemptId).startedAt + duration.value(st(attemptId).duration, 'm') + duration.value(90, 's');
+      allow delete: if false;
+    }
+
+    // ---- results: admin create+update (revisi in-place), siswa baca sendiri ----
+    match /results/{resultId} {
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ---- quizExplanations: terbuka setelah closeAt (0 access-call) ----
+    match /quizExplanations/{quizId} {
+      allow read: if request.auth != null && request.time > resource.data.closeAt;
+      allow write: if isAdmin();
+    }
+
+    // ---- users: pemilik (kelas immutable oleh siswa) atau admin ----
+    match /users/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == uid
+        && exists(/databases/$(database)/documents/classes/$(request.resource.data.kelas));
+      allow update: if request.auth != null && (
+        (request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nama','updatedAt']))
+        || isAdmin());
+    }
+
+    // ---- progress: pemilik tulis/baca, admin baca ----
+    match /progress/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ---- admins: hanya admin (bootstrap pertama via Console) ----
+    match /admins/{uid} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ---- classes: admin-only write; dibaca semua login (berisi metadata jadwal) ----
+    match /classes/{code} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ---- certificates: admin write, publik read (verifikasi) ----
+    match /certificates/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---- leaderboard: admin write, login read ----
+    match /leaderboard/{doc} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
