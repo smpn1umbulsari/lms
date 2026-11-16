@@ -70,6 +70,13 @@
   .link-rm{padding:.3rem .6rem;background:#334155;color:#fff;border:0;border-radius:8px;cursor:pointer}
   #btn-add-link{background:var(--surface-2);color:var(--text-hero);border:1px solid var(--surface-3);font-size:.85rem;padding:.4rem .8rem;min-height:36px;margin-bottom:.85rem}
 
+  /* Ringkasan Cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all .2s; }
+  .stat-card:hover { border-color: var(--accent); background: var(--surface-2); }
+  .stat-val { font-size: 2.25rem; font-weight: 700; color: var(--text-hero); line-height: 1.2; margin-bottom: .25rem; }
+  .stat-lbl { font-size: .85rem; color: var(--text-muted); font-weight: 600; }
+
   /* Responsive / Mobile styles (<= 640px) */
   @media (max-width: 640px) {
     body {
@@ -247,6 +254,16 @@
       min-height: 36px;
       padding: .35rem .6rem !important;
     }
+    .stat-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: .75rem;
+    }
+    .stat-card {
+      padding: 1rem .85rem;
+    }
+    .stat-val {
+      font-size: 1.75rem;
+    }
   }
 </style>
 </head>
@@ -264,7 +281,8 @@
     </label>
   </div>
   <div class="sidebar-content">
-    <button class="nav-btn active" data-tab="sec-materi">📖 Kelola Materi</button>
+    <button class="nav-btn active" data-tab="sec-ringkasan">📊 Ringkasan</button>
+    <button class="nav-btn" data-tab="sec-materi">📖 Kelola Materi</button>
     <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
     <button class="nav-btn" data-tab="sec-asesmen">✍️ Asesmen Builder</button>
     <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
@@ -289,8 +307,33 @@
   <!-- MAIN APP CONTAINER -->
   <div id="app-content" class="hidden">
     
+    <!-- SECTION 0: RINGKASAN -->
+    <div id="sec-ringkasan" class="tab-pane">
+      <div class="header-bar">
+        <h2>Ringkasan Dashboard</h2>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">
+          <div id="rk-materi" class="stat-val">–</div>
+          <div class="stat-lbl">📖 Materi</div>
+        </div>
+        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">
+          <div id="rk-tugas" class="stat-val">–</div>
+          <div class="stat-lbl">📋 Tugas</div>
+        </div>
+        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
+          <div id="rk-asesmen" class="stat-val">–</div>
+          <div class="stat-lbl">✍️ Asesmen</div>
+        </div>
+        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
+          <div id="rk-kiriman" class="stat-val">–</div>
+          <div class="stat-lbl">⚖️ Kiriman Masuk</div>
+        </div>
+      </div>
+    </div>
+
     <!-- SECTION 1: MATERI -->
-    <div id="sec-materi" class="tab-pane">
+    <div id="sec-materi" class="tab-pane hidden">
       <div class="header-bar">
         <h2>Materi Pembelajaran</h2>
         <button id="btn-mat-new" class="btn btn-primary">+ Tambah Materi</button>
@@ -447,7 +490,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, deleteField, writeBatch, collection, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, deleteField, writeBatch, collection, query, where, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function mediaEmbed(link){
@@ -513,6 +556,25 @@ function updateClassOptions(selectEl, items) {
 
 const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
 
+async function loadRingkasan() {
+  const items = [
+    { col: "materials", id: "rk-materi" },
+    { col: "assignments", id: "rk-tugas" },
+    { col: "quizzes", id: "rk-asesmen" },
+    { col: "submissions", id: "rk-kiriman" }
+  ];
+  await Promise.all(items.map(async ({ col, id }) => {
+    try {
+      const snap = await getCountFromServer(collection(db, col));
+      const el = document.getElementById(id);
+      if (el) el.textContent = snap.data().count;
+    } catch (e) {
+      console.error(`Gagal memuat count ${col}:`, e);
+    }
+  }));
+}
+window.loadRingkasan = loadRingkasan;
+
 // Auth verification
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -525,6 +587,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("app-content").classList.remove("hidden");
     document.getElementById("sidebar").classList.remove("hidden");
     document.getElementById("u-display").textContent = user.email;
+    loadRingkasan();
     loadMateriTable(); loadTugasTable(); loadAsesmenTable();
   } else {
     document.getElementById("sec-auth").classList.remove("hidden");
