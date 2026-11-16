@@ -1,3 +1,4 @@
+<!-- admin.html -->
 <!doctype html>
 <html lang="id">
 <head>
@@ -14,8 +15,12 @@
   body { font: 14px/1.5 system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-body); display: flex; min-height: 100vh; }
   
   /* Sidebar */
-  aside { width: 230px; background: var(--surface-1); border-right: 1px solid var(--border); padding: 1.25rem; display: flex; flex-direction: column; }
+  aside { width: 230px; min-width: 230px; background: var(--surface-1); border-right: 1px solid var(--border); padding: 1.25rem; display: flex; flex-direction: column; }
   .brand { font-size: 1.15rem; font-weight: 700; color: var(--text-hero); margin-bottom: 2rem; }
+  .sidebar-toggle-input,
+  .sidebar-hamburger,
+  .sidebar-backdrop { display: none; }
+  .sidebar-content { display: flex; flex-direction: column; flex: 1; }
   .nav-btn { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .65rem .85rem; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font: inherit; font-weight: 600; cursor: pointer; text-align: left; margin-bottom: .4rem; }
   .nav-btn:hover { background: var(--surface-2); color: var(--text-body); }
   .nav-btn.active { background: var(--surface-2); color: var(--accent); border-left: 3px solid var(--accent); }
@@ -32,15 +37,18 @@
   .row { display: flex; gap: .75rem; }
   .row > div { flex: 1; }
   
-  .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 600; padding: .6rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 600; padding: .6rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; min-height: 44px; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-secondary { background: var(--surface-2); color: var(--text-hero); border: 1px solid var(--surface-3); }
   .btn-danger { background: var(--danger); color: #fff; }
   
   /* Tables */
-  table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .9rem; }
+  .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: .5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 520px; }
   th, td { padding: .75rem; text-align: left; border-bottom: 1px solid var(--border); }
   th { color: var(--text-muted); font-weight: 600; }
+  table .btn { min-height: 34px; padding: .3rem .6rem !important; }
+  table input[type="number"] { min-height: 34px !important; margin-bottom: 0 !important; }
   
   /* Question Builder Card */
   .q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; position: relative; }
@@ -49,20 +57,210 @@
   .badge-ok { background: rgba(16,185,129,.15); color: #86efac; }
   
   .hidden { display: none !important; }
-  #log { font: 12px ui-monospace, monospace; color: var(--text-muted); background: var(--surface-2); padding: .75rem; border-radius: 8px; margin-top: 1rem; max-height: 120px; overflow-y: auto; }
+  #log { font: 12px ui-monospace, monospace; color: var(--text-muted); background: var(--surface-2); padding: .75rem; border-radius: 8px; margin-top: 1rem; max-height: 120px; overflow-y: auto; word-break: break-all; }
+
+  /* Responsive / Mobile styles (<= 640px) */
+  @media (max-width: 640px) {
+    body {
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    aside {
+      width: 100%;
+      min-width: 0;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .brand {
+      margin-bottom: 0;
+      font-size: 1.1rem;
+    }
+    .sidebar-hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--surface-3);
+      padding: 9px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hamburger-bar {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text-hero);
+      border-radius: 2px;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(2) {
+      opacity: 0;
+    }
+    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+    .sidebar-toggle-input:checked ~ .sidebar-content {
+      display: flex;
+    }
+    .sidebar-toggle-input:checked ~ .sidebar-backdrop {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 90;
+    }
+    .sidebar-content {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+      padding: 1rem;
+      max-height: calc(100vh - 65px);
+      overflow-y: auto;
+      z-index: 95;
+    }
+    .nav-btn {
+      min-height: 44px;
+      padding: .75rem 1rem;
+      font-size: .95rem;
+    }
+    .sidebar-user {
+      margin-top: .75rem !important;
+      padding-top: .75rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #btn-logout {
+      margin-top: 0 !important;
+      min-height: 44px;
+      padding: 0 .75rem;
+      font-size: .9rem;
+    }
+    main {
+      padding: 1rem .75rem;
+      width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+    .panel {
+      padding: 1rem .85rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+    }
+    #sec-auth {
+      margin: 2rem auto !important;
+      width: 100%;
+    }
+    .header-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: .75rem;
+      margin-bottom: 1rem;
+    }
+    .header-bar h2 {
+      margin-bottom: 0;
+    }
+    .header-bar .btn {
+      width: 100%;
+    }
+    .header-bar > div[style*="display:flex"] {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem !important;
+      width: 100%;
+    }
+    .header-bar > div[style*="display:flex"] .btn {
+      width: 100%;
+      padding: .5rem .25rem;
+      font-size: .8rem;
+    }
+    .row {
+      flex-direction: column;
+      gap: 0;
+    }
+    .row > div {
+      flex: none;
+      width: 100%;
+    }
+    input, textarea, select {
+      font-size: 16px;
+      min-height: 44px;
+      padding: .65rem .75rem;
+    }
+    .btn {
+      min-height: 44px;
+      padding: .65rem 1.25rem;
+    }
+    div[style*="justify-content:flex-end"] {
+      display: flex !important;
+      gap: .5rem !important;
+      width: 100%;
+    }
+    div[style*="justify-content:flex-end"] .btn {
+      flex: 1;
+    }
+    .q-card {
+      padding: .85rem;
+    }
+    .q-card .btn-danger {
+      min-height: 36px;
+      padding: .35rem .6rem !important;
+    }
+  }
 </style>
 </head>
 <body>
 
 <aside id="sidebar" class="hidden">
-  <div class="brand">LMS SITURI · Guru</div>
-  <button class="nav-btn active" data-tab="sec-materi">📖 Kelola Materi</button>
-  <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
-  <button class="nav-btn" data-tab="sec-asesmen">✍️ Asesmen Builder</button>
-  <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
-  <div style="margin-top:auto; font-size:.8rem; color:var(--text-muted)">
-    <div id="u-display">-</div>
-    <button id="btn-logout" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-top:.5rem">Logout</button>
+  <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input" aria-hidden="true">
+  <label for="sidebar-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
+  <div class="sidebar-top">
+    <div class="brand">LMS SITURI · Guru</div>
+    <label for="sidebar-toggle" class="sidebar-hamburger" aria-label="Toggle Menu">
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </label>
+  </div>
+  <div class="sidebar-content">
+    <button class="nav-btn active" data-tab="sec-materi">📖 Kelola Materi</button>
+    <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
+    <button class="nav-btn" data-tab="sec-asesmen">✍️ Asesmen Builder</button>
+    <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
+    <div class="sidebar-user" style="margin-top:auto; font-size:.8rem; color:var(--text-muted)">
+      <div id="u-display">-</div>
+      <button id="btn-logout" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-top:.5rem">Logout</button>
+    </div>
   </div>
 </aside>
 
@@ -102,7 +300,9 @@
         </div>
       </div>
       <div class="panel">
-        <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+        <div class="table-container">
+          <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+        </div>
       </div>
     </div>
 
@@ -128,11 +328,15 @@
         </div>
       </div>
       <div class="panel">
-        <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th></tr></thead><tbody></tbody></table>
+        <div class="table-container">
+          <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th></tr></thead><tbody></tbody></table>
+        </div>
       </div>
       <div id="tug-sub-panel" class="panel hidden">
         <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
-        <table id="tug-sub-table"><thead><tr><th>UID Siswa</th><th>Teks Jawaban</th><th>Link Tugas</th><th>Nilai</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+        <div class="table-container">
+          <table id="tug-sub-table"><thead><tr><th>UID Siswa</th><th>Teks Jawaban</th><th>Link Tugas</th><th>Nilai</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+        </div>
       </div>
     </div>
 
