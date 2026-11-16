@@ -339,6 +339,10 @@
         </div>
         <label>Instruksi Pengerjaan</label>
         <textarea id="t-instruksi" rows="4" placeholder="Jelaskan petunjuk pengumpulan tugas..."></textarea>
+        <label>Tautan Materi/Referensi (video/PDF — bisa lebih dari satu)</label>
+        <input id="t-link" placeholder="https://...">
+        <div id="t-links-extra"></div>
+        <button type="button" id="btn-add-tlink" class="btn">+ Tambah tautan</button>
         <div style="display:flex; justify-content:flex-end; gap:.5rem">
           <button id="btn-tug-cancel" class="btn btn-secondary">Batal</button>
           <button id="btn-tug-save" class="btn btn-primary">Terbitkan Tugas</button>
@@ -608,18 +612,33 @@ async function loadTugasTable() {
 }
 document.getElementById("btn-tug-new").onclick = () => document.getElementById("tug-form-panel").classList.remove("hidden");
 document.getElementById("btn-tug-cancel").onclick = () => document.getElementById("tug-form-panel").classList.add("hidden");
+document.getElementById("btn-add-tlink").onclick = () => {
+  const container = document.getElementById("t-links-extra");
+  const row = document.createElement("div");
+  row.className = "link-row";
+  row.innerHTML = '<input class="t-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">×</button>';
+  container.appendChild(row);
+};
+document.getElementById("t-links-extra").addEventListener("click", (e) => {
+  const rm = e.target.closest(".link-rm");
+  if (rm) { const row = rm.closest(".link-row"); if (row) row.remove(); }
+});
 document.getElementById("btn-tug-save").onclick = async () => {
   const judul = document.getElementById("t-judul").value.trim();
   const classes = document.getElementById("t-kelas").value.split(",").map(x => x.trim()).filter(Boolean);
   const dueVal = document.getElementById("t-due").value;
   const instruksi = document.getElementById("t-instruksi").value.trim();
+  const links = [document.getElementById("t-link").value, ...[...document.querySelectorAll(".t-link-extra")].map(i=>i.value)].map(s=>s.trim()).filter(Boolean);
+  const link = links[0] || "";
   if (!judul || !classes.length || !dueVal) return alert("Lengkapi data penugasan!");
   const id = "asg_" + Date.now();
   await setDoc(doc(db, "assignments", id), {
-    judul, classes, instruksi, dueAt: Timestamp.fromDate(new Date(dueVal)), createdAt: Timestamp.now()
+    judul, classes, instruksi, link, links, dueAt: Timestamp.fromDate(new Date(dueVal)), createdAt: Timestamp.now()
   });
   log("Tugas baru diterbitkan: " + judul);
   document.getElementById("tug-form-panel").classList.add("hidden");
+  document.getElementById("t-link").value = "";
+  const tExtra = document.getElementById("t-links-extra"); if (tExtra) tExtra.innerHTML = "";
   loadTugasTable();
 };
 
