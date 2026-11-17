@@ -11,7 +11,7 @@ import {
   serverTimestamp
 } from "../core/firebase.js";
 import { initTheme } from "../core/theme.js";
-import { initToast } from "../core/toast.js";
+import { initToast, showToast } from "../core/toast.js";
 import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
 import { loadAsesmen } from "./asesmen.js";
@@ -73,11 +73,69 @@ function refreshAllData() {
   });
 }
 
+export function setLoginRole(role) {
+  const btnSiswa = document.getElementById("btn-role-siswa");
+  const btnGuru = document.getElementById("btn-role-guru");
+  const title = document.getElementById("auth-title");
+  const sub = document.getElementById("auth-sub");
+  const lblEmail = document.getElementById("lbl-email");
+  const inEmail = document.getElementById("l-email");
+  const inPass = document.getElementById("l-pass");
+  const btnSubmit = document.getElementById("btn-login");
+  const chipContainer = document.getElementById("auth-chips-box");
+
+  if (role === "guru") {
+    btnSiswa?.classList.remove("active");
+    btnGuru?.classList.add("active");
+    if (title) title.textContent = "Login Guru & Pendidik";
+    if (sub) sub.textContent = "Sistem Manajemen Pembelajaran SMPN 1 Umbulsari";
+    if (lblEmail) lblEmail.textContent = "Email Guru / Admin";
+    if (inEmail) inEmail.placeholder = "guru@sekolah.sch.id";
+    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Guru →";
+    if (chipContainer) {
+      chipContainer.innerHTML = `
+        <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@sekolah.sch.id'; document.getElementById('l-pass').value='guru123';">
+          🎓 Guru Pengampu (Admin)
+        </button>
+      `;
+    }
+  } else {
+    btnGuru?.classList.remove("active");
+    btnSiswa?.classList.add("active");
+    if (title) title.textContent = "Masuk Siswa";
+    if (sub) sub.textContent = "Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari";
+    if (lblEmail) lblEmail.textContent = "Email Siswa (NISN)";
+    if (inEmail) inEmail.placeholder = "nisn@smpn1umbulsari.sch.id";
+    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Siswa →";
+    if (chipContainer) {
+      chipContainer.innerHTML = `
+        <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
+          👤 Siswa Kelas 7 (c1)
+        </button>
+      `;
+    }
+  }
+}
+window._setLoginRole = setLoginRole;
+
 // Auth State Changed
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
     nilaiLoaded = false;
+
+    // Smart Role Check: If user is an Admin, redirect to admin.html
+    const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
+    if (adminSnap && adminSnap.exists()) {
+      showToast("Akun Guru terdeteksi. Mengarahkan ke Portal Guru...", "ok");
+      setTimeout(() => {
+        window.location.href = "admin.html";
+      }, 600);
+      return;
+    }
+
     const udoc = await getDoc(doc(db, "users", user.uid));
     if (udoc.exists()) {
       userProfile = udoc.data();

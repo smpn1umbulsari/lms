@@ -61,23 +61,33 @@
           <span class="badge badge-neutral" style="font-size:11px">Siswa · 2026/2027</span>
         </div>
         <div class="auth-header">
-          <h2>Masuk Siswa</h2>
-          <p>Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari</p>
+          <h2 id="auth-title">Masuk Siswa</h2>
+          <p id="auth-sub">Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari</p>
+        </div>
+        <div class="auth-role-pills" role="tablist" aria-label="Pilih Peran">
+          <button type="button" class="auth-role-btn active" id="btn-role-siswa" onclick="window._setLoginRole('siswa')">
+            <span class="material-symbols-outlined" style="font-size:16px">school</span>
+            <span>Akun Siswa</span>
+          </button>
+          <button type="button" class="auth-role-btn" id="btn-role-guru" onclick="window._setLoginRole('guru')">
+            <span class="material-symbols-outlined" style="font-size:16px">psychology</span>
+            <span>Akun Guru</span>
+          </button>
         </div>
         <div id="login-err" class="callout callout-warn hidden" role="alert"></div>
         <div class="field" style="margin-bottom:12px">
-          <label for="l-email">Email Siswa</label>
+          <label for="l-email" id="lbl-email">Email Siswa (NISN)</label>
           <input id="l-email" type="email" placeholder="nisn@smpn1umbulsari.sch.id" autocomplete="username">
         </div>
         <div class="field" style="margin-bottom:12px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
             <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi wali kelas untuk reset sandi.', 'warn') : alert('Hubungi wali kelas untuk reset sandi.')" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi wali kelas atau proktor sekolah untuk reset sandi.', 'warn') : null" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
           </div>
           <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
         </div>
         <button id="btn-login" class="btn btn-primary auth-submit">Masuk ke Portal Siswa →</button>
-        <div class="auth-demo-chips">
+        <div class="auth-demo-chips" id="auth-chips-box">
           <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
           <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
             👤 Siswa Kelas 7 (c1)

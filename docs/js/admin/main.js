@@ -98,13 +98,26 @@ initKoreksi();
 initCSVExport();
 renderQBuilder();
 
+// Role Switcher on Admin Login
+export function setAdminLoginRole(role) {
+  if (role === "siswa") {
+    showToast("Mengarahkan ke Portal Siswa...", "ok");
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 400);
+  }
+}
+window._setLoginRole = setAdminLoginRole;
+
 // Auth State Changed
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
     if (!adminSnap || !adminSnap.exists()) {
-      showToast("Akun ini bukan admin/guru (tidak terdaftar di koleksi admins).", "error");
-      await signOut(auth);
+      showToast("Akun Siswa terdeteksi. Mengarahkan ke Portal Siswa...", "ok");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 700);
       return;
     }
     document.body.classList.remove("auth-mode");

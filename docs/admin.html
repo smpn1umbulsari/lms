@@ -128,8 +128,18 @@
           <span class="badge badge-neutral" style="font-size:11px">Portal Guru · 2026/2027</span>
         </div>
         <div class="auth-header">
-          <h1>Login Guru</h1>
-          <p>SMPN 1 Umbulsari · Sistem Manajemen Pembelajaran</p>
+          <h1 id="auth-title">Login Guru & Pendidik</h1>
+          <p id="auth-sub">SMPN 1 Umbulsari · Sistem Manajemen Pembelajaran</p>
+        </div>
+        <div class="auth-role-pills" role="tablist" aria-label="Pilih Peran">
+          <button type="button" class="auth-role-btn" id="btn-role-siswa" onclick="window._setLoginRole('siswa')">
+            <span class="material-symbols-outlined" style="font-size:16px">school</span>
+            <span>Akun Siswa</span>
+          </button>
+          <button type="button" class="auth-role-btn active" id="btn-role-guru" onclick="window._setLoginRole('guru')">
+            <span class="material-symbols-outlined" style="font-size:16px">psychology</span>
+            <span>Akun Guru</span>
+          </button>
         </div>
         <div id="auth-err" class="callout callout-warn hidden" role="alert"></div>
         <div class="field" style="margin-bottom:12px">
@@ -139,7 +149,7 @@
         <div class="field" style="margin-bottom:12px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
             <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi proktor/admin sekolah untuk reset kata sandi.', 'warn') : alert('Hubungi proktor/admin sekolah.')" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi proktor/admin sekolah untuk reset kata sandi.', 'warn') : null" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
           </div>
           <input id="l-pass" type="password" placeholder="••••••••" value="" autocomplete="current-password">
         </div>

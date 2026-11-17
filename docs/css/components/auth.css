@@ -27,7 +27,48 @@
 }
 
 .auth-header {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
+}
+
+/* Role Switcher Pills */
+.auth-role-pills {
+  display: flex;
+  gap: 6px;
+  background: var(--surface-low);
+  border: 1px solid var(--line);
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.auth-role-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.auth-role-btn:hover {
+  color: var(--ink);
+}
+
+.auth-role-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  border-color: var(--line);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .auth-header h2, .auth-header h1 {
