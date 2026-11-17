@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Konsep 2: Bento Slate â€” LMS SITURI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --muted: #f9fafb;
+      --border: #e5e7eb;
+      --ink: #09090b;
+      --ink-2: #52525b;
+      --ink-3: #a1a1aa;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --ok: #059669;
+      --ok-soft: #ecfdf5;
+      --warn: #d97706;
+      --warn-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 16px;
+      min-height: 100vh;
+    }
+
+    /* Floating Bento Sidebar */
+    aside.rail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: calc(100vh - 32px);
+      position: sticky;
+      top: 16px;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 8px 16px;
+    }
+    .logo-sq {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 16px;
+    }
+    .mode-switch button {
+      height: 30px;
+      border: none;
+      background: transparent;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .mode-switch button.active {
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .nav-list { display: grid; gap: 4px; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--ink-2);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+    }
+    .nav-btn:hover { background: var(--muted); color: var(--ink); }
+    .nav-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .nav-btn svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.7; fill: none; flex-shrink: 0; }
+
+    .user-box {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    /* Main Canvas */
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 72px;
+    }
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.025em; }
+    .sub { font-size: 12.5px; color: var(--ink-2); }
+
+    .btn {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+    }
+    .btn-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    /* Bento Grid Cards */
+    .bento-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .bento-2 {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .kpi-label { font-size: 12px; color: var(--ink-2); }
+    .kpi-val { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin-top: 6px; }
+    .kpi-note { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .card-title { font-size: 14px; font-weight: 600; }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 12px;
+      border-radius: 11px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+    .item:last-child { margin-bottom: 0; }
+    .pill {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .p-blue { background: var(--accent-soft); color: var(--accent); }
+    .p-ok { background: var(--ok-soft); color: var(--ok); }
+    .p-warn { background: var(--warn-soft); color: var(--warn); }
+    .p-danger { background: var(--danger-soft); color: var(--danger); }
+
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; }
+
+    .mob-bar {
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      left: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      height: 58px;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 40;
+    }
+    .mob-bar button {
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10.5px;
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .mob-bar button.active { color: var(--accent); font-weight: 600; }
+    .mob-bar svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.7; fill: none; }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; padding: 12px; }
+      aside.rail { display: none; }
+      .bento-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .bento-2 { grid-template-columns: 1fr; }
+      .mob-bar { display: flex; }
+      .toast { bottom: 78px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="rail">
+      <div>
+        <div class="logo-row">
+          <span class="logo-sq">S1</span>
+          <div>
+            <div style="font-weight:700;font-size:13.5px;">SITURI LMS</div>
+            <div style="font-size:11px;color:var(--ink-3);">Konsep 02 Â· Bento</div>
+          </div>
+        </div>
+        <div class="mode-switch">
+          <button type="button" class="active" id="sw-guru" onclick="switchPersona('guru')">Guru</button>
+          <button type="button" id="sw-siswa" onclick="switchPersona('siswa')">Siswa</button>
+        </div>
+        <nav class="nav-list" id="nav-list"></nav>
+      </div>
+      <div class="user-box">
+        <div>
+          <div style="font-weight:600;" id="u-name">Budi Santoso</div>
+          <div style="color:var(--ink-3);font-size:11px;" id="u-role">Guru IPA</div>
+        </div>
+        <a href="login-2-bento-slate.html" style="color:var(--accent);text-decoration:none;font-weight:500;">Keluar</a>
+      </div>
+    </aside>
+
+    <main class="content" id="canvas"></main>
+  </div>
+
+  <nav class="mob-bar" id="mob-bar"></nav>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SVG = {
+      home: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+      book: '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+      task: '<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+      exam: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+      grade: '<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'
+    };
+
+    const NAV_DATA = {
+      guru: [
+        { id: 'g_dash', label: 'Ringkasan', icon: 'home' },
+        { id: 'g_materi', label: 'Materi Belajar', icon: 'book' },
+        { id: 'g_tugas', label: 'Penugasan', icon: 'task' },
+        { id: 'g_asesmen', label: 'Asesmen & Soal', icon: 'exam' },
+        { id: 'g_koreksi', label: 'Koreksi Nilai', icon: 'grade' }
+      ],
+      siswa: [
+        { id: 's_dash', label: 'Beranda', icon: 'home' },
+        { id: 's_materi', label: 'Materi', icon: 'book' },
+        { id: 's_tugas', label: 'Tugas', icon: 'task' },
+        { id: 's_ujian', label: 'Ujian & Latihan', icon: 'exam' },
+        { id: 's_nilai', label: 'Nilai Saya', icon: 'grade' }
+      ]
+    };
+
+    let role = 'guru';
+    let tab = 'g_dash';
+
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    function switchPersona(r) {
+      role = r;
+      tab = NAV_DATA[r][0].id;
+      document.getElementById('sw-guru').classList.toggle('active', r === 'guru');
+      document.getElementById('sw-siswa').classList.toggle('active', r === 'siswa');
+      document.getElementById('u-name').textContent = r === 'guru' ? 'Budi Santoso' : 'Alya Nabila';
+      document.getElementById('u-role').textContent = r === 'guru' ? 'Guru IPA Â· 6 Kelas' : 'Siswa VIII-A';
+      drawNav();
+      drawCanvas();
+    }
+
+    function goTab(id) {
+      tab = id;
+      drawNav();
+      drawCanvas();
+    }
+
+    function drawNav() {
+      const items = NAV_DATA[role];
+      document.getElementById('nav-list').innerHTML = items.map(i => `
+        <button type="button" class="nav-btn ${i.id === tab ? 'active' : ''}" onclick="goTab('${i.id}')">
+          ${SVG[i.icon]}<span>${i.label}</span>
+        </button>
+      `).join('');
+      document.getElementById('mob-bar').innerHTML = items.slice(0, 4).map(i => `
+        <button type="button" class="${i.id === tab ? 'active' : ''}" onclick="goTab('${i.id}')">
+          ${SVG[i.icon]}<span>${i.label.split(' ')[0]}</span>
+        </button>
+      `).join('');
+    }
+
+    function drawCanvas() {
+      const c = document.getElementById('canvas');
+      const screens = {
+        g_dash: `
+          <div class="topbar"><div><h1>Ringkasan Kelas</h1><p class="sub">Semester Ganjil 2026/2027 Â· SMPN 1 Umbulsari</p></div><div style="display:flex;gap:8px;"><button class="btn" onclick="toast('CSV diekspor')">Ekspor CSV</button><button class="btn btn-dark" onclick="goTab('g_asesmen')">+ Buat Ujian</button></div></div>
+          <div class="bento-4">
+            <div class="card"><div class="kpi-label">Materi Terbit</div><div class="kpi-val tabular">18</div><div class="kpi-note">6 rombel aktif</div></div>
+            <div class="card"><div class="kpi-label">Perlu Koreksi</div><div class="kpi-val tabular">14</div><div class="kpi-note">Jawaban esai</div></div>
+            <div class="card"><div class="kpi-label">Ulangan Aktif</div><div class="kpi-val tabular">03</div><div class="kpi-note">Minggu ini</div></div>
+            <div class="card"><div class="kpi-label">Partisipasi</div><div class="kpi-val tabular">96,4%</div><div class="kpi-note">Tepat waktu</div></div>
+          </div>
+          <div class="bento-2">
+            <div class="card">
+              <div class="card-head"><span class="card-title">Aktivitas &amp; Kiriman Terbaru</span><span class="pill p-blue">Real-time</span></div>
+              <div class="item"><div><strong>Ulangan Bab 3 Â· IPA VIII-A</strong><div class="sub tabular">32/32 siswa selesai Â· PG otomatis dinilai</div></div><span class="pill p-ok">Selesai</span></div>
+              <div class="item"><div><strong>Praktikum Sel Â· IPA VIII-B</strong><div class="sub tabular">28/32 kiriman masuk</div></div><span class="pill p-warn">4 Belum</span></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><span class="card-title">Jadwal Mengajar Hari Ini</span><span class="sub tabular">17 Nov</span></div>
+              <div class="item"><div><strong>VIII-A Â· Ulangan Harian</strong><div class="sub tabular">08.00 â€“ 09.30</div></div><span class="pill p-blue">IPA8A</span></div>
+              <div class="item"><div><strong>VIII-C Â· Diskusi Bab 4</strong><div class="sub tabular">10.15 â€“ 11.45</div></div><span class="pill p-ok">Siap</span></div>
+            </div>
+          </div>
+        `,
+        g_materi: `
+          <div class="topbar"><div><h1>Materi Belajar</h1><p class="sub">Kelola modul bacaan dan tautan video untuk siswa</p></div><button class="btn btn-dark" onclick="toast('Modal tambah materi dibuka')">+ Tambah Materi</button></div>
+          <div class="card">
+            <div class="item"><div><strong>Bab 4 Â· Sistem Peredaran Darah</strong><div class="sub">Kelas VIII-A, VIII-B, VIII-C Â· Video YouTube &amp; Ringkasan</div></div><span class="pill p-blue">Video</span></div>
+            <div class="item"><div><strong>Bab 3 Â· Struktur Jaringan Tumbuhan</strong><div class="sub">Kelas VIII-A, VIII-B Â· Teks &amp; Tautan</div></div><span class="pill p-ok">Teks</span></div>
+          </div>
+        `,
+        g_tugas: `
+          <div class="topbar"><div><h1>Penugasan Siswa</h1><p class="sub">Pantau pengumpulan tugas dan tenggat waktu</p></div><button class="btn btn-dark" onclick="toast('Form tugas dibuka')">+ Buat Tugas</button></div>
+          <div class="card">
+            <div class="item"><div><strong>Laporan Pengamatan Sel Bawang Merah</strong><div class="sub tabular">Tenggat 20 Nov 2026, 15.00 Â· 29/32 terkumpul</div></div><span class="pill p-warn">Aktif</span></div>
+            <div class="item"><div><strong>Resume Sistem Pencernaan</strong><div class="sub tabular">Tenggat 12 Nov 2026 Â· 32/32 dinilai</div></div><span class="pill p-ok">Tuntas</span></div>
+          </div>
+        `,
+        g_asesmen: `
+          <div class="topbar"><div><h1>Asesmen &amp; Bank Soal</h1><p class="sub">Susun soal PG, Benar/Salah, Menjodohkan, dan Esai</p></div><button class="btn btn-dark" onclick="toast('Asesmen disimpan')">Terbitkan Asesmen</button></div>
+          <div class="card">
+            <div class="item"><div><strong>Soal 01 Â· Organel penghasil ATP pada sel</strong><div class="sub">Kunci: Mitokondria</div></div><span class="pill p-blue">PG</span></div>
+            <div class="item"><div><strong>Soal 02 Â· Arteri pulmonalis membawa darah kaya CO2</strong><div class="sub">Kunci: Benar</div></div><span class="pill p-ok">BS</span></div>
+            <div class="item"><div><strong>Soal 03 Â· Jodohkan enzim dan organ penghasil</strong><div class="sub">4 pasangan otomatis</div></div><span class="pill p-warn">MATCH</span></div>
+            <div class="item"><div><strong>Soal 04 Â· Jelaskan mekanisme peredaran darah kecil</strong><div class="sub">Penilaian manual guru</div></div><span class="pill p-danger">ESSAY</span></div>
+          </div>
+        `,
+        g_koreksi: `
+          <div class="topbar"><div><h1>Koreksi &amp; Penilaian</h1><p class="sub">Navigasi cepat antar-siswa dengan autosave lokal</p></div><button class="btn btn-dark" onclick="toast('Nilai dipublikasikan ke siswa')">Publikasikan Batch</button></div>
+          <div class="card">
+            <div class="item"><div><strong>Alya Nabila Â· VIII-A</strong><div class="sub tabular">Auto-score: 75/80 Â· Esai menunggu input</div></div><span class="pill p-ok">Tersimpan lokal</span></div>
+            <div class="item"><div><strong>Bagas Pratama Â· VIII-A</strong><div class="sub tabular">Auto-score: 70/80 Â· Esai menunggu input</div></div><span class="pill p-warn">Menunggu</span></div>
+          </div>
+        `,
+        s_dash: `
+          <div class="topbar"><div><h1>Halo, Alya Nabila</h1><p class="sub">Kelas VIII-A Â· 1 Ulangan dijadwalkan hari ini</p></div><button class="btn btn-dark" onclick="goTab('s_ujian')">Kerjakan Ulangan &rarr;</button></div>
+          <div class="bento-4">
+            <div class="card"><div class="kpi-label">Materi Selesai</div><div class="kpi-val tabular">14/16</div><div class="kpi-note">87,5% progres</div></div>
+            <div class="card"><div class="kpi-label">Tugas Aktif</div><div class="kpi-val tabular">01</div><div class="kpi-note">Tenggat 20 Nov</div></div>
+            <div class="card"><div class="kpi-label">Ujian Hari Ini</div><div class="kpi-val tabular">01</div><div class="kpi-note">IPA Â· 45 menit</div></div>
+            <div class="card"><div class="kpi-label">Rata-Rata Nilai</div><div class="kpi-val tabular">88,5</div><div class="kpi-note">Sangat Baik</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Lanjut Belajar</span><span class="sub">Kelas VIII-A</span></div>
+            <div class="item"><div><strong>Sistem Peredaran Darah Manusia</strong><div class="sub">IPA Terpadu Â· 80% selesai</div></div><span class="pill p-blue">Buka</span></div>
+            <div class="item"><div><strong>Teks Eksplanasi</strong><div class="sub">Bahasa Indonesia Â· 100% selesai</div></div><span class="pill p-ok">Selesai</span></div>
+          </div>
+        `,
+        s_materi: `
+          <div class="topbar"><div><h1>Materi Pelajaran</h1><p class="sub">Daftar materi untuk rombel VIII-A</p></div></div>
+          <div class="card">
+            <div class="item"><div><strong>Sistem Peredaran Darah Manusia</strong><div class="sub">IPA Â· Video &amp; Ringkasan</div></div><span class="pill p-blue">Baca</span></div>
+            <div class="item"><div><strong>Persamaan Garis Lurus</strong><div class="sub">Matematika Â· Modul PDF &amp; Latihan</div></div><span class="pill p-ok">Telah dibaca</span></div>
+          </div>
+        `,
+        s_tugas: `
+          <div class="topbar"><div><h1>Tugas Kelas</h1><p class="sub">Kirim tautan atau jawaban sebelum tenggat</p></div></div>
+          <div class="card">
+            <div class="item"><div><strong>Laporan Pengamatan Sel Bawang Merah</strong><div class="sub tabular">Tenggat 20 Nov 2026, 15.00</div></div><button class="btn btn-dark" onclick="toast('Modal kirim tugas dibuka')">Kumpulkan</button></div>
+            <div class="item"><div><strong>Resume Sistem Pencernaan</strong><div class="sub tabular">Terkumpul 11 Nov 2026</div></div><span class="pill p-ok">Tersimpan</span></div>
+          </div>
+        `,
+        s_ujian: `
+          <div class="topbar"><div><h1>Ujian &amp; Latihan</h1><p class="sub">Jawaban tersimpan otomatis di perangkat</p></div></div>
+          <div class="card">
+            <div class="item"><div><strong>Ulangan Harian IPA Â· Bab 3</strong><div class="sub tabular">20 Soal Â· 45 menit</div></div><button class="btn btn-dark" onclick="toast('Ujian dimulai')">Mulai</button></div>
+            <div class="item"><div><strong>Latihan Mandiri Matematika</strong><div class="sub tabular">10 Soal Â· Mode Latihan</div></div><button class="btn" onclick="toast('Latihan dibuka')">Latihan</button></div>
+          </div>
+        `,
+        s_nilai: `
+          <div class="topbar"><div><h1>Transkrip Nilai Saya</h1><p class="sub tabular">Rata-rata kumulatif: 88,5</p></div></div>
+          <div class="card">
+            <div class="item"><div><strong>Ulangan Harian IPA Â· Bab 2</strong><div class="sub tabular">02 Nov 2026</div></div><span class="pill p-ok tabular">92,0</span></div>
+            <div class="item"><div><strong>Tugas Algoritma Dasar</strong><div class="sub tabular">29 Okt 2026</div></div><span class="pill p-ok tabular">89,5</span></div>
+          </div>
+        `
+      };
+      c.innerHTML = screens[tab] || screens.g_dash;
+    }
+
+    drawNav();
+    drawCanvas();
+  </script>
+</body>
+</html>
