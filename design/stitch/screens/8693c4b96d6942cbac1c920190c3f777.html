@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'surface-container-highest': '#e0e3e5', 'inverse-primary': '#b7c4ff', 'line-soft': '#f1f5f9', 'on-secondary-fixed': '#0b1c30', 'surface-variant': '#e0e3e5', 'surface-container-low': '#f2f4f6', 'on-secondary': '#ffffff', 'tertiary': '#3d445a', 'background': '#f7f9fb', 'ink-muted': '#64748b', 'on-surface-variant': '#434655', 'on-primary': '#ffffff', 'badge-bs-bg': '#f0fdf4', 'on-tertiary': '#ffffff', 'on-secondary-container': '#54647a', 'badge-match': '#d97706', 'on-error-container': '#93000a', 'badge-pg': '#1d4ed8', 'surface-bright': '#f7f9fb', 'badge-bs': '#16a34a', 'paper': '#f8fafc', 'on-tertiary-fixed-variant': '#3f465c', 'on-secondary-fixed-variant': '#38485d', 'secondary': '#505f76', 'primary': '#0037b0', 'ink-tertiary': '#94a3b8', 'on-primary-fixed': '#001551', 'tertiary-container': '#545c72', 'surface-container-lowest': '#ffffff', 'primary-fixed-dim': '#b7c4ff', 'on-primary-fixed-variant': '#0039b5', 'outline': '#747686', 'line': '#e2e8f0', 'on-tertiary-fixed': '#131b2e', 'tertiary-fixed': '#dae2fd', 'inverse-surface': '#2d3133', 'on-error': '#ffffff', 'badge-essay': '#dc2626', 'outline-variant': '#c4c5d7', 'inverse-on-surface': '#eff1f3', 'badge-match-bg': '#fffbeb', 'on-surface': '#191c1e', 'error-container': '#ffdad6', 'surface': '#ffffff', 'primary-fixed': '#dce1ff', 'on-background': '#191c1e', 'badge-pg-bg': '#eff6ff', 'on-primary-container': '#cad3ff', 'surface-container-high': '#e6e8ea', 'primary-container': '#1d4ed8', 'surface-tint': '#2151da', 'surface-dim': '#d8dadc', 'surface-container': '#eceef0', 'secondary-fixed-dim': '#b7c8e1', 'secondary-fixed': '#d3e4fe', 'badge-essay-bg': '#fef2f2', 'on-tertiary-container': '#cdd5ef', 'secondary-container': '#d0e1fb', 'error': '#ba1a1a', 'tertiary-fixed-dim': '#bec6e0', 'ink': '#0f172a' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.625rem', 'gutter': '0.875rem', 'space-xxs': '0.25rem', 'space-2xl': '2.125rem', 'margin-desktop': '2.75rem', 'space-xs': '0.5rem', 'space-md': '0.875rem', 'space-lg': '1rem', 'gutter-desktop': '1rem', 'space-xl': '1.375rem', 'margin': '1.25rem' }, fontFamily: { 'body-medium': ['Inter'], 'nav-mobile': ['Inter'], 'headline-lg': ['Inter'], 'label-default': ['Inter'], 'headline-md': ['Inter'], 'meta-default': ['Inter'], 'display-stat': ['Inter'], 'headline-sm': ['Inter'], 'body-default': ['Inter'], 'panel-title': ['Inter'], 'headline-lg-mobile': ['Inter'], 'badge-label': ['Inter'] }, fontSize: { 'body-medium': ['13.5px', { lineHeight: '20px', fontWeight: '500' }], 'nav-mobile': ['10.5px', { lineHeight: '14px', fontWeight: '500' }], 'headline-lg': ['26px', { lineHeight: '32px', letterSpacing: '-0.03em', fontWeight: '600' }], 'label-default': ['12.5px', { lineHeight: '16px', fontWeight: '500' }], 'headline-md': ['19px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }], 'meta-default': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'display-stat': ['29px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'body-default': ['13.5px', { lineHeight: '20px', fontWeight: '400' }], 'panel-title': ['13px', { lineHeight: '18px', fontWeight: '600' }], 'headline-lg-mobile': ['20px', { lineHeight: '26px', letterSpacing: '-0.02em', fontWeight: '600' }], 'badge-label': ['11px', { lineHeight: '14px', fontWeight: '600' }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;overflow-x:clip;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-default text-body-default text-ink min-h-screen flex flex-col antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-xs"><div class="flex flex-col min-w-0 justify-center"><div class="flex items-center gap-space-xs"><span class="font-panel-title text-panel-title text-ink truncate">Ahmad Rizqi Pratama</span><span class="px-1.5 py-0.5 rounded-full bg-badge-pg-bg text-badge-pg font-badge-label text-badge-label shrink-0">VIII-A</span></div><div class="flex items-center gap-1.5 mt-0.5"><span class="font-meta-default text-meta-default text-ink-muted truncate">Semester Ganjil 2024/2025</span></div></div><div class="flex items-center gap-space-xs shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-background px-margin"><div class="flex flex-col w-full pb-6 space-y-space-md">
+<!-- Status / Network Mode Callout Strip -->
+<div class="w-full flex items-center justify-between px-space-md py-2 bg-surface-container-low rounded-lg shadow-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="w-2 h-2 rounded-full bg-badge-bs shrink-0 animate-pulse"></span>
+<span class="font-meta-default text-meta-default text-ink truncate">Koneksi Stabil • Mode Pembaca Ringan Aktif</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-ink-muted shrink-0" title="Sinkron">cloud_done</span>
+</div>
+<!-- Search & Fast Filters -->
+<div class="flex flex-col gap-space-xs">
+<!-- 1-Row Compact Search Input -->
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-3 text-[18px] text-ink-muted pointer-events-none">search</span>
+<input class="w-full pl-9 pr-9 py-2 bg-surface rounded-lg font-body-default text-body-default text-ink placeholder:text-ink-tertiary focus:outline-none focus:bg-surface-container-low transition-colors h-10 shadow-sm" id="material-search" placeholder="Cari topik atau bab pelajaran..." type="search"/>
+<button aria-label="Bersihkan pencarian" class="hidden absolute right-2.5 text-ink-muted hover:text-ink p-1 rounded-full flex items-center justify-center transition-colors" id="clear-search">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Filter Pills Container -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar" id="subject-chips">
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-default text-label-default bg-primary-container text-on-primary font-medium shrink-0 transition-all flex items-center gap-1" data-filter="all" type="button">
+<span>Semua</span>
+<span class="text-[10px] opacity-80 font-bold px-1 rounded-full bg-white/20">4</span>
+</button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-default text-label-default bg-surface-container-high text-on-surface-variant shrink-0 hover:bg-surface-variant transition-all" data-filter="ipa" type="button">
+        IPA
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-default text-label-default bg-surface-container-high text-on-surface-variant shrink-0 hover:bg-surface-variant transition-all" data-filter="matematika" type="button">
+        Matematika
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-default text-label-default bg-surface-container-high text-on-surface-variant shrink-0 hover:bg-surface-variant transition-all" data-filter="indonesia" type="button">
+        B. Indonesia
+      </button>
+</div>
+</div>
+<!-- Materi List Container -->
+<div class="flex flex-col space-y-3" id="materials-container">
+<!-- Card 1: Sistem Peredaran Darah Manusia -->
+<article class="material-card bg-surface rounded-xl p-space-md shadow-sm transition-all hover:bg-surface-bright flex flex-col gap-2.5" data-subject="ipa" data-title="sistem peredaran darah manusia">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-badge-pg-bg text-badge-pg font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[13px]">play_circle</span>
+            Teks &amp; Video Embed
+          </span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+            Selesai Dibaca
+          </span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-ink-muted">bookmark</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-ink leading-snug">Sistem Peredaran Darah Manusia</h3>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1">
+          IPA Kelas VIII • Guru: Drs. Bambang S. • Estimasi 12 Menit
+        </p>
+</div>
+<!-- Micro visual info pill -->
+<div class="flex items-center justify-between pt-2 mt-0.5 bg-line-soft/40 -mx-space-md px-space-md pb-1 rounded-b-xl">
+<div class="flex items-center gap-1.5 text-badge-bs font-meta-default text-meta-default">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+<span>100% Tercapai</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface hover:bg-surface-container-low text-ink font-body-medium text-body-medium shadow-sm transition-colors active:scale-95" type="button">
+<span>Buka Kembali</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Struktur Jaringan Tumbuhan & Fotosintesis -->
+<article class="material-card bg-surface rounded-xl p-space-md shadow-sm transition-all hover:bg-surface-bright flex flex-col gap-2.5" data-subject="ipa" data-title="struktur jaringan tumbuhan fotosintesis">
+<div class="flex items-start justify-between gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[13px]">description</span>
+          Modul PDF Ringkasan
+        </span>
+<span class="font-meta-default text-meta-default text-ink-muted">18 Okt 2026</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-ink leading-snug">Struktur Jaringan Tumbuhan &amp; Fotosintesis</h3>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1">
+          IPA Kelas VIII • 12 Halaman Terverifikasi
+        </p>
+</div>
+<!-- Linear Reading Progress -->
+<div class="flex flex-col gap-1 mt-0.5">
+<div class="flex justify-between items-center font-meta-default text-meta-default">
+<span class="text-ink-muted">Progres Belajar</span>
+<span class="text-badge-pg font-semibold">45% (Hal 5 dari 12)</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-[3px] overflow-hidden">
+<div class="bg-badge-pg h-full rounded-full w-[45%]"></div>
+</div>
+</div>
+<div class="flex items-center justify-end pt-1">
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-body-medium text-body-medium hover:bg-primary transition-colors shadow-sm active:scale-95" type="button">
+<span>Lanjutkan Baca</span>
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+</button>
+</div>
+</article>
+<!-- Card 3: Gerak Lurus Beraturan (GLB & GLBB) -->
+<article class="material-card bg-surface rounded-xl p-space-md shadow-sm transition-all hover:bg-surface-bright flex flex-col gap-2.5" data-subject="ipa" data-title="gerak lurus beraturan glb glbb rumus">
+<div class="flex items-start justify-between gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-badge-match-bg text-badge-match font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[13px]">smart_display</span>
+          Video Pembelajaran
+        </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-meta-default text-meta-default">
+          14:20 Menit
+        </span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-ink leading-snug">Gerak Lurus Beraturan (GLB &amp; GLBB)</h3>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1">
+          Video YouTube • Pembahasan Soal Rumus <code class="px-1 py-0.5 rounded bg-surface-container-low font-mono text-[11px] text-ink">v = s/t</code>
+</p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1 font-meta-default text-meta-default text-ink-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-ink-tertiary"></span>
+<span>Belum ditonton</span>
+</div>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-ink font-body-medium text-body-medium transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px] text-badge-match">play_arrow</span>
+<span>Tonton Video</span>
+</button>
+</div>
+</article>
+<!-- Card 4: Teorema Pythagoras & Segitiga Istimewa -->
+<article class="material-card bg-surface rounded-xl p-space-md shadow-sm transition-all hover:bg-surface-bright flex flex-col gap-2.5" data-subject="matematika" data-title="teorema pythagoras segitiga istimewa latihan soal">
+<div class="flex items-start justify-between gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-badge-pg-bg text-badge-pg font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[13px]">calculate</span>
+          Modul Interaktif
+        </span>
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-badge-match">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+          Interaktif
+        </span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-ink leading-snug">Teorema Pythagoras &amp; Segitiga Istimewa</h3>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1">
+          Matematika Kelas VIII • Dilengkapi Latihan Mandiri &amp; Pembuktian Geometris
+        </p>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="font-meta-default text-meta-default text-ink-muted">Belum Dimulai</span>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-ink font-body-medium text-body-medium transition-colors active:scale-95" type="button">
+<span>Mulai Pelajari</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</button>
+</div>
+</article>
+</div>
+<!-- Interactive Filter / Search Empty State -->
+<div class="hidden flex-col items-center justify-center p-8 text-center bg-surface rounded-xl" id="search-empty-state">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-ink-muted mb-2">
+<span class="material-symbols-outlined text-[24px]">search_off</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-ink">Materi Tidak Ditemukan</h4>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1 max-w-[260px]">
+      Coba gunakan kata kunci lain atau pilih mata pelajaran yang berbeda.
+    </p>
+<button class="mt-3 px-3 py-1.5 rounded-lg bg-surface-container-high font-body-medium text-body-medium text-ink" id="reset-filter-btn" type="button">
+      Tampilkan Semua Materi
+    </button>
+</div>
+<!-- Editorial Institutional Note / Footer Note -->
+<div class="flex items-center justify-center gap-2 pt-2 px-space-xs text-center">
+<span class="material-symbols-outlined text-[16px] text-ink-tertiary shrink-0">verified</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary leading-tight">
+      Materi disinkronkan otomatis sesuai Kurikulum Merdeka SMPN 1 Umbulsari
+    </span>
+</div>
+</div>
+<script>
+  (function initMaterialInteractions() {
+    const searchInput = document.getElementById('material-search');
+    const clearBtn = document.getElementById('clear-search');
+    const chipBtns = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('.material-card');
+    const emptyState = document.getElementById('search-empty-state');
+    const resetBtn = document.getElementById('reset-filter-btn');
+
+    let currentFilter = 'all';
+    let currentQuery = '';
+
+    function filterMaterials() {
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const subject = card.getAttribute('data-subject');
+        const title = card.getAttribute('data-title') || '';
+        
+        const matchesFilter = (currentFilter === 'all') || (subject === currentFilter);
+        const matchesQuery = !currentQuery || title.toLowerCase().includes(currentQuery.toLowerCase());
+
+        if (matchesFilter && matchesQuery) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+
+    // Fast Filter Chip selection
+    chipBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        chipBtns.forEach(c => {
+          c.classList.remove('bg-primary-container', 'text-on-primary', 'font-medium');
+          c.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+        });
+        btn.classList.add('bg-primary-container', 'text-on-primary', 'font-medium');
+        btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+
+        currentFilter = btn.getAttribute('data-filter');
+        filterMaterials();
+      });
+    });
+
+    // Search input listener
+    searchInput.addEventListener('input', (e) => {
+      currentQuery = e.target.value.trim();
+      if (currentQuery.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      filterMaterials();
+    });
+
+    // Clear search
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentQuery = '';
+      clearBtn.classList.add('hidden');
+      searchInput.focus();
+      filterMaterials();
+    });
+
+    // Reset from empty state
+    resetBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentQuery = '';
+      clearBtn.classList.add('hidden');
+      const allChip = document.querySelector('[data-filter="all"]');
+      if (allChip) allChip.click();
+    });
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-container font-semibold"><div class="flex justify-around items-center h-14 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] text-ink-muted hover:text-ink transition-colors gap-0.5" data-path="beranda-siswa" href="#"><span class="material-symbols-outlined text-[20px]">home</span><span class="font-nav-mobile text-nav-mobile">Beranda</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] transition-colors gap-0.5 text-primary-container font-semibold" data-path="materi-pembelajaran" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-nav-mobile text-nav-mobile">Materi</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] text-ink-muted hover:text-ink transition-colors gap-0.5" data-path="tugas-pengumpulan" href="#"><span class="material-symbols-outlined text-[20px]">assignment_turned_in</span><span class="font-nav-mobile text-nav-mobile">Tugas</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] text-ink-muted hover:text-ink transition-colors gap-0.5" data-path="rekap-nilai-siswa" href="#"><span class="material-symbols-outlined text-[20px]">military_tech</span><span class="font-nav-mobile text-nav-mobile">Nilai</span></a></div></nav></body></html>

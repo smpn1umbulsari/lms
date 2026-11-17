@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'surface-container-highest': '#e0e3e5', 'inverse-primary': '#b7c4ff', 'line-soft': '#f1f5f9', 'on-secondary-fixed': '#0b1c30', 'surface-variant': '#e0e3e5', 'surface-container-low': '#f2f4f6', 'on-secondary': '#ffffff', 'tertiary': '#3d445a', 'background': '#f7f9fb', 'ink-muted': '#64748b', 'on-surface-variant': '#434655', 'on-primary': '#ffffff', 'badge-bs-bg': '#f0fdf4', 'on-tertiary': '#ffffff', 'on-secondary-container': '#54647a', 'badge-match': '#d97706', 'on-error-container': '#93000a', 'badge-pg': '#1d4ed8', 'surface-bright': '#f7f9fb', 'badge-bs': '#16a34a', 'paper': '#f8fafc', 'on-tertiary-fixed-variant': '#3f465c', 'on-secondary-fixed-variant': '#38485d', 'secondary': '#505f76', 'primary': '#0037b0', 'ink-tertiary': '#94a3b8', 'on-primary-fixed': '#001551', 'tertiary-container': '#545c72', 'surface-container-lowest': '#ffffff', 'primary-fixed-dim': '#b7c4ff', 'on-primary-fixed-variant': '#0039b5', 'outline': '#747686', 'line': '#e2e8f0', 'on-tertiary-fixed': '#131b2e', 'tertiary-fixed': '#dae2fd', 'inverse-surface': '#2d3133', 'on-error': '#ffffff', 'badge-essay': '#dc2626', 'outline-variant': '#c4c5d7', 'inverse-on-surface': '#eff1f3', 'badge-match-bg': '#fffbeb', 'on-surface': '#191c1e', 'error-container': '#ffdad6', 'surface': '#ffffff', 'primary-fixed': '#dce1ff', 'on-background': '#191c1e', 'badge-pg-bg': '#eff6ff', 'on-primary-container': '#cad3ff', 'surface-container-high': '#e6e8ea', 'primary-container': '#1d4ed8', 'surface-tint': '#2151da', 'surface-dim': '#d8dadc', 'surface-container': '#eceef0', 'secondary-fixed-dim': '#b7c8e1', 'secondary-fixed': '#d3e4fe', 'badge-essay-bg': '#fef2f2', 'on-tertiary-container': '#cdd5ef', 'secondary-container': '#d0e1fb', 'error': '#ba1a1a', 'tertiary-fixed-dim': '#bec6e0', 'ink': '#0f172a' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.625rem', 'gutter': '0.875rem', 'space-xxs': '0.25rem', 'space-2xl': '2.125rem', 'margin-desktop': '2.75rem', 'space-xs': '0.5rem', 'space-md': '0.875rem', 'space-lg': '1rem', 'gutter-desktop': '1rem', 'space-xl': '1.375rem', 'margin': '1.25rem' }, fontFamily: { 'body-medium': ['Inter'], 'nav-mobile': ['Inter'], 'headline-lg': ['Inter'], 'label-default': ['Inter'], 'headline-md': ['Inter'], 'meta-default': ['Inter'], 'display-stat': ['Inter'], 'headline-sm': ['Inter'], 'body-default': ['Inter'], 'panel-title': ['Inter'], 'headline-lg-mobile': ['Inter'], 'badge-label': ['Inter'] }, fontSize: { 'body-medium': ['13.5px', { lineHeight: '20px', fontWeight: '500' }], 'nav-mobile': ['10.5px', { lineHeight: '14px', fontWeight: '500' }], 'headline-lg': ['26px', { lineHeight: '32px', letterSpacing: '-0.03em', fontWeight: '600' }], 'label-default': ['12.5px', { lineHeight: '16px', fontWeight: '500' }], 'headline-md': ['19px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }], 'meta-default': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'display-stat': ['29px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'body-default': ['13.5px', { lineHeight: '20px', fontWeight: '400' }], 'panel-title': ['13px', { lineHeight: '18px', fontWeight: '600' }], 'headline-lg-mobile': ['20px', { lineHeight: '26px', letterSpacing: '-0.02em', fontWeight: '600' }], 'badge-label': ['11px', { lineHeight: '14px', fontWeight: '600' }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;overflow-x:clip;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-default text-body-default text-ink min-h-screen flex flex-col antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs min-w-0"><button aria-label="Kembali" class="w-11 h-11 -ml-2 flex items-center justify-center text-ink hover:text-primary transition-colors shrink-0" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span></button><h1 class="font-headline-sm text-headline-sm text-ink truncate">Asesmen &amp; Ujian Cbt</h1></div><div class="flex items-center gap-space-xs shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-safe bg-background px-margin"><div class="flex flex-col w-full pb-28">
+<!-- Status Ujian & Timer Bar -->
+<section class="w-full bg-surface-container-low rounded-xl p-space-sm mb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-space-xs">
+<div class="min-w-0">
+<div class="flex items-center gap-space-xxs">
+<span class="material-symbols-outlined text-[15px] text-badge-bs" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-nav-mobile text-nav-mobile text-ink-muted uppercase tracking-wider">Kiosk Mode Aktif</span>
+</div>
+<p class="font-headline-sm text-[14px] leading-tight text-ink font-semibold truncate">STS IPA Terpadu Kelas VIII</p>
+</div>
+<!-- Timer Monospace Pill -->
+<div class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-pg-bg text-primary">
+<span class="material-symbols-outlined text-[16px] animate-pulse">timer</span>
+<span class="font-body-medium text-body-medium font-semibold tabular-nums text-primary">01:12:45</span>
+</div>
+</div>
+<!-- Progress Meter -->
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex justify-between items-center text-meta-default font-meta-default text-ink-muted">
+<span>Progres Pengerjaan</span>
+<span class="font-medium text-ink tabular-nums">Soal 3 dari 4 (75%)</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-300" style="width: 75%;"></div>
+</div>
+</div>
+</section>
+<!-- Palet Cepat Navigasi Soal Horisontal -->
+<section class="w-full mb-space-md">
+<div class="flex items-center justify-between gap-2 overflow-x-auto py-1 no-scrollbar">
+<!-- Item 1: PG -->
+<button aria-label="Buka Soal 1 Pilihan Ganda" class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg bg-surface-container-low flex flex-col items-center gap-0.5 active:scale-95 transition-transform" type="button">
+<div class="flex items-center gap-1">
+<span class="font-label-default text-label-default text-ink font-semibold">01</span>
+<span class="material-symbols-outlined text-badge-bs text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-nav-mobile text-[10px] text-primary font-medium">PG</span>
+</button>
+<!-- Item 2: B-S -->
+<button aria-label="Buka Soal 2 Benar Salah" class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg bg-surface-container-low flex flex-col items-center gap-0.5 active:scale-95 transition-transform" type="button">
+<div class="flex items-center gap-1">
+<span class="font-label-default text-label-default text-ink font-semibold">02</span>
+<span class="material-symbols-outlined text-badge-bs text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-nav-mobile text-[10px] text-badge-bs font-medium">B-S</span>
+</button>
+<!-- Item 3: MATCH (Aktif) -->
+<button aria-label="Soal 3 Menjodohkan Aktif" class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg bg-badge-match-bg flex flex-col items-center gap-0.5 shadow-sm active:scale-95 transition-transform" type="button">
+<div class="flex items-center gap-1">
+<span class="font-label-default text-label-default text-badge-match font-bold">03</span>
+<span class="w-2 h-2 rounded-full bg-badge-match"></span>
+</div>
+<span class="font-nav-mobile text-[10px] text-badge-match font-bold">MATCH</span>
+</button>
+<!-- Item 4: ESSAY -->
+<button aria-label="Buka Soal 4 Esai" class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg bg-surface-container-low flex flex-col items-center gap-0.5 opacity-60 active:scale-95 transition-transform" type="button">
+<div class="flex items-center gap-1">
+<span class="font-label-default text-label-default text-ink-muted font-medium">04</span>
+<span class="w-2 h-2 rounded-full bg-surface-container-highest"></span>
+</div>
+<span class="font-nav-mobile text-[10px] text-badge-essay font-medium">ESAI</span>
+</button>
+</div>
+</section>
+<!-- Soal & Meta Card -->
+<article class="bg-surface rounded-xl p-space-md shadow-sm mb-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between flex-wrap gap-2 pb-1">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-badge-match-bg text-badge-match font-badge-label text-badge-label">
+          MENJODOHKAN
+        </span>
+<span class="font-panel-title text-panel-title text-ink font-semibold">Nomor 3</span>
+</div>
+<div class="px-2.5 py-0.5 rounded bg-surface-container-low font-meta-default text-meta-default text-ink-muted">
+        Bobot: <strong class="text-ink font-semibold tabular-nums">30 Poin</strong>
+</div>
+</div>
+<!-- Instruksi Soal -->
+<p class="font-body-default text-body-default text-ink leading-relaxed">
+      Jodohkanlah struktur organ pernapasan manusia berikut dengan fungsi fisiologis utamanya secara tepat!
+    </p>
+</article>
+<!-- Area Interaktif Menjodohkan (Premis Kolom A) -->
+<section aria-label="Daftar Premis Menjodohkan" class="flex flex-col gap-space-sm mb-space-md">
+<div class="flex items-center justify-between">
+<h2 class="font-panel-title text-panel-title text-ink font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[17px] text-primary">join_inner</span>
+        Pasangan Kolom A &amp; Kolom B
+      </h2>
+<span class="font-meta-default text-meta-default text-ink-muted">2/3 Terjodohkan</span>
+</div>
+<!-- Premis 1 (Terpasang) -->
+<div class="bg-surface rounded-xl p-3 shadow-sm flex flex-col gap-2 transition-all">
+<div class="flex items-center justify-between">
+<span class="font-body-medium text-body-medium text-ink font-semibold flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-surface-container text-ink font-label-default text-[11px] flex items-center justify-center font-bold">1</span>
+          Alveolus
+        </span>
+<span class="flex items-center gap-1 text-[11px] font-medium text-badge-bs">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+          Terpasang
+        </span>
+</div>
+<div class="p-2.5 rounded-lg bg-badge-bs-bg flex items-start justify-between gap-2">
+<p class="font-body-default text-[12.5px] leading-snug text-ink min-w-0">
+          Tempat terjadinya difusi gas O₂ dan CO₂ melalui membran epitel tipis
+        </p>
+<button aria-label="Lepas pasangan Alveolus" class="shrink-0 p-1 text-ink-muted hover:text-error active:scale-90 transition-transform" onclick="unlinkItem('alveolus')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Premis 2 (Terpasang) -->
+<div class="bg-surface rounded-xl p-3 shadow-sm flex flex-col gap-2 transition-all">
+<div class="flex items-center justify-between">
+<span class="font-body-medium text-body-medium text-ink font-semibold flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-surface-container text-ink font-label-default text-[11px] flex items-center justify-center font-bold">2</span>
+          Trakea
+        </span>
+<span class="flex items-center gap-1 text-[11px] font-medium text-badge-bs">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+          Terpasang
+        </span>
+</div>
+<div class="p-2.5 rounded-lg bg-badge-bs-bg flex items-start justify-between gap-2">
+<p class="font-body-default text-[12.5px] leading-snug text-ink min-w-0">
+          Menyaring dan menyapu partikel debu asing melalui gerakan silia dan sekresi mukus
+        </p>
+<button aria-label="Lepas pasangan Trakea" class="shrink-0 p-1 text-ink-muted hover:text-error active:scale-90 transition-transform" onclick="unlinkItem('trakea')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Premis 3 (Sedang Aktif / Menunggu Pilihan) -->
+<div class="bg-surface rounded-xl p-3 shadow-md flex flex-col gap-2 transition-all bg-primary-fixed/20" id="premis-laring">
+<div class="flex items-center justify-between">
+<span class="font-body-medium text-body-medium text-primary font-bold flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-primary text-on-primary font-label-default text-[11px] flex items-center justify-center font-bold">3</span>
+          Laring
+        </span>
+<span class="flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse">
+<span class="material-symbols-outlined text-[14px]">touch_app</span>
+          Pilih Jawaban
+        </span>
+</div>
+<div class="p-3 rounded-lg bg-badge-pg-bg flex items-center gap-2" id="slot-laring">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0">radio_button_unchecked</span>
+<p class="font-body-default text-[12.5px] text-primary font-medium">
+          Ketuk salah satu respon di bank pilihan bawah...
+        </p>
+</div>
+</div>
+</section>
+<!-- Bank Respon (Kolom B - Kartu Opsi Interaktif) -->
+<section aria-label="Bank Respon Pilihan" class="flex flex-col gap-space-xs mb-space-md">
+<div class="flex items-center justify-between">
+<h3 class="font-panel-title text-panel-title text-ink font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[17px] text-badge-match">list_alt</span>
+        Bank Respon (Kolom B)
+      </h3>
+<span class="font-meta-default text-[11px] text-ink-muted">Ketuk untuk memasangkan</span>
+</div>
+<!-- Opsi A (Sudah Terpasang) -->
+<div class="w-full p-3 rounded-xl bg-surface-container-low opacity-50 flex items-start justify-between gap-2">
+<div class="flex items-start gap-2">
+<span class="w-5 h-5 rounded bg-surface-container-highest text-ink-muted text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">A</span>
+<p class="font-body-default text-[12.5px] text-ink-muted leading-snug line-through">
+          Tempat terjadinya difusi gas O₂ dan CO₂ melalui membran epitel tipis
+        </p>
+</div>
+<span class="text-[10px] font-medium text-ink-muted whitespace-nowrap bg-surface-container px-1.5 py-0.5 rounded">Di #1</span>
+</div>
+<!-- Opsi B (Sudah Terpasang) -->
+<div class="w-full p-3 rounded-xl bg-surface-container-low opacity-50 flex items-start justify-between gap-2">
+<div class="flex items-start gap-2">
+<span class="w-5 h-5 rounded bg-surface-container-highest text-ink-muted text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">B</span>
+<p class="font-body-default text-[12.5px] text-ink-muted leading-snug line-through">
+          Menyaring dan menyapu partikel debu asing melalui gerakan silia dan sekresi mukus
+        </p>
+</div>
+<span class="text-[10px] font-medium text-ink-muted whitespace-nowrap bg-surface-container px-1.5 py-0.5 rounded">Di #2</span>
+</div>
+<!-- Opsi C (Tersedia - Pasangan Benar untuk Laring) -->
+<button class="w-full p-3 rounded-xl bg-surface shadow-sm hover:bg-badge-pg-bg flex items-start justify-between gap-2 text-left active:scale-[0.98] transition-all group" id="option-c" onclick="pairOption('C', 'Mengatur tegangan pita suara untuk fonasi dan katup epiglotis saat menelan')" type="button">
+<div class="flex items-start gap-2">
+<span class="w-5 h-5 rounded bg-badge-pg-bg text-primary text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary group-hover:text-on-primary transition-colors">C</span>
+<p class="font-body-default text-[12.5px] text-ink leading-snug font-medium">
+          Mengatur tegangan pita suara untuk fonasi dan katup epiglotis saat menelan
+        </p>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">add_circle</span>
+</button>
+<!-- Opsi D (Pengecoh / Distractor) -->
+<button class="w-full p-3 rounded-xl bg-surface shadow-sm hover:bg-surface-container-low flex items-start justify-between gap-2 text-left active:scale-[0.98] transition-all group" id="option-d" onclick="pairOption('D', 'Menghasilkan asam klorida (HCl) untuk memecah protein dan membunuh kuman')" type="button">
+<div class="flex items-start gap-2">
+<span class="w-5 h-5 rounded bg-surface-container text-ink text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">D</span>
+<p class="font-body-default text-[12.5px] text-ink leading-snug">
+          Menghasilkan asam klorida (HCl) untuk memecah protein dan membunuh patogen
+        </p>
+</div>
+<span class="material-symbols-outlined text-ink-tertiary text-[18px] shrink-0 mt-0.5 group-hover:text-ink">add_circle</span>
+</button>
+</section>
+<!-- Auto-save Pill Indicator -->
+<div class="flex items-center justify-center gap-1.5 py-2 text-meta-default text-meta-default text-ink-muted mb-space-sm">
+<span class="material-symbols-outlined text-badge-bs text-[15px]" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+<span>Draf tersimpan otomatis di perangkat (<span class="tabular-nums font-medium text-ink">08:45:12</span> WIB)</span>
+</div>
+<!-- Sticky Bottom Navigation Bar for Mobile -->
+<nav aria-label="Navigasi Ujian" class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md px-margin py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] flex items-center justify-between gap-2">
+<!-- Prev Button -->
+<button aria-label="Kembali ke soal sebelumnya" class="h-11 px-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink flex items-center gap-1 font-body-medium text-body-medium active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Sebelumnya</span>
+</button>
+<!-- Doubt / Ragu-ragu Checkbox Button -->
+<button aria-label="Tandai ragu-ragu" class="h-11 px-3 rounded-lg bg-badge-match-bg text-badge-match flex items-center gap-1.5 font-label-default text-label-default active:scale-95 transition-all" id="doubt-btn" onclick="toggleDoubt()" type="button">
+<span class="material-symbols-outlined text-[18px]" id="doubt-icon">check_box_outline_blank</span>
+<span class="font-semibold">Ragu</span>
+</button>
+<!-- Next Button (Primary Action) -->
+<button aria-label="Lanjut ke soal berikutnya" class="h-11 px-4 rounded-lg bg-primary hover:bg-primary-container text-on-primary flex items-center gap-1 font-body-medium text-body-medium font-semibold shadow-sm active:scale-95 transition-transform" type="button">
+<span>Berikutnya</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</nav>
+</div>
+<script>
+  function pairOption(code, text) {
+    const slot = document.getElementById('slot-laring');
+    const premisCard = document.getElementById('premis-laring');
+    
+    if (slot && premisCard) {
+      premisCard.classList.remove('bg-primary-fixed/20');
+      premisCard.classList.add('bg-surface');
+
+      slot.className = 'p-2.5 rounded-lg bg-badge-bs-bg flex items-start justify-between gap-2';
+      slot.innerHTML = `
+        <p class="font-body-default text-[12.5px] leading-snug text-ink min-w-0">
+          <strong class="font-semibold text-primary">[Pilihan ` + code + `]</strong> ` + text + `
+        </p>
+        <button type="button" class="shrink-0 p-1 text-ink-muted hover:text-error active:scale-90 transition-transform" aria-label="Lepas pasangan Laring" onclick="resetLaring()">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      `;
+
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-ink text-surface px-4 py-2 rounded-full text-xs font-medium shadow-md transition-all';
+      toast.textContent = 'Pasangan Laring tersimpan!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+  }
+
+  function resetLaring() {
+    const slot = document.getElementById('slot-laring');
+    const premisCard = document.getElementById('premis-laring');
+    if (slot && premisCard) {
+      premisCard.classList.add('bg-primary-fixed/20');
+      slot.className = 'p-3 rounded-lg bg-badge-pg-bg flex items-center gap-2';
+      slot.innerHTML = `
+        <span class="material-symbols-outlined text-primary text-[18px] shrink-0">radio_button_unchecked</span>
+        <p class="font-body-default text-[12.5px] text-primary font-medium">
+          Ketuk salah satu respon di bank pilihan bawah...
+        </p>
+      `;
+    }
+  }
+
+  function unlinkItem(item) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-surface-container-highest text-ink px-4 py-2 rounded-full text-xs font-medium shadow-md';
+    toast.textContent = 'Pasangan ' + item + ' telah dilepas.';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+  }
+
+  function toggleDoubt() {
+    const btn = document.getElementById('doubt-btn');
+    const icon = document.getElementById('doubt-icon');
+    if (icon.textContent.includes('blank')) {
+      icon.textContent = 'check_box';
+      icon.style.fontVariationSettings = "'FILL' 1";
+      btn.classList.add('bg-badge-match', 'text-surface');
+      btn.classList.remove('bg-badge-match-bg', 'text-badge-match');
+    } else {
+      icon.textContent = 'check_box_outline_blank';
+      icon.style.fontVariationSettings = "'FILL' 0";
+      btn.classList.remove('bg-badge-match', 'text-surface');
+      btn.classList.add('bg-badge-match-bg', 'text-badge-match');
+    }
+  }
+</script></main></body></html>

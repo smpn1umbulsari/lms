@@ -1,0 +1,426 @@
+{
+  "screens": [
+    {
+      "deviceType": "MOBILE",
+      "height": "2124",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/6b00090d863a409ea8abcc9bbdb3bc37:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/6b00090d863a409ea8abcc9bbdb3bc37/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/6b00090d863a409ea8abcc9bbdb3bc37",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e816c422b0925d4512a02ea12:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/6b00090d863a409ea8abcc9bbdb3bc37/fileEntries/screenshot"
+      },
+      "title": "Asesmen & Ujian CBT (Dark Mode)",
+      "width": "780"
+    },
+    {
+      "height": "1768",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/2585500863167715026:download",
+        "mimeType": "text/markdown",
+        "name": "projects/1529169781025736343/files/2585500863167715026"
+      },
+      "name": "projects/1529169781025736343/screens/2585500863167715355",
+      "screenType": "DOCUMENT",
+      "screenshot": {},
+      "title": "ui-spec.md",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2338",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/7131f5d42f5440a7a4ba30e75ec45868:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/7131f5d42f5440a7a4ba30e75ec45868/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/7131f5d42f5440a7a4ba30e75ec45868",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606ea0efa3390925c7247b0c30c5:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/7131f5d42f5440a7a4ba30e75ec45868/fileEntries/screenshot"
+      },
+      "title": "Pengerjaan CBT Siswa - Menjodohkan (MATCH)",
+      "width": "780"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "3590",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/a95d79285d3c4606b7a46542a61a435c:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/a95d79285d3c4606b7a46542a61a435c/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/a95d79285d3c4606b7a46542a61a435c",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e76d25f29034a4ec22f2a1d62:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/a95d79285d3c4606b7a46542a61a435c/fileEntries/screenshot"
+      },
+      "title": "Asesmen & Ujian Builder",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "5184",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/05ab23ec449248ebae640d9225552ae9:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/05ab23ec449248ebae640d9225552ae9/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/05ab23ec449248ebae640d9225552ae9",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e9114198403749980721b3ed4:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/05ab23ec449248ebae640d9225552ae9/fileEntries/screenshot"
+      },
+      "title": "Bank Soal / Asesmen Guru - Detail Paket Soal",
+      "width": "2560"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2510",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/0f612323f39740e19f982982e37d527d:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/0f612323f39740e19f982982e37d527d/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/0f612323f39740e19f982982e37d527d",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7bec0beb0338587e3314ee6d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/0f612323f39740e19f982982e37d527d/fileEntries/screenshot"
+      },
+      "title": "Tugas & Pengumpulan",
+      "width": "780"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/ae63d07c367e4271997777d4680ed5f9:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/ae63d07c367e4271997777d4680ed5f9/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/ae63d07c367e4271997777d4680ed5f9",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7683b3c20779b34aa0062ea8:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/ae63d07c367e4271997777d4680ed5f9/fileEntries/screenshot"
+      },
+      "title": "Manajemen Materi Pelajaran",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/2b02d4e6d9344e3a80a70fe3368385f2:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/2b02d4e6d9344e3a80a70fe3368385f2/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/2b02d4e6d9344e3a80a70fe3368385f2",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e884fe1850576326cd108fb4a:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/2b02d4e6d9344e3a80a70fe3368385f2/fileEntries/screenshot"
+      },
+      "title": "Manajemen Materi Pelajaran (Dark Mode)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/1dc3ed53d7584c6ba70c6718bf3c83ae:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/1dc3ed53d7584c6ba70c6718bf3c83ae/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/1dc3ed53d7584c6ba70c6718bf3c83ae",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e99ea3f290338587e3314ee6d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/1dc3ed53d7584c6ba70c6718bf3c83ae/fileEntries/screenshot"
+      },
+      "title": "Modal Tambah Butir Soal Baru (4 Tipe)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/0c37ee8800e1490c9bb2e763a3a885c2:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/0c37ee8800e1490c9bb2e763a3a885c2/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/0c37ee8800e1490c9bb2e763a3a885c2",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7612c069073aec62d33c1666:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/0c37ee8800e1490c9bb2e763a3a885c2/fileEntries/screenshot"
+      },
+      "title": "Ringkasan Dashboard Guru",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/0574317d703d4bcb81daffe9643a92f8:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/0574317d703d4bcb81daffe9643a92f8/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/0574317d703d4bcb81daffe9643a92f8",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e9d2caf4d07c4ca1fa3291a51:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/0574317d703d4bcb81daffe9643a92f8/fileEntries/screenshot"
+      },
+      "title": "Modal Tambah Butir Soal - Tipe Menjodohkan (MATCH)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2354",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/a868c6e7a1ba4faabe5dfcc1c70ac604:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/a868c6e7a1ba4faabe5dfcc1c70ac604/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/a868c6e7a1ba4faabe5dfcc1c70ac604",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7c3227bb0576326cd108fb4a:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/a868c6e7a1ba4faabe5dfcc1c70ac604/fileEntries/screenshot"
+      },
+      "title": "Rekap Nilai Siswa",
+      "width": "780"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "4914",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/67ec79db05be4dcd9d3035ef6786f998:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/67ec79db05be4dcd9d3035ef6786f998/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/67ec79db05be4dcd9d3035ef6786f998",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e77c5e5a604eab21efa156ca5:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/67ec79db05be4dcd9d3035ef6786f998/fileEntries/screenshot"
+      },
+      "title": "Koreksi & Penilaian Siswa",
+      "width": "2560"
+    },
+    {
+      "height": "1768",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/2585500863167715684:download",
+        "mimeType": "text/markdown",
+        "name": "projects/1529169781025736343/files/2585500863167715684"
+      },
+      "name": "projects/1529169781025736343/screens/2585500863167716013",
+      "screenType": "DOCUMENT",
+      "screenshot": {},
+      "title": "UI UX.md",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2486",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/bc01467a74464f608cb56b3ec1660c13:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/bc01467a74464f608cb56b3ec1660c13/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/bc01467a74464f608cb56b3ec1660c13",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e81de305d07c4dda27e34ecac:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/bc01467a74464f608cb56b3ec1660c13/fileEntries/screenshot"
+      },
+      "title": "Rekap Nilai Siswa (Dark Mode)",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2116",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/8693c4b96d6942cbac1c920190c3f777:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/8693c4b96d6942cbac1c920190c3f777/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/8693c4b96d6942cbac1c920190c3f777",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7c20f85f0576316e3823a6dd:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/8693c4b96d6942cbac1c920190c3f777/fileEntries/screenshot"
+      },
+      "title": "Materi Pembelajaran",
+      "width": "780"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "4340",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/fea976ac7416426fb5f3247d3b55f24f:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/fea976ac7416426fb5f3247d3b55f24f/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/fea976ac7416426fb5f3247d3b55f24f",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e89626842053b4beac109343d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/fea976ac7416426fb5f3247d3b55f24f/fileEntries/screenshot"
+      },
+      "title": "Koreksi & Penilaian Siswa (Dark Mode)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "1880",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/730165e512db4e8295345c6b59233b7b:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/730165e512db4e8295345c6b59233b7b/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/730165e512db4e8295345c6b59233b7b",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e8253955b02a9b62ac10e5a13:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/730165e512db4e8295345c6b59233b7b/fileEntries/screenshot"
+      },
+      "title": "Beranda Siswa (Dark Mode)",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "1784",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/65b41f9b090d4b2daa5bddca500dd009:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/65b41f9b090d4b2daa5bddca500dd009/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/65b41f9b090d4b2daa5bddca500dd009",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7bb1a71c0925c7247b0c30c5:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/65b41f9b090d4b2daa5bddca500dd009/fileEntries/screenshot"
+      },
+      "title": "Beranda Siswa",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2328",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/cb7ea798f8f8412ba6a23bd85928f6b4:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/cb7ea798f8f8412ba6a23bd85928f6b4/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/cb7ea798f8f8412ba6a23bd85928f6b4",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e83990e040383ac1d370d4a3d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/cb7ea798f8f8412ba6a23bd85928f6b4/fileEntries/screenshot"
+      },
+      "title": "Materi Pembelajaran (Dark Mode)",
+      "width": "780"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "2048",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/46ede192e9784d578d827d7dde774d2c:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/46ede192e9784d578d827d7dde774d2c/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/46ede192e9784d578d827d7dde774d2c",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e87f30c1700303ee4402bf24d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/46ede192e9784d578d827d7dde774d2c/fileEntries/screenshot"
+      },
+      "title": "Ringkasan Dashboard Guru (Dark Mode)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "DESKTOP",
+      "height": "3568",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/89f9cbec4bed471995f3a3e3e040a4e6:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/89f9cbec4bed471995f3a3e3e040a4e6/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/89f9cbec4bed471995f3a3e3e040a4e6",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e88395e3d07c4e2034f353f3a:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/89f9cbec4bed471995f3a3e3e040a4e6/fileEntries/screenshot"
+      },
+      "title": "Asesmen & Ujian Builder (Dark Mode)",
+      "width": "2560"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "1874",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/f97ca2209979488282dd2948eb48cd88:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/f97ca2209979488282dd2948eb48cd88/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/f97ca2209979488282dd2948eb48cd88",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e7c0f3952073ad6a292005ae0:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/f97ca2209979488282dd2948eb48cd88/fileEntries/screenshot"
+      },
+      "title": "Asesmen & Ujian CBT",
+      "width": "780"
+    },
+    {
+      "deviceType": "MOBILE",
+      "height": "2872",
+      "htmlCode": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/20ae6b27b9714bf488f38cd7be0f5067:download",
+        "mimeType": "text/html",
+        "name": "projects/1529169781025736343/screens/20ae6b27b9714bf488f38cd7be0f5067/fileEntries/html"
+      },
+      "name": "projects/1529169781025736343/screens/20ae6b27b9714bf488f38cd7be0f5067",
+      "screenType": "DESIGN",
+      "screenshot": {
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/1529169781025736343/files/screenshot_0006606e83a9773c089af57a9a1e199d:download",
+        "mimeType": "image/png",
+        "name": "projects/1529169781025736343/screens/20ae6b27b9714bf488f38cd7be0f5067/fileEntries/screenshot"
+      },
+      "title": "Tugas & Pengumpulan (Dark Mode)",
+      "width": "780"
+    }
+  ]
+}

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container":"#eceef0","secondary-fixed":"#d3e4fe","line-soft":"#f1f5f9","surface-container-highest":"#e0e3e5","inverse-on-surface":"#eff1f3","on-tertiary":"#ffffff","badge-essay":"#dc2626","primary-fixed-dim":"#b7c4ff","on-secondary-fixed":"#0b1c30","outline":"#747686","badge-bs-bg":"#f0fdf4","on-secondary-fixed-variant":"#38485d","on-primary":"#ffffff","on-error":"#ffffff","line":"#e2e8f0","ink-tertiary":"#94a3b8","outline-variant":"#c4c5d7","on-surface-variant":"#434655","secondary-fixed-dim":"#b7c8e1","on-tertiary-fixed":"#131b2e","inverse-primary":"#b7c4ff","ink":"#0f172a","surface-container-lowest":"#ffffff","badge-pg":"#1d4ed8","badge-pg-bg":"#eff6ff","on-surface":"#191c1e","surface-container-high":"#e6e8ea","surface-dim":"#d8dadc","on-background":"#191c1e","on-tertiary-fixed-variant":"#3f465c","surface-bright":"#f7f9fb","ink-muted":"#64748b","surface-variant":"#e0e3e5","badge-essay-bg":"#fef2f2","on-primary-container":"#cad3ff","primary-container":"#1d4ed8","badge-match":"#d97706","error":"#ba1a1a","secondary":"#505f76","on-tertiary-container":"#cdd5ef","badge-match-bg":"#fffbeb","tertiary":"#3d445a","on-primary-fixed":"#001551","on-secondary-container":"#54647a","surface-tint":"#2151da","background":"#f7f9fb","paper":"#f8fafc","on-secondary":"#ffffff","on-primary-fixed-variant":"#0039b5","tertiary-container":"#545c72","primary-fixed":"#dce1ff","secondary-container":"#d0e1fb","on-error-container":"#93000a","tertiary-fixed":"#dae2fd","primary":"#0037b0","surface-container-low":"#f2f4f6","error-container":"#ffdad6","badge-bs":"#16a34a","inverse-surface":"#2d3133","tertiary-fixed-dim":"#bec6e0","surface":"#ffffff"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xl":"1.375rem","space-2xl":"2.125rem","gutter":"0.875rem","space-sm":"0.625rem","gutter-desktop":"1rem","space-xs":"0.5rem","margin":"1.25rem","margin-desktop":"2.75rem","space-xxs":"0.25rem","space-lg":"1rem","space-md":"0.875rem"},fontFamily:{"headline-lg":["Inter"],"headline-lg-mobile":["Inter"],"body-default":["Inter"],"headline-sm":["Inter"],"body-medium":["Inter"],"nav-mobile":["Inter"],"display-stat":["Inter"],"panel-title":["Inter"],"label-default":["Inter"],"meta-default":["Inter"],"badge-label":["Inter"],"headline-md":["Inter"]},fontSize:{"headline-lg":["26px",{lineHeight:"32px",letterSpacing:"-0.03em",fontWeight:"600"}],"headline-lg-mobile":["20px",{lineHeight:"26px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-default":["13.5px",{lineHeight:"20px",fontWeight:"400"}],"headline-sm":["16px",{lineHeight:"22px",fontWeight:"600"}],"body-medium":["13.5px",{lineHeight:"20px",fontWeight:"500"}],"nav-mobile":["10.5px",{lineHeight:"14px",fontWeight:"500"}],"display-stat":["29px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"panel-title":["13px",{lineHeight:"18px",fontWeight:"600"}],"label-default":["12.5px",{lineHeight:"16px",fontWeight:"500"}],"meta-default":["12px",{lineHeight:"16px",fontWeight:"400"}],"badge-label":["11px",{lineHeight:"14px",fontWeight:"600"}],"headline-md":["19px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}};</script></head><body class="bg-paper text-ink font-body-default text-body-default min-h-screen selection:bg-badge-pg-bg selection:text-badge-pg"><aside class="fixed left-0 top-0 h-full w-16 bg-surface z-50 flex flex-col items-center py-4 border-r border-line"><div class="w-10 h-10 flex items-center justify-center mb-6"><img alt="LMS SMPN 1 Umbulsari Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrD4KIfD-oewl9rHNR0g6pJCdWQ_ItyIxxPimnjWRHPftlZy3UTLL2Bffwmh-txmMayQqdzWIpub6DuRPgv14b5DpLzfKkfk-tI6sCClfWDU15Gt60R-xzn_sibXvlx4nYdqqemEJrxdifV2vvcBr5uleIoy1HTaTR5sdGzx_iV5lVx3kSoWh9GGZvMIh5JXRvkngm7XssdWFhVgNyP9CPzAWy7mb6gr-b0Lijx0u9-d"/></div><nav class="flex flex-col items-center gap-2 w-full px-2" data-active-classes="bg-badge-pg-bg text-badge-pg font-medium"><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="ringkasan-dashboard-guru" href="#" title="Ringkasan Dashboard Guru"><span class="material-symbols-outlined text-[20px]">grid_view</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="materi" href="#" title="Materi Pembelajaran"><span class="material-symbols-outlined text-[20px]">menu_book</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="bank-soal-asesmen" href="#" title="Bank Soal / Asesmen"><span class="material-symbols-outlined text-[20px]">quiz</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="penilaian" href="#" title="Penilaian &amp; Koreksi"><span class="material-symbols-outlined text-[20px]">fact_check</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="kelas" href="#" title="Manajemen Kelas"><span class="material-symbols-outlined text-[20px]">groups</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="pengaturan" href="#" title="Pengaturan Portal"><span class="material-symbols-outlined text-[20px]">settings</span></a></nav><div class="mt-auto flex flex-col items-center gap-3"><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="bantuan" href="#" title="Pusat Bantuan"><span class="material-symbols-outlined text-[20px]">help_outline</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></aside><div class="pl-16"><header class="fixed top-0 left-16 right-0 h-14 bg-surface/90 backdrop-blur-md z-40 border-b border-line"><div class="h-14 px-6 flex items-center justify-between"><div class="flex items-center gap-2 text-ink-muted font-meta-default text-meta-default"><span class="font-label-default text-ink font-medium">SMPN 1 Umbulsari</span><span class="text-ink-tertiary">/</span><span class="text-ink-muted">Portal Guru</span></div><div class="flex items-center gap-4"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low rounded border border-line-soft font-meta-default text-meta-default text-ink-muted"><span class="w-1.5 h-1.5 rounded-full bg-badge-bs"></span><span>Semester Ganjil 2026/2027</span></div><button aria-label="Notifikasi" class="relative p-1.5 text-ink-muted hover:text-ink hover:bg-surface-container-low rounded transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-badge-essay ring-2 ring-surface"></span></button><div class="h-4 w-[1px] bg-line"></div><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[16px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-default text-label-default text-ink leading-none">Drs. Bambang S.</span><span class="font-meta-default text-[11px] text-ink-tertiary leading-tight">Guru Matematika</span></div></div></div></div></header><main class="relative pt-14 bg-paper min-h-screen"><div class="flex flex-col w-full relative">
+<!-- Latar Belakang Layar Bank Soal Guru (Simulated Ambient Canvas) -->
+<div class="w-full max-w-[1040px] px-8 py-7 opacity-35 pointer-events-none select-none filter blur-[1px]">
+<div class="flex items-center justify-between pb-5 border-b border-line">
+<div>
+<div class="flex items-center gap-2 text-ink-muted font-meta-default text-meta-default mb-1">
+<span>Bank Soal</span>
+<span>/</span>
+<span>Ilmu Pengetahuan Alam</span>
+<span>/</span>
+<span class="text-ink">Kelas VIII Terpadu</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-ink tracking-tight">Kompilasi Butir Asesmen Sumatif</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="h-9 px-3 bg-surface border border-line rounded flex items-center text-ink-muted text-body-default gap-2">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<span>Cari butir soal, topik KD...</span>
+</div>
+<button class="h-9 px-4 bg-primary text-on-primary rounded font-label-default text-label-default flex items-center gap-1.5 font-medium">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Tambah Soal</span>
+</button>
+</div>
+</div>
+<!-- Stat Strip Kanonik 1-Row -->
+<div class="grid grid-cols-4 bg-surface border border-line rounded-lg mt-5 divide-x divide-line">
+<div class="p-3.5 flex flex-col">
+<span class="font-label-default text-label-default text-ink-muted">Total Bank Soal</span>
+<span class="font-display-stat text-display-stat text-ink font-semibold tabular-nums mt-0.5">142</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary mt-0.5">3 Bab Aktif</span>
+</div>
+<div class="p-3.5 flex flex-col">
+<span class="font-label-default text-label-default text-ink-muted">Pilihan Ganda (PG)</span>
+<span class="font-display-stat text-display-stat text-badge-pg font-semibold tabular-nums mt-0.5">96</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary mt-0.5">Proporsi 68%</span>
+</div>
+<div class="p-3.5 flex flex-col">
+<span class="font-label-default text-label-default text-ink-muted">Taraf HOTS (C4-C6)</span>
+<span class="font-display-stat text-display-stat text-badge-match font-semibold tabular-nums mt-0.5">38</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary mt-0.5">Target Capaian 30%</span>
+</div>
+<div class="p-3.5 flex flex-col">
+<span class="font-label-default text-label-default text-ink-muted">Status Validasi</span>
+<span class="font-display-stat text-display-stat text-badge-bs font-semibold tabular-nums mt-0.5">100%</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary mt-0.5">Siap Terbit</span>
+</div>
+</div>
+<!-- Tabel Soal Latar -->
+<div class="mt-6 bg-surface border border-line rounded-lg overflow-hidden">
+<div class="px-4 py-3 bg-surface-container-low border-b border-line flex items-center justify-between font-label-default text-label-default text-ink-muted">
+<span>Daftar Butir Soal Terdaftar</span>
+<span>Semester Ganjil 2026/2027</span>
+</div>
+<div class="divide-y divide-line-soft">
+<div class="p-4 flex items-center justify-between gap-4">
+<div class="flex items-start gap-3 min-w-0">
+<span class="font-badge-label text-badge-label bg-badge-pg-bg text-badge-pg px-2 py-0.5 rounded">PG</span>
+<div class="truncate">
+<p class="font-body-medium text-body-medium text-ink truncate">Fungsi utama leukosit dalam sistem peredaran darah manusia adalah...</p>
+<p class="font-meta-default text-meta-default text-ink-muted">KD 3.2 Sistem Sirkulasi • Sedang • 4 Pilihan</p>
+</div>
+</div>
+<span class="font-meta-default text-meta-default text-ink-muted tabular-nums shrink-0">25 Poin</span>
+</div>
+<div class="p-4 flex items-center justify-between gap-4">
+<div class="flex items-start gap-3 min-w-0">
+<span class="font-badge-label text-badge-label bg-badge-match-bg text-badge-match px-2 py-0.5 rounded">MATCH</span>
+<div class="truncate">
+<p class="font-body-medium text-body-medium text-ink truncate">Pasangkan organ pencernaan berikut dengan enzim pencernaan yang dihasilkannya...</p>
+<p class="font-meta-default text-meta-default text-ink-muted">KD 3.3 Sistem Pencernaan • Sukar • HOTS</p>
+</div>
+</div>
+<span class="font-meta-default text-meta-default text-ink-muted tabular-nums shrink-0">25 Poin</span>
+</div>
+</div>
+</div>
+</div>
+<!-- BACKDROP OVERLAY POP-UP -->
+<div class="fixed inset-0 z-50 bg-[#0f172a]/45 backdrop-blur-[2.5px] flex items-center justify-center p-3 sm:p-5 overflow-y-auto" id="modal-container">
+<!-- MODAL DIALOG CANONICAL (Center Max 720px) -->
+<div aria-labelledby="modal-title" aria-modal="true" class="w-full max-w-[720px] bg-surface rounded-xl border border-line shadow-2xl flex flex-col max-h-[942px] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150" role="dialog">
+<!-- 1. HEADER MODAL (Fixed Top) -->
+<div class="shrink-0 bg-surface border-b border-line px-5 pt-4 pb-3.5 flex flex-col gap-3">
+<!-- Top bar: Title & Escape Button -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<h2 class="font-headline-sm text-headline-sm text-ink tracking-tight" id="modal-title">Tambah Butir Soal Baru</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-low border border-line-soft font-badge-label text-badge-label text-ink-muted">
+              Bank Soal IPA Kelas VIII
+            </span>
+</div>
+<button aria-label="Tutup dialog (Esc)" class="w-7 h-7 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container-low transition-colors group" onclick="document.getElementById('modal-container').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[19px]">close</span>
+<span class="sr-only">Tutup modal</span>
+</button>
+</div>
+<!-- Sub-bar: Pemilih Tipe Soal (4 Tab Segmented Switcher berkapsul) -->
+<div class="grid grid-cols-4 p-1 bg-surface-container-low rounded-lg gap-1 border border-line-soft" id="type-tabs" role="tablist">
+<!-- Tab 1: Pilihan Ganda (PG) - Default Active -->
+<button aria-selected="false" class="tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all text-ink-muted hover:text-ink" id="tab-btn-pg" onclick="switchTab('pg')" role="tab">
+<span class="material-symbols-outlined text-[15px]">radio_button_unchecked</span>
+<span class="truncate">Pilihan Ganda</span>
+<span class="hidden sm:inline-block px-1 py-0.2 bg-badge-pg-bg text-badge-pg rounded text-[10px]">PG</span>
+</button>
+<!-- Tab 2: Benar / Salah (BS) -->
+<button aria-selected="false" class="tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all text-ink-muted hover:text-ink" id="tab-btn-bs" onclick="switchTab('bs')" role="tab">
+<span class="material-symbols-outlined text-[15px]">flaky</span>
+<span class="truncate">Benar / Salah</span>
+<span class="hidden sm:inline-block px-1 py-0.2 bg-badge-bs-bg text-badge-bs rounded text-[10px]">BS</span>
+</button>
+<!-- Tab 3: Menjodohkan (Match) -->
+<button aria-selected="true" class="tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all bg-surface text-badge-match border border-line/60 shadow-sm" id="tab-btn-match" onclick="switchTab('match')" role="tab">
+<span class="material-symbols-outlined text-[15px]">radio_button_checked</span>
+<span class="truncate">Menjodohkan</span>
+<span class="hidden sm:inline-block px-1 py-0.2 bg-badge-match-bg text-badge-match rounded text-[10px]">MATCH</span>
+</button>
+<!-- Tab 4: Uraian / Essay (HOTS) -->
+<button aria-selected="false" class="tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all text-ink-muted hover:text-ink" id="tab-btn-essay" onclick="switchTab('essay')" role="tab">
+<span class="material-symbols-outlined text-[15px]">notes</span>
+<span class="truncate">Uraian / Essay</span>
+<span class="hidden sm:inline-block px-1 py-0.2 bg-badge-essay-bg text-badge-essay rounded text-[10px]">HOTS</span>
+</button>
+</div>
+</div>
+<!-- 2. BODY MODAL (Scrollable, padding 24px) -->
+<div class="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-surface text-ink text-body-default">
+<!-- Bagian Metadata Soal (1 baris ringkas / dense layout) -->
+<div class="p-3.5 bg-paper rounded-lg border border-line grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+<!-- KD / Bab -->
+<div class="sm:col-span-4 flex flex-col gap-1">
+<label class="font-label-default text-label-default text-ink font-medium" for="input-kd">Kompetensi Dasar (KD)</label>
+<select class="h-9 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" id="input-kd">
+<option selected="" value="kd32">KD 3.2 Peredaran Darah</option>
+<option value="kd31">KD 3.1 Gerak Tumbuhan</option>
+<option value="kd33">KD 3.3 Sistem Pencernaan</option>
+<option value="kd34">KD 3.4 Zat Aditif Makanan</option>
+</select>
+</div>
+<!-- Ranah Kognitif Bloom -->
+<div class="sm:col-span-3 flex flex-col gap-1">
+<label class="font-label-default text-label-default text-ink font-medium" for="input-bloom">Ranah Kognitif</label>
+<select class="h-9 px-2 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" id="input-bloom">
+<option value="c1c2">C1-C2 Mengingat</option>
+<option value="c3">C3 Aplikasi</option>
+<option selected="" value="c4c6">C4-C6 Analisis (HOTS)</option>
+</select>
+</div>
+<!-- Tingkat Kesulitan (Segmented Chip) -->
+<div class="sm:col-span-3 flex flex-col gap-1">
+<label class="font-label-default text-label-default text-ink font-medium">Tingkat Kesulitan</label>
+<div class="grid grid-cols-3 h-9 bg-surface rounded border border-line p-0.5 gap-0.5 text-center items-center">
+<button class="h-full rounded font-meta-default text-[11px] text-ink-muted hover:text-ink hover:bg-surface-container-low transition-colors" type="button">Mudah</button>
+<button class="h-full rounded font-meta-default text-[11px] bg-badge-pg-bg text-badge-pg font-semibold border border-badge-pg/20" type="button">Sedang</button>
+<button class="h-full rounded font-meta-default text-[11px] text-ink-muted hover:text-ink hover:bg-surface-container-low transition-colors" type="button">Sukar</button>
+</div>
+</div>
+<!-- Bobot Nilai / Poin -->
+<div class="sm:col-span-2 flex flex-col gap-1">
+<label class="font-label-default text-label-default text-ink font-medium" for="input-point">Poin Bobot</label>
+<div class="relative">
+<input class="w-full h-9 pl-2.5 pr-6 bg-surface border border-line rounded text-body-default text-ink tabular-nums font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" id="input-point" max="100" min="1" type="number" value="30"/>
+<span class="absolute right-2 top-2 font-meta-default text-meta-default text-ink-tertiary pointer-events-none">pt</span>
+</div>
+</div>
+</div>
+<!-- Stimulus Bacaan / Konteks (Collapsible Panel) -->
+<div class="border border-line rounded-lg overflow-hidden bg-surface">
+<div class="flex items-center justify-between px-3.5 py-2.5 bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors" onclick="document.getElementById('stimulus-body').classList.toggle('hidden'); document.getElementById('stimulus-chevron').classList.toggle('rotate-180')">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[17px] text-ink-muted">subject</span>
+<span class="font-panel-title text-panel-title text-ink">Stimulus / Wacana Bacaan Pendukung</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">(Opsional untuk Soal Kontekstual)</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-ink-muted transition-transform" id="stimulus-chevron">expand_more</span>
+</div>
+<div class="p-3.5 border-t border-line space-y-2.5" id="stimulus-body">
+<div class="flex items-center justify-between text-meta-default font-meta-default text-ink-muted">
+<span>Sisipkan teks bacaan, infografis data lab, atau kutipan literasi ilmiah.</span>
+<div class="flex items-center gap-1.5">
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded border border-line text-ink hover:bg-surface-container-low text-[11px]" type="button">
+<span class="material-symbols-outlined text-[14px]">image</span> Unggah Gambar
+                </button>
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded border border-line text-ink hover:bg-surface-container-low text-[11px]" type="button">
+<span class="material-symbols-outlined text-[14px]">functions</span> LaTeX / Simbol
+                </button>
+</div>
+</div>
+<textarea class="w-full p-2.5 bg-paper border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none placeholder:text-ink-tertiary" placeholder="Contoh: 'Seorang pasien bergolongan darah A mengalami kecelakaan dan membutuhkan transfusi segera...'" rows="2"></textarea>
+</div>
+</div>
+<!-- Lembar Pertanyaan Utama (Rich Text Input) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-panel-title text-panel-title text-ink flex items-center gap-1" for="question-prompt">
+<span>Teks Pertanyaan Utama</span>
+<span class="text-error text-[14px]">*</span>
+</label>
+<!-- Rich text simple micro-toolbar -->
+<div class="flex items-center gap-0.5 bg-surface-container-low border border-line-soft rounded p-0.5">
+<button class="w-6 h-6 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface text-[12px] font-bold" title="Bold" type="button">B</button>
+<button class="w-6 h-6 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface text-[12px] italic font-serif" title="Italic" type="button">I</button>
+<button class="w-6 h-6 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface text-[11px]" title="Subscript" type="button">X<sub>2</sub></button>
+<button class="w-6 h-6 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface text-[11px]" title="Superscript" type="button">X<sup>2</sup></button>
+<div class="w-[1px] h-3.5 bg-line mx-0.5"></div>
+<button class="w-6 h-6 rounded flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface" title="Rumus Kimia/Fisika" type="button">
+<span class="material-symbols-outlined text-[13px]">science</span>
+</button>
+</div>
+</div>
+<div class="relative">
+<textarea class="w-full p-3 bg-surface border border-line rounded-lg text-body-default text-ink focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all leading-relaxed" id="question-prompt" rows="3">Jodohkanlah struktur organ pernapasan berikut dengan fungsi fisiologis utamanya secara tepat!</textarea>
+</div>
+</div>
+<!-- INTERACTIVE QUESTION TYPE PANELS -->
+<!-- Type 1: Panel Opsi Pilihan Ganda (Active) -->
+<div class="space-y-3 hidden" id="panel-pg">
+<div class="flex items-center justify-between pt-1">
+<span class="font-panel-title text-panel-title text-ink">Opsi Jawaban &amp; Kunci Validasi</span>
+<span class="font-meta-default text-meta-default text-ink-muted">Pilih satu radio bulat sebagai kunci benar</span>
+</div>
+<!-- Opsi A (Kunci Benar) -->
+<div class="flex items-start gap-2.5 p-2.5 rounded-lg border border-badge-pg/30 bg-badge-pg-bg/30 transition-colors">
+<label class="pt-2 cursor-pointer flex items-center justify-center">
+<input checked="" class="w-4 h-4 text-primary focus:ring-primary accent-primary" name="answer_key" type="radio"/>
+<span class="sr-only">Kunci Opsi A</span>
+</label>
+<div class="w-7 h-7 rounded bg-primary text-on-primary font-label-default text-label-default flex items-center justify-center font-semibold shrink-0 mt-1">
+              A
+            </div>
+<div class="flex-1 space-y-1.5">
+<input class="w-full h-9 px-2.5 bg-surface border border-line rounded text-body-default text-ink font-medium focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Beban kerja ventrikel kiri meningkat karena resistensi perifer vaskular bertambah tinggi."/>
+<input class="w-full h-7 px-2.5 bg-surface/75 border border-line-soft rounded font-meta-default text-meta-default text-ink-muted focus:outline-none focus:border-line" placeholder="Catatan distractor opsi (opsional)..." type="text" value="Kunci valid: Peningkatan eritrosit meningkatkan hematokrit sehingga viskositas naik."/>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-badge-pg text-on-primary font-badge-label text-[10px] uppercase font-semibold mt-1">
+              Kunci Benar
+            </span>
+</div>
+<!-- Opsi B -->
+<div class="flex items-start gap-2.5 p-2.5 rounded-lg border border-line bg-surface hover:bg-paper transition-colors">
+<label class="pt-2 cursor-pointer flex items-center justify-center">
+<input class="w-4 h-4 text-primary focus:ring-primary accent-primary" name="answer_key" type="radio"/>
+<span class="sr-only">Kunci Opsi B</span>
+</label>
+<div class="w-7 h-7 rounded bg-surface-container-high text-ink font-label-default text-label-default flex items-center justify-center font-medium shrink-0 mt-1">
+              B
+            </div>
+<div class="flex-1 space-y-1.5">
+<input class="w-full h-9 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Tekanan osmotik kapiler menurun drastis sehingga memicu penimbunan cairan di alveolus."/>
+<input class="w-full h-7 px-2.5 bg-paper border border-line-soft rounded font-meta-default text-meta-default text-ink-muted focus:outline-none focus:border-line" placeholder="Catatan distractor opsi (opsional)..." type="text"/>
+</div>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors mt-1" title="Hapus Opsi" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+<!-- Opsi C -->
+<div class="flex items-start gap-2.5 p-2.5 rounded-lg border border-line bg-surface hover:bg-paper transition-colors">
+<label class="pt-2 cursor-pointer flex items-center justify-center">
+<input class="w-4 h-4 text-primary focus:ring-primary accent-primary" name="answer_key" type="radio"/>
+<span class="sr-only">Kunci Opsi C</span>
+</label>
+<div class="w-7 h-7 rounded bg-surface-container-high text-ink font-label-default text-label-default flex items-center justify-center font-medium shrink-0 mt-1">
+              C
+            </div>
+<div class="flex-1 space-y-1.5">
+<input class="w-full h-9 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Laju difusi oksigen pada membran kapiler alveolus melambat akibat pengikatan keping darah."/>
+<input class="w-full h-7 px-2.5 bg-paper border border-line-soft rounded font-meta-default text-meta-default text-ink-muted focus:outline-none focus:border-line" placeholder="Catatan distractor opsi (opsional)..." type="text"/>
+</div>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors mt-1" title="Hapus Opsi" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+<!-- Opsi D -->
+<div class="flex items-start gap-2.5 p-2.5 rounded-lg border border-line bg-surface hover:bg-paper transition-colors">
+<label class="pt-2 cursor-pointer flex items-center justify-center">
+<input class="w-4 h-4 text-primary focus:ring-primary accent-primary" name="answer_key" type="radio"/>
+<span class="sr-only">Kunci Opsi D</span>
+</label>
+<div class="w-7 h-7 rounded bg-surface-container-high text-ink font-label-default text-label-default flex items-center justify-center font-medium shrink-0 mt-1">
+              D
+            </div>
+<div class="flex-1 space-y-1.5">
+<input class="w-full h-9 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="Frekuensi detak nodus sinoatrialis menurun karena kejenuhan hemoglobin terhadap gas CO2."/>
+<input class="w-full h-7 px-2.5 bg-paper border border-line-soft rounded font-meta-default text-meta-default text-ink-muted focus:outline-none focus:border-line" placeholder="Catatan distractor opsi (opsional)..." type="text"/>
+</div>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors mt-1" title="Hapus Opsi" type="button">
+<span class="material-symbols-outlined text-[17px]">delete</span>
+</button>
+</div>
+<!-- Tombol Tambah Opsi -->
+<button class="w-full py-2 bg-surface hover:bg-paper border border-dashed border-line rounded-lg text-ink-muted hover:text-ink font-label-default text-label-default flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>Tambah Opsi Pilihan (E)</span>
+</button>
+</div>
+<!-- Type 2: Panel Benar / Salah (BS) - Hidden initially -->
+<div class="hidden space-y-3" id="panel-bs">
+<div class="p-3.5 bg-badge-bs-bg border border-badge-bs/30 rounded-lg">
+<span class="font-panel-title text-panel-title text-badge-bs block mb-1">Pernyataan Logis Benar / Salah</span>
+<p class="font-meta-default text-meta-default text-ink-muted mb-3">Tentukan apakah pernyataan pada soal di atas bernilai Benar atau Salah secara saintifik.</p>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-3 p-3 bg-surface border border-line rounded-lg cursor-pointer hover:border-badge-bs transition-all">
+<input checked="" class="w-4 h-4 text-badge-bs accent-badge-bs" name="bs_choice" type="radio"/>
+<div>
+<span class="font-label-default text-label-default font-semibold text-ink block">BENAR</span>
+<span class="font-meta-default text-meta-default text-ink-muted">Pernyataan valid sesuai kaidah ilmiah</span>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 bg-surface border border-line rounded-lg cursor-pointer hover:border-badge-bs transition-all">
+<input class="w-4 h-4 text-badge-bs accent-badge-bs" name="bs_choice" type="radio"/>
+<div>
+<span class="font-label-default text-label-default font-semibold text-ink block">SALAH</span>
+<span class="font-meta-default text-meta-default text-ink-muted">Pernyataan menyimpang / tidak valid</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Type 3: Panel Menjodohkan (MATCH) - Hidden initially -->
+<div class="space-y-3" id="panel-match">
+<div class="p-3.5 bg-badge-match-bg border border-badge-match/30 rounded-lg space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-badge-match">sync_alt</span>
+<span class="font-panel-title text-panel-title text-ink font-semibold">Konfigurasi Pasangan Menjodohkan</span>
+</div>
+<span class="font-meta-default text-meta-default text-ink-muted">3 Pasangan Utama • 1 Pengecoh (Distraktor)</span>
+</div>
+<!-- Header Kolom -->
+<div class="grid grid-cols-12 gap-2 text-meta-default font-label-default text-ink-muted px-1 pb-1 border-b border-badge-match/20">
+<div class="col-span-4 font-semibold text-ink">Kolom A (Premis / Organ)</div>
+<div class="col-span-1 text-center font-medium">Relasi</div>
+<div class="col-span-5 font-semibold text-ink">Kolom B (Pasangan Jawaban Benar)</div>
+<div class="col-span-2 text-right font-medium">Bobot / Aksi</div>
+</div>
+<!-- Baris Pasangan 1 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface p-2 rounded-md border border-line">
+<div class="col-span-4">
+<input class="w-full h-8 px-2.5 bg-surface-container-low border border-line rounded text-body-default text-ink font-medium focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Alveolus"/>
+</div>
+<div class="col-span-1 flex justify-center text-badge-match font-bold">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+</div>
+<div class="col-span-5">
+<input class="w-full h-8 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Tempat terjadinya difusi gas O2 dan CO2 melalui membran epitel"/>
+</div>
+<div class="col-span-2 flex items-center justify-end gap-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-[10px] font-semibold border border-badge-match/30">10 pt</span>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors" title="Hapus Pasangan" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Baris Pasangan 2 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface p-2 rounded-md border border-line">
+<div class="col-span-4">
+<input class="w-full h-8 px-2.5 bg-surface-container-low border border-line rounded text-body-default text-ink font-medium focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Trakea"/>
+</div>
+<div class="col-span-1 flex justify-center text-badge-match font-bold">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+</div>
+<div class="col-span-5">
+<input class="w-full h-8 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Menyaring dan menyapu debu asing melalui gerakan silia"/>
+</div>
+<div class="col-span-2 flex items-center justify-end gap-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-[10px] font-semibold border border-badge-match/30">10 pt</span>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors" title="Hapus Pasangan" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Baris Pasangan 3 -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface p-2 rounded-md border border-line">
+<div class="col-span-4">
+<input class="w-full h-8 px-2.5 bg-surface-container-low border border-line rounded text-body-default text-ink font-medium focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Laring"/>
+</div>
+<div class="col-span-1 flex justify-center text-badge-match font-bold">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+</div>
+<div class="col-span-5">
+<input class="w-full h-8 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Mengatur pita suara dan katup epiglotis saat menelan"/>
+</div>
+<div class="col-span-2 flex items-center justify-end gap-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-[10px] font-semibold border border-badge-match/30">10 pt</span>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors" title="Hapus Pasangan" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Baris Pengecoh / Distraktor (Kolom B tanpa pasangan di Kolom A) -->
+<div class="grid grid-cols-12 gap-2 items-center bg-surface/75 p-2 rounded-md border border-dashed border-badge-match/40">
+<div class="col-span-4 flex items-center gap-1.5 text-meta-default font-meta-default text-ink-tertiary italic px-2">
+<span class="material-symbols-outlined text-[15px]">block</span>
+<span>(Tanpa Pasangan)</span>
+</div>
+<div class="col-span-1 flex justify-center text-ink-tertiary font-bold">
+<span class="text-[14px]">✕</span>
+</div>
+<div class="col-span-5">
+<input class="w-full h-8 px-2.5 bg-surface border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-badge-match" type="text" value="Menghasilkan asam klorida (HCl) untuk memecah protein"/>
+</div>
+<div class="col-span-2 flex items-center justify-end gap-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container-high text-ink-muted font-badge-label text-[10px] font-medium">Pengecoh</span>
+<button class="p-1 text-ink-tertiary hover:text-error transition-colors" title="Hapus Pengecoh" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Aksi Baris & Opsi Pengacakan Kolom B -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-1">
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1.5 bg-surface hover:bg-paper border border-line rounded-md text-badge-match font-label-default text-label-default flex items-center gap-1 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[15px]">add</span>
+<span>Tambah Pasangan Baris</span>
+</button>
+<button class="px-2.5 py-1.5 bg-surface hover:bg-paper border border-dashed border-line rounded-md text-ink-muted hover:text-ink font-label-default text-label-default flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">add_circle_outline</span>
+<span>Tambah Pengecoh</span>
+</button>
+</div>
+<label class="inline-flex items-center gap-2 cursor-pointer">
+<input checked="" class="w-3.5 h-3.5 accent-badge-match text-badge-match rounded" type="checkbox"/>
+<span class="font-meta-default text-meta-default text-ink-muted">Acak urutan opsi Kolom B saat siswa mengerjakan</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Type 4: Panel Uraian / Essay (HOTS) - Hidden initially -->
+<div class="hidden space-y-3" id="panel-essay">
+<div class="p-3.5 bg-badge-essay-bg border border-badge-essay/30 rounded-lg space-y-2">
+<span class="font-panel-title text-panel-title text-badge-essay block">Rubrik Penilaian Uraian (Pedoman Penskoran)</span>
+<p class="font-meta-default text-meta-default text-ink-muted">Tuliskan kata kunci wajib dan kriteria pemberian skor maksimum 25 poin.</p>
+<textarea class="w-full p-2 bg-surface border border-line rounded text-body-default text-ink" placeholder="Kriteria: Siswa harus menyebutkan kata kunci: (1) Hematokrit naik (10 pt), (2) Afterload ventrikel kiri (15 pt)..." rows="2"></textarea>
+</div>
+</div>
+<!-- Panel Pembahasan & Catatan Kunci (Collapsible) -->
+<div class="border border-line rounded-lg overflow-hidden bg-surface">
+<div class="flex items-center justify-between px-3.5 py-2.5 bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors" onclick="document.getElementById('explanation-body').classList.toggle('hidden'); document.getElementById('explanation-chevron').classList.toggle('rotate-180')">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[17px] text-badge-pg">lightbulb</span>
+<span class="font-panel-title text-panel-title text-ink">Pembahasan Kunci &amp; Analisis Distractor</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">(Tampil saat evaluasi asesmen selesai)</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-ink-muted transition-transform rotate-180" id="explanation-chevron">expand_more</span>
+</div>
+<div class="p-3.5 border-t border-line space-y-2" id="explanation-body">
+<textarea class="w-full p-2.5 bg-paper border border-line rounded text-body-default text-ink focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-ink-tertiary" placeholder="Tuliskan rasionalisasi ilmiah mengapa opsi A benar dan bagaimana mengidentifikasi miskonsepsi siswa pada opsi lainnya..." rows="2">Kunci validasi: Alveolus memiliki epitel pipih selapis untuk difusi O2-CO2; Trakea dilengkapi epitel bersilia untuk membersihkan jalan napas; Laring memiliki plika vokalis dan epiglotis. Opsi pengecoh (HCl) merupakan fungsi lambung pada sistem pencernaan, bukan pernapasan.</textarea>
+</div>
+</div>
+<!-- Switches & Pengaturan Tambahan (Dense 1-Row Grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<!-- Switch 1: Acak Opsi -->
+<label class="flex items-center justify-between p-2.5 bg-paper border border-line rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="font-label-default text-label-default text-ink font-medium">Acak Urutan Opsi</span>
+<span class="font-meta-default text-meta-default text-ink-muted">Urutan A-D diacak otomatis tiap siswa</span>
+</div>
+<input checked="" class="w-4 h-4 text-primary accent-primary rounded cursor-pointer" type="checkbox"/>
+</label>
+<!-- Switch 2: Simpan ke Bank Soal Nasional -->
+<label class="flex items-center justify-between p-2.5 bg-paper border border-line rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="font-label-default text-label-default text-ink font-medium">Bagikan ke MGMP Kab. Jember</span>
+<span class="font-meta-default text-meta-default text-ink-muted">Sinkronisasi repositori bersama</span>
+</div>
+<input class="w-4 h-4 text-primary accent-primary rounded cursor-pointer" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- 3. FOOTER MODAL (Fixed Bottom, Hairline Divider) -->
+<div class="shrink-0 bg-surface border-t border-line px-5 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+<!-- Kiri: Indikator Validasi Otomatis -->
+<div class="flex items-center gap-1.5 text-badge-bs w-full sm:w-auto">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-meta-default text-meta-default font-medium text-ink">
+            Status: <span class="text-badge-bs">Kunci jawaban telah tervalidasi</span>
+</span>
+</div>
+<!-- Kanan: Tombol Aksi (Kanonik 1 Primary Rule) -->
+<div class="flex items-center justify-end gap-2.5 w-full sm:w-auto">
+<!-- Ghost Button: Batal -->
+<button class="h-9 px-3.5 bg-transparent hover:bg-surface-container-low text-ink-muted hover:text-ink rounded font-label-default text-label-default transition-colors" onclick="document.getElementById('modal-container').classList.add('hidden')" type="button">
+            Batal
+          </button>
+<!-- Secondary Outline Button: Simpan & Tambah Lagi -->
+<button class="h-9 px-3.5 bg-surface hover:bg-paper text-ink border border-line rounded font-label-default text-label-default font-medium transition-colors" onclick="handleSaveQuick()" type="button">
+            Simpan &amp; Tambah Lagi
+          </button>
+<!-- The Exactly ONE Prominent Primary Action Button (#14161a / canonical slate fill, 9px radius) -->
+<button class="h-9 px-4.5 bg-[#14161a] hover:bg-[#272a30] active:scale-[0.98] text-white rounded-[9px] font-label-default text-label-default font-medium transition-all shadow-sm flex items-center gap-1.5" id="btn-save-main" onclick="handleSaveFinal()" type="button">
+<span class="material-symbols-outlined text-[17px]">save</span>
+<span>Simpan Butir Soal</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Logic for Tab Switching & Dialog Behaviors -->
+<script>
+    function switchTab(type) {
+      // List of tabs and panels
+      const types = ['pg', 'bs', 'match', 'essay'];
+      
+      types.forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        const panel = document.getElementById('panel-' + t);
+        
+        if (!btn || !panel) return;
+
+        if (t === type) {
+          btn.setAttribute('aria-selected', 'true');
+          panel.classList.remove('hidden');
+          
+          // Apply active styling based on type
+          if (t === 'pg') {
+            btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all bg-surface text-badge-pg border border-line/60 shadow-sm';
+          } else if (t === 'bs') {
+            btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all bg-surface text-badge-bs border border-line/60 shadow-sm';
+          } else if (t === 'match') {
+            btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all bg-surface text-badge-match border border-line/60 shadow-sm';
+          } else if (t === 'essay') {
+            btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all bg-surface text-badge-essay border border-line/60 shadow-sm';
+          }
+        } else {
+          btn.setAttribute('aria-selected', 'false');
+          panel.classList.add('hidden');
+          btn.className = 'tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md font-badge-label text-badge-label transition-all text-ink-muted hover:text-ink';
+        }
+      });
+    }
+
+    function handleSaveFinal() {
+      const btn = document.getElementById('btn-save-main');
+      const origText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">refresh</span><span>Menyimpan...</span>';
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">check</span><span>Tersimpan!</span>';
+        setTimeout(() => {
+          document.getElementById('modal-container').classList.add('hidden');
+          btn.innerHTML = origText;
+        }, 600);
+      }, 500);
+    }
+
+    function handleSaveQuick() {
+      const prompt = document.getElementById('question-prompt');
+      prompt.value = '';
+      prompt.placeholder = 'Tuliskan butir soal selanjutnya di sini...';
+      prompt.focus();
+    }
+
+    // Escape key handler to close modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('modal-container');
+        if (modal && !modal.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+        }
+      }
+    });
+  </script>
+</div></main></div><div class="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-surface border-t border-line z-50 flex items-center justify-around px-2"><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="ringkasan-dashboard-guru" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Beranda</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="materi" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Materi</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="bank-soal-asesmen" href="#"><span class="material-symbols-outlined text-[20px]">quiz</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Bank Soal</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="penilaian" href="#"><span class="material-symbols-outlined text-[20px]">fact_check</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Nilai</span></a></div></body></html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#3f465c","badge-bs-bg":"#f0fdf4","secondary-fixed-dim":"#b7c8e1","on-background":"#191c1e","on-secondary-fixed":"#0b1c30","ink-tertiary":"#94a3b8","outline-variant":"#c4c5d7","on-error-container":"#93000a","on-tertiary-fixed":"#131b2e","on-secondary-fixed-variant":"#38485d","ink":"#0f172a","tertiary-fixed-dim":"#bec6e0","badge-essay-bg":"#fef2f2","tertiary-fixed":"#dae2fd","inverse-surface":"#2d3133","on-secondary":"#ffffff","secondary-fixed":"#d3e4fe","on-secondary-container":"#54647a","badge-match-bg":"#fffbeb","background":"#f7f9fb","badge-pg-bg":"#eff6ff","on-error":"#ffffff","surface-dim":"#d8dadc","surface-tint":"#2151da","on-primary-fixed-variant":"#0039b5","on-surface":"#191c1e","on-surface-variant":"#434655","surface-container-low":"#f2f4f6","inverse-on-surface":"#eff1f3","badge-match":"#d97706","on-primary-fixed":"#001551","secondary":"#505f76","badge-pg":"#1d4ed8","on-primary":"#ffffff","line-soft":"#f1f5f9","primary-fixed":"#dce1ff","paper":"#f8fafc","error-container":"#ffdad6","inverse-primary":"#b7c4ff","surface-container":"#eceef0","ink-muted":"#64748b","error":"#ba1a1a","secondary-container":"#d0e1fb","badge-essay":"#dc2626","on-tertiary":"#ffffff","tertiary":"#3d445a","surface-bright":"#f7f9fb","surface-container-lowest":"#ffffff","surface-variant":"#e0e3e5","outline":"#747686","surface-container-high":"#e6e8ea","primary-container":"#1d4ed8","surface-container-highest":"#e0e3e5","line":"#e2e8f0","primary-fixed-dim":"#b7c4ff","tertiary-container":"#545c72","surface":"#ffffff","badge-bs":"#16a34a","on-primary-container":"#cad3ff","primary":"#0037b0","on-tertiary-container":"#cdd5ef"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-md":"0.875rem","space-sm":"0.625rem","margin-desktop":"2.75rem","space-2xl":"2.125rem","space-xl":"1.375rem","space-xxs":"0.25rem","space-xs":"0.5rem",margin:"1.25rem","gutter-desktop":"1rem","space-lg":"1rem",gutter:"0.875rem"},fontFamily:{"body-medium":["Inter"],"headline-md":["Inter"],"headline-lg":["Inter"],"headline-lg-mobile":["Inter"],"nav-mobile":["Inter"],"badge-label":["Inter"],"body-default":["Inter"],"display-stat":["Inter"],"panel-title":["Inter"],"headline-sm":["Inter"],"meta-default":["Inter"],"label-default":["Inter"]},fontSize:{"body-medium":["13.5px",{lineHeight:"20px",fontWeight:"500"}],"headline-md":["19px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["26px",{lineHeight:"32px",letterSpacing:"-0.03em",fontWeight:"600"}],"headline-lg-mobile":["20px",{lineHeight:"26px",letterSpacing:"-0.02em",fontWeight:"600"}],"nav-mobile":["10.5px",{lineHeight:"14px",fontWeight:"500"}],"badge-label":["11px",{lineHeight:"14px",fontWeight:"600"}],"body-default":["13.5px",{lineHeight:"20px",fontWeight:"400"}],"display-stat":["29px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"600"}],"panel-title":["13px",{lineHeight:"18px",fontWeight:"600"}],"headline-sm":["16px",{lineHeight:"22px",fontWeight:"600"}],"meta-default":["12px",{lineHeight:"16px",fontWeight:"400"}],"label-default":["12.5px",{lineHeight:"16px",fontWeight:"500"}]}}}};</script></head><body class="bg-paper text-ink font-body-default text-body-default min-h-screen selection:bg-badge-pg-bg selection:text-badge-pg"><aside class="fixed left-0 top-0 h-full w-16 bg-surface z-50 flex flex-col items-center py-4 border-r border-line"><div class="w-10 h-10 flex items-center justify-center mb-6"><img alt="LMS SMPN 1 Umbulsari Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrD4KIfD-oewl9rHNR0g6pJCdWQ_ItyIxxPimnjWRHPftlZy3UTLL2Bffwmh-txmMayQqdzWIpub6DuRPgv14b5DpLzfKkfk-tI6sCClfWDU15Gt60R-xzn_sibXvlx4nYdqqemEJrxdifV2vvcBr5uleIoy1HTaTR5sdGzx_iV5lVx3kSoWh9GGZvMIh5JXRvkngm7XssdWFhVgNyP9CPzAWy7mb6gr-b0Lijx0u9-d"/></div><nav class="flex flex-col items-center gap-2 w-full px-2" data-active-classes="bg-badge-pg-bg text-badge-pg"><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="beranda" href="#" title="Beranda / Ringkasan"><span class="material-symbols-outlined text-[20px]">grid_view</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="materi" href="#" title="Materi Pembelajaran"><span class="material-symbols-outlined text-[20px]">menu_book</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="asesmen" href="#" title="Asesmen & Tugas"><span class="material-symbols-outlined text-[20px]">assignment</span></a><a aria-current="page" class="w-10 h-10 flex items-center justify-center rounded-lg transition-colors bg-badge-pg-bg text-badge-pg" data-path="penilaian" href="#" title="Penilaian & Koreksi"><span class="material-symbols-outlined text-[20px]">fact_check</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="kelas" href="#" title="Manajemen Kelas"><span class="material-symbols-outlined text-[20px]">groups</span></a><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="pengaturan" href="#" title="Pengaturan Portal"><span class="material-symbols-outlined text-[20px]">settings</span></a></nav><div class="mt-auto flex flex-col items-center gap-3"><a class="w-10 h-10 flex items-center justify-center rounded-lg text-ink-muted hover:bg-surface-container-low hover:text-ink transition-colors" data-path="bantuan" href="#" title="Pusat Bantuan"><span class="material-symbols-outlined text-[20px]">help_outline</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></aside><div class="pl-16"><header class="fixed top-0 left-16 right-0 h-14 bg-surface/90 backdrop-blur-md z-40 border-b border-line"><div class="h-14 px-6 flex items-center justify-between"><div class="flex items-center gap-2 text-ink-muted font-meta-default text-meta-default"><span class="font-label-default text-ink font-medium">SMPN 1 Umbulsari</span><span class="text-ink-tertiary">/</span><span class="text-ink-muted">Portal Guru</span></div><div class="flex items-center gap-4"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low rounded border border-line-soft font-meta-default text-meta-default text-ink-muted"><span class="w-1.5 h-1.5 rounded-full bg-badge-bs"></span><span>Semester Ganjil 2026/2027</span></div><button aria-label="Notifikasi" class="relative p-1.5 text-ink-muted hover:text-ink hover:bg-surface-container-low rounded transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-badge-essay ring-2 ring-surface"></span></button><div class="h-4 w-[1px] bg-line"></div><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[16px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-default text-label-default text-ink leading-none">Drs. Bambang S.</span><span class="font-meta-default text-[11px] text-ink-tertiary leading-tight">Guru Matematika</span></div></div></div></div></header><main class="relative pt-14 bg-paper min-h-screen"><div class="max-w-[1040px] px-[44px] pt-[34px] pb-[30px]"><div class="flex flex-col w-full">
+<!-- Top Context Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-line">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-badge-pg-bg text-badge-pg font-badge-label text-badge-label uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-pg"></span> Modul Koreksi Aktif
+        </span>
+<span class="font-meta-default text-meta-default text-ink-muted">T.A. 2026/2027 Ganjil</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-ink">Penilaian & Koreksi</h1>
+<p class="font-body-default text-body-default text-ink-muted">
+        Asesmen Sumatif Tengah Semester (IPA VIII) · <span class="font-mono text-ink text-[12px] bg-surface-container-low px-1.5 py-0.5 rounded">Kode: IPA-VIII-STS1</span>
+</p>
+</div>
+<!-- Rule of One Primary Action: exactly 1 solid primary button, 1 ghost secondary -->
+<div class="flex items-center gap-2.5 self-start md:self-auto shrink-0">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-surface hover:bg-surface-container-low text-ink font-label-default text-label-default rounded-lg border border-line transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-ink-muted">download</span>
+<span>Unduh Rekap CSV</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-container hover:bg-primary text-on-primary font-label-default text-label-default rounded-lg shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">publish</span>
+<span>Publikasikan Nilai ke Siswa</span>
+</button>
+</div>
+</div>
+<!-- Siswa Switcher Toolbar & Stat Strip -->
+<div class="mt-6 bg-surface border border-line rounded-xl p-4 shadow-sm space-y-4">
+<div class="flex flex-wrap items-center justify-between gap-3 border-b border-line-soft pb-3.5">
+<div class="flex items-center gap-2.5">
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low rounded-lg border border-line text-ink">
+<span class="font-meta-default text-meta-default text-ink-muted">Kelas:</span>
+<span class="font-label-default text-label-default font-semibold">VIII-A</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-badge-match-bg text-badge-match rounded-lg border border-badge-match/20 font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-match animate-pulse"></span>
+<span>Menunggu Koreksi Essay (14 siswa tersisa)</span>
+</div>
+</div>
+<!-- Quick Switcher Navigation -->
+<div class="flex items-center gap-1.5 ml-auto">
+<button class="h-8 px-2.5 inline-flex items-center gap-1 bg-surface hover:bg-surface-container-low text-ink border border-line rounded-lg font-meta-default text-meta-default transition-colors" title="Siswa Sebelumnya" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+<span class="hidden sm:inline">Sebelumnya</span>
+</button>
+<div class="px-3 py-1 bg-surface-container-low border border-line rounded-lg text-center">
+<span class="font-meta-default text-meta-default text-ink font-semibold">4 / 32</span>
+</div>
+<button class="h-8 px-2.5 inline-flex items-center gap-1 bg-surface hover:bg-surface-container-low text-ink border border-line rounded-lg font-meta-default text-meta-default transition-colors" title="Siswa Berikutnya" type="button">
+<span class="hidden sm:inline">Berikutnya</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Active Student Identity Banner & Single-Row Density Strip -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+<div class="md:col-span-6 flex items-center gap-3">
+<div class="w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center font-display-stat text-ink font-semibold shrink-0">
+          AR
+        </div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-ink truncate">Ahmad Rizqi Pratama</h2>
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-ink-muted font-badge-label text-[10px]">Laki-laki</span>
+</div>
+<p class="font-meta-default text-meta-default text-ink-muted">
+            No. Absen: <span class="font-medium text-ink">04</span> · NISN: <span class="font-mono text-ink">0082910</span> · Waktu Selesai: 08:44 WIB
+          </p>
+</div>
+</div>
+<!-- Stat Strip (1-row horizontal density, hairline borders) -->
+<div class="md:col-span-6 flex items-stretch border border-line rounded-lg bg-surface-container-lowest overflow-hidden">
+<div class="flex-1 px-3.5 py-2 border-r border-line flex flex-col justify-center">
+<div class="font-meta-default text-meta-default text-ink-muted truncate">Skor Otomatis (PG/BS/Match)</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-display-stat text-display-stat text-ink font-semibold tabular-nums">72</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">/ 80</span>
+</div>
+</div>
+<div class="flex-1 px-3.5 py-2 border-r border-line bg-badge-match-bg/30 flex flex-col justify-center">
+<div class="font-meta-default text-meta-default text-badge-match font-medium truncate">Skor Essay (Manual)</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-display-stat text-display-stat text-badge-match font-semibold tabular-nums" id="stat-essay-score">18</span>
+<span class="font-meta-default text-meta-default text-badge-match/70">/ 20</span>
+</div>
+</div>
+<div class="flex-1 px-3.5 py-2 bg-badge-pg-bg/30 flex flex-col justify-center">
+<div class="font-meta-default text-meta-default text-badge-pg font-medium truncate">Skor Akhir Sementara</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-display-stat text-display-stat text-badge-pg font-semibold tabular-nums" id="stat-total-score">90</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">/ 100</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Asymmetric 2-Column Split (1.45fr / 1fr) -->
+<div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-[14px]">
+<!-- Left Column: Itemized Evaluation Panel (Questions 1-4) -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-ink flex items-center gap-2">
+<span>Lembar Evaluasi Soal</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary font-normal">(Total 4 Butir Soal)</span>
+</h3>
+<span class="font-meta-default text-meta-default text-ink-muted">Sistem Koreksi Hibrida</span>
+</div>
+<!-- Question 1: Auto-checked PG -->
+<article class="bg-surface border border-line rounded-xl p-4 shadow-sm transition-all">
+<header class="flex items-start justify-between gap-3 border-b border-line-soft pb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-default text-label-default font-semibold text-ink">Butir 1</span>
+<span class="px-2 py-0.5 rounded bg-badge-pg-bg text-badge-pg font-badge-label text-badge-label font-semibold">PG</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">· Bobot Maks 20</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Benar (+20)</span>
+</span>
+</header>
+<div class="pt-3">
+<p class="font-body-default text-body-default text-ink leading-relaxed">
+            Organ penyusun sistem pernapasan manusia yang berfungsi sebagai tempat penyaringan udara tahap pertama dari debu dan kotoran adalah ...
+          </p>
+<div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-ink">
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-line-soft font-body-default text-body-default flex items-center justify-between">
+<span class="text-ink-muted">A. Faring</span>
+</div>
+<div class="p-2.5 rounded-lg bg-badge-bs-bg border border-badge-bs/30 font-body-default text-body-default flex items-center justify-between text-badge-bs font-medium">
+<span>B. Rongga Hidung</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-line-soft font-body-default text-body-default">
+<span class="text-ink-muted">C. Trakea</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-line-soft font-body-default text-body-default">
+<span class="text-ink-muted">D. Bronkiolus</span>
+</div>
+</div>
+<div class="mt-2.5 flex items-center justify-between text-ink-muted font-meta-default text-meta-default pt-2 border-t border-line-soft">
+<span>Jawaban Siswa: <strong class="text-ink">B (Rongga Hidung)</strong></span>
+<span class="text-badge-bs font-medium">Kunci: B · Auto-validated</span>
+</div>
+</div>
+</article>
+<!-- Question 2: Auto-checked Benar-Salah (BS) -->
+<article class="bg-surface border border-line rounded-xl p-4 shadow-sm transition-all">
+<header class="flex items-start justify-between gap-3 border-b border-line-soft pb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-default text-label-default font-semibold text-ink">Butir 2</span>
+<span class="px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label font-semibold">BS</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">· Bobot Maks 20</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Benar (+20)</span>
+</span>
+</header>
+<div class="pt-3">
+<p class="font-body-default text-body-default text-ink leading-relaxed">
+            Saat inspirasi pada pernapasan dada, otot antartulang rusuk luar berkontraksi sehingga rongga dada membesar dan tekanan udara di dalam paru-paru menurun.
+          </p>
+<div class="mt-2 flex items-center gap-4 text-ink-muted font-meta-default text-meta-default bg-surface-container-low p-2.5 rounded-lg border border-line-soft">
+<div>Jawaban Siswa: <span class="font-medium text-badge-bs uppercase">Benar</span></div>
+<div class="h-3 w-px bg-line"></div>
+<div>Kunci Jawaban: <span class="font-medium text-ink uppercase">Benar</span></div>
+</div>
+</div>
+</article>
+<!-- Question 3: Auto-checked Menjodohkan (MATCH) - Sebagian Benar -->
+<article class="bg-surface border border-line rounded-xl p-4 shadow-sm transition-all">
+<header class="flex items-start justify-between gap-3 border-b border-line-soft pb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-default text-label-default font-semibold text-ink">Butir 3</span>
+<span class="px-2 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-badge-label font-semibold">MATCH</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">· Bobot Maks 40</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">remove_done</span>
+<span>Sebagian (+32/40)</span>
+</span>
+</header>
+<div class="pt-3 space-y-2">
+<p class="font-body-default text-body-default text-ink leading-relaxed">
+            Pasangkan organ sistem respirasi berikut dengan perannya dalam pertukaran dan proteksi saluran napas:
+          </p>
+<div class="space-y-1.5 text-body-default text-[13px]">
+<div class="p-2 rounded bg-surface-container-low border border-line-soft flex items-center justify-between">
+<span class="text-ink">1. Epiglotis → Menutup laring saat menelan</span>
+<span class="text-badge-bs font-semibold text-meta-default">Tepat (+16)</span>
+</div>
+<div class="p-2 rounded bg-surface-container-low border border-line-soft flex items-center justify-between">
+<span class="text-ink">2. Silia Trakea → Mendorong lendir ke atas</span>
+<span class="text-badge-bs font-semibold text-meta-default">Tepat (+16)</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Question 4: ESSAY MANUAL EVALUATION (Core Focus with left accent border) -->
+<article class="bg-surface border-l-4 border-l-primary-container border-y border-r border-line rounded-xl p-5 shadow-sm space-y-4" id="gr-eval-panel">
+<header class="flex items-start justify-between gap-3 border-b border-line-soft pb-3.5">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-default text-label-default font-bold text-ink">Butir 4</span>
+<span class="px-2 py-0.5 rounded bg-badge-essay-bg text-badge-essay font-badge-label text-badge-label font-semibold">ESSAY</span>
+<span class="font-meta-default text-meta-default text-ink-tertiary">· Bobot Maks 20</span>
+</div>
+<p class="font-meta-default text-meta-default text-ink-muted mt-1">Perlu koreksi manual oleh pendidik</p>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-badge-match-bg text-badge-match font-badge-label text-badge-label border border-badge-match/20">
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+<span>Menunggu Verifikasi Guru</span>
+</span>
+</header>
+<!-- Pertanyaan -->
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-line-soft space-y-1">
+<span class="font-meta-default text-meta-default text-ink-muted uppercase tracking-wide">Teks Pertanyaan:</span>
+<p class="font-body-default text-body-default text-ink font-medium leading-relaxed">
+            "Jelaskan proses pertukaran gas O2 dan CO2 di alveolus serta faktor yang mempengaruhinya."
+          </p>
+</div>
+<!-- Lembar Jawaban Siswa -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-default text-label-default font-medium text-ink flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-ink-muted">description</span>
+<span>Lembar Jawaban Siswa</span>
+</label>
+<span class="font-meta-default text-meta-default text-ink-tertiary">389 karakter</span>
+</div>
+<!-- Clean lined text sheet -->
+<div class="p-4 rounded-lg bg-surface border border-line font-body-default text-body-default text-ink leading-7 select-text relative">
+<p>
+              Pertukaran gas terjadi di dinding alveolus yang tipis secara difusi pasif. Gas oksigen (O2) dari udara bertekanan tinggi di dalam alveolus menembus membran kapiler darah dan diikat oleh hemoglobin menjadi oksihemoglobin. Pada saat bersamaan, gas karbondioksida (CO2) dari darah kapiler berdifusi masuk ke alveolus untuk dihembuskan keluar.
+            </p>
+<p class="mt-2">
+              Faktor yang mempengaruhinya antara lain: ketebalan membran respirasi, luas permukaan alveolus, perbedaan tekanan parsial gas, dan kebersihan saluran napas.
+            </p>
+</div>
+</div>
+<!-- Rubrik Rujukan Cepat -->
+<div class="p-3 bg-badge-pg-bg/30 border border-badge-pg/15 rounded-lg text-body-default text-[13px] text-ink space-y-1">
+<div class="font-label-default text-label-default text-badge-pg font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>Kunci Rubrik Penilaian:</span>
+</div>
+<ul class="list-disc pl-5 space-y-0.5 text-ink-muted font-meta-default text-meta-default">
+<li>Menyebutkan difusi O2 & CO2 di alveolus: <strong class="text-ink">+8 poin</strong></li>
+<li>Mengaitkan peran hemoglobin/tekanan parsial: <strong class="text-ink">+6 poin</strong></li>
+<li>Menyebutkan minimal 2 faktor pengaruh: <strong class="text-ink">+6 poin</strong></li>
+</ul>
+</div>
+<!-- Input Nilai Guru & Catatan Ringkas -->
+<div class="pt-3 border-t border-line-soft space-y-4">
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start">
+<div class="sm:col-span-4 space-y-1">
+<label class="font-label-default text-label-default font-semibold text-ink block" for="input-essay-score">
+                Input Nilai Guru
+              </label>
+<div class="relative flex items-center">
+<input class="w-full h-11 px-3 bg-surface border border-line rounded-lg font-display-stat text-display-stat tabular-nums text-ink focus:outline-none focus:ring-2 focus:ring-primary-container" id="input-essay-score" max="20" min="0" type="number" value="18"/>
+<span class="absolute right-3 font-meta-default text-meta-default text-ink-muted">/ 20</span>
+</div>
+<span class="font-meta-default text-[11px] text-ink-tertiary">Skor bulat atau desimal 0-20</span>
+</div>
+<div class="sm:col-span-8 space-y-1">
+<label class="font-label-default text-label-default font-medium text-ink block" for="teacher-notes">
+                Catatan Masukan Guru (Feedback Siswa)
+              </label>
+<textarea class="w-full p-2.5 bg-surface border border-line rounded-lg font-body-default text-body-default text-ink focus:outline-none focus:ring-2 focus:ring-primary-container resize-none" id="teacher-notes" placeholder="Berikan umpan balik konstruktif..." rows="2">Konsep difusi dan tekanan parsial dijelaskan dengan sangat jelas dan runut. Tingkatkan kedalaman pembahasan tentang luas permukaan alveolus.</textarea>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="inline-flex items-center gap-1.5 font-meta-default text-meta-default text-badge-bs">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+<span>Tersimpan ke lokal (14:32:05)</span>
+</div>
+<button class="px-3.5 py-1.5 bg-surface hover:bg-surface-container-low border border-line rounded-lg text-ink font-label-default text-label-default transition-colors inline-flex items-center gap-1.5" id="btn-save-eval" type="button">
+<span class="material-symbols-outlined text-[16px] text-ink-muted">save</span>
+<span>Simpan Evaluasi Butir</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<!-- Right Column: Quick Status & Visual Overview (1fr) -->
+<div class="lg:col-span-5 flex flex-col gap-4">
+<!-- Progress Bar & Summary Card -->
+<div class="bg-surface border border-line rounded-xl p-4 shadow-sm space-y-3.5">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-ink">Progres Koreksi Kelas</h3>
+<span class="font-meta-default text-meta-default font-semibold text-primary">56.2%</span>
+</div>
+<div class="w-full bg-surface-container-low h-2.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 56.2%"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1 text-ink">
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-line-soft">
+<div class="font-meta-default text-meta-default text-ink-muted">Selesai Dikoreksi</div>
+<div class="font-headline-md text-headline-md text-ink font-semibold tabular-nums mt-0.5">18 Siswa</div>
+</div>
+<div class="p-2.5 rounded-lg bg-badge-match-bg border border-badge-match/20">
+<div class="font-meta-default text-meta-default text-badge-match">Perlu Diperiksa</div>
+<div class="font-headline-md text-headline-md text-badge-match font-semibold tabular-nums mt-0.5">14 Siswa</div>
+</div>
+</div>
+</div>
+<!-- Rubrik Pembobotan Asesmen (Data Visualization Mini Strip) -->
+<div class="bg-surface border border-line rounded-xl p-4 shadow-sm space-y-3">
+<h4 class="font-headline-sm text-headline-sm text-ink">Distribusi Bobot Soal</h4>
+<div class="space-y-2.5">
+<div>
+<div class="flex justify-between font-meta-default text-meta-default text-ink mb-1">
+<span>Pilihan Ganda (1 Butir)</span>
+<span class="font-medium text-ink tabular-nums">20 Poin</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-badge-pg h-full" style="width: 20%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-meta-default text-meta-default text-ink mb-1">
+<span>Benar-Salah (1 Butir)</span>
+<span class="font-medium text-ink tabular-nums">20 Poin</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-badge-bs h-full" style="width: 20%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-meta-default text-meta-default text-ink mb-1">
+<span>Menjodohkan (1 Butir)</span>
+<span class="font-medium text-ink tabular-nums">40 Poin</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-badge-match h-full" style="width: 40%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-meta-default text-meta-default text-ink mb-1">
+<span>Uraian / Essay (1 Butir)</span>
+<span class="font-medium text-badge-essay tabular-nums">20 Poin</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-badge-essay h-full" style="width: 20%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Tips Card -->
+<div class="p-3.5 rounded-xl border border-line-soft bg-surface-container-low space-y-2">
+<div class="flex items-center gap-1.5 text-ink font-label-default text-label-default">
+<span class="material-symbols-outlined text-[18px] text-badge-pg">keyboard</span>
+<span class="font-semibold">Pintasan Keyboard</span>
+</div>
+<div class="space-y-1.5 font-meta-default text-meta-default text-ink-muted">
+<div class="flex justify-between">
+<span>Simpan & Siswa Berikutnya:</span>
+<kbd class="px-1.5 py-0.5 bg-surface border border-line rounded text-ink font-mono text-[11px]">Alt + Enter</kbd>
+</div>
+<div class="flex justify-between">
+<span>Fokus Input Nilai Essay:</span>
+<kbd class="px-1.5 py-0.5 bg-surface border border-line rounded text-ink font-mono text-[11px]">Ctrl + /</kbd>
+</div>
+<div class="flex justify-between">
+<span>Pindah Siswa:</span>
+<kbd class="px-1.5 py-0.5 bg-surface border border-line rounded text-ink font-mono text-[11px]">← / →</kbd>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Rekap Nilai Cepat Tabel Bawah (5 Siswa Terakhir) -->
+<section class="mt-8 space-y-3">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-ink">Rekap Riwayat Siswa Terakhir</h3>
+<p class="font-meta-default text-meta-default text-ink-muted">Log penilaian beruntun di kelas VIII-A</p>
+</div>
+<span class="font-meta-default text-meta-default text-ink-tertiary">Menampilkan 5 entri terakhir</span>
+</div>
+<div class="bg-surface border border-line rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-line text-ink-muted font-meta-default text-meta-default uppercase tracking-wider">
+<th class="py-2.5 px-4 font-semibold">Absen / Siswa</th>
+<th class="py-2.5 px-3 font-semibold text-right">Skor PG/BS/M</th>
+<th class="py-2.5 px-3 font-semibold text-right">Skor Essay</th>
+<th class="py-2.5 px-3 font-semibold text-right">Skor Akhir</th>
+<th class="py-2.5 px-4 font-semibold text-center">Status</th>
+<th class="py-2.5 px-3 text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-line-soft font-body-default text-body-default text-ink">
+<!-- Row 1: Active Student -->
+<tr class="bg-badge-pg-bg/30">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="w-5 font-mono text-ink-tertiary text-meta-default">04</span>
+<div>
+<span class="font-medium text-badge-pg">Ahmad Rizqi Pratama</span>
+<span class="block font-meta-default text-[11px] text-ink-muted">NISN: 0082910</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">72 / 80</td>
+<td class="py-3 px-3 text-right font-mono text-badge-match tabular-nums font-semibold">18 / 20</td>
+<td class="py-3 px-3 text-right font-mono text-badge-pg tabular-nums font-bold">90</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-match"></span> Draft Siap
+                </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 hover:bg-surface rounded text-primary transition-colors" title="Sedang Aktif" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="w-5 font-mono text-ink-tertiary text-meta-default">03</span>
+<div>
+<span class="font-medium text-ink">Aditya Dwi Nugraha</span>
+<span class="block font-meta-default text-[11px] text-ink-muted">NISN: 0082875</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">68 / 80</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">16 / 20</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums font-semibold">84</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-bs"></span> Terkoreksi
+                </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 hover:bg-surface rounded text-ink-muted hover:text-ink transition-colors" title="Buka Detail" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="w-5 font-mono text-ink-tertiary text-meta-default">02</span>
+<div>
+<span class="font-medium text-ink">Aisyah Nur Salsabila</span>
+<span class="block font-meta-default text-[11px] text-ink-muted">NISN: 0083120</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">76 / 80</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">20 / 20</td>
+<td class="py-3 px-3 text-right font-mono text-badge-pg tabular-nums font-semibold">96</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-bs"></span> Terkoreksi
+                </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 hover:bg-surface rounded text-ink-muted hover:text-ink transition-colors" title="Buka Detail" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="w-5 font-mono text-ink-tertiary text-meta-default">01</span>
+<div>
+<span class="font-medium text-ink">Achmad Choirul Huda</span>
+<span class="block font-meta-default text-[11px] text-ink-muted">NISN: 0081992</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">54 / 80</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">12 / 20</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums font-semibold">66</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-bs-bg text-badge-bs font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-bs"></span> Terkoreksi
+                </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 hover:bg-surface rounded text-ink-muted hover:text-ink transition-colors" title="Buka Detail" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Pending Grading -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="w-5 font-mono text-ink-tertiary text-meta-default">05</span>
+<div>
+<span class="font-medium text-ink">Anisa Putri Wulandari</span>
+<span class="block font-meta-default text-[11px] text-ink-muted">NISN: 0082731</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-right font-mono text-ink tabular-nums">70 / 80</td>
+<td class="py-3 px-3 text-right font-mono text-ink-tertiary tabular-nums">-- / 20</td>
+<td class="py-3 px-3 text-right font-mono text-ink-tertiary tabular-nums">--</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-badge-match-bg text-badge-match font-badge-label text-badge-label">
+<span class="w-1.5 h-1.5 rounded-full bg-badge-match"></span> Menunggu
+                </span>
+</td>
+<td class="py-3 px-3 text-right">
+<button class="p-1 hover:bg-surface rounded text-ink-muted hover:text-ink transition-colors" title="Buka Detail" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Spatial buffer and interactive micro-script -->
+<div class="h-8"></div>
+</div>
+<script>
+  (function() {
+    const inputEssay = document.getElementById('input-essay-score');
+    const statEssay = document.getElementById('stat-essay-score');
+    const statTotal = document.getElementById('stat-total-score');
+    const btnSave = document.getElementById('btn-save-eval');
+
+    if (inputEssay && statEssay && statTotal) {
+      inputEssay.addEventListener('input', function(e) {
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = 0;
+        if (val < 0) val = 0;
+        if (val > 20) val = 20;
+        statEssay.textContent = val;
+        statTotal.textContent = 72 + val;
+      });
+    }
+
+    if (btnSave) {
+      btnSave.addEventListener('click', function() {
+        const originalText = btnSave.innerHTML;
+        btnSave.innerHTML = '<span class="material-symbols-outlined text-[16px] text-badge-bs">check</span><span>Tersimpan!</span>';
+        setTimeout(() => {
+          btnSave.innerHTML = originalText;
+        }, 2000);
+      });
+    }
+  })();
+</script></div></main></div><div class="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-surface border-t border-line z-50 flex items-center justify-around px-2"><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="beranda" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Beranda</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="materi" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Materi</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="asesmen" href="#"><span class="material-symbols-outlined text-[20px]">assignment</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Asesmen</span></a><a class="flex flex-col items-center justify-center text-ink-muted hover:text-badge-pg" data-path="penilaian" href="#"><span class="material-symbols-outlined text-[20px]">fact_check</span><span class="font-nav-mobile text-nav-mobile mt-0.5">Nilai</span></a></div></body></html>

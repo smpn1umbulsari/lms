@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"secondary-fixed-dim":"#b0c9e8","surface-dim":"#090d16","primary-fixed":"#c4e7ff","on-secondary-container":"#9fb7d6","paper":"#0d1117","on-error-container":"#ffdad6","surface-variant":"#31353c","warn":"#f59e0b","secondary-container":"#314863","ok":"#22c55e","surface-container":"#151b23","danger":"#ef4444","accent":"#38bdf8","surface-container-high":"#1e2633","primary-container":"#38bdf8","line":"#252d38","on-surface":"#dfe2eb","on-secondary":"#19324b","surface-container-highest":"#31353c","surface-container-low":"#0f141c","on-background":"#dfe2eb","secondary":"#b0c9e8","surface":"#151b23","line-soft":"#1e252f","secondary-fixed":"#d1e4ff","error":"#ffb4ab","inverse-surface":"#dfe2eb","outline-variant":"#3e484f","inverse-on-surface":"#2d3137","on-primary-fixed":"#001e2c","on-tertiary-container":"#613b00","surface-container-lowest":"#0a0e14","on-error":"#690005","on-tertiary-fixed":"#2a1700","on-surface-variant":"#bdc8d1","ink-2":"#a3adba","on-primary-fixed-variant":"#004c69","on-secondary-fixed":"#011d35","error-container":"#93000a","inverse-primary":"#00668a","on-primary-container":"#004965","on-tertiary-fixed-variant":"#653e00","tertiary-fixed-dim":"#ffb960","background":"#10141a","surface-bright":"#353940","on-secondary-fixed-variant":"#314863","primary":"#8ed5ff","primary-fixed-dim":"#7bd0ff","tertiary-fixed":"#ffddb8","surface-tint":"#7bd0ff","accent-soft":"#0f2942","ink":"#f2f5f7","ink-3":"#6f7b8a","tertiary-container":"#f1a02b","outline":"#87929a","on-primary":"#00354a","on-tertiary":"#472a00","tertiary":"#ffc176"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xl":"1.5rem","space-lg":"1rem","space-md":"0.75rem","gutter":"1rem","space-sm":"0.5rem","margin":"1.5rem","space-xs":"0.25rem"},"fontFamily":{"label-md":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"badge":["Inter"],"headline-lg":["Inter"],"label-sm":["Inter"]},"fontSize":{"label-md":["12.5px",{"lineHeight":"16px","fontWeight":"500"}],"headline-md":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["13.5px",{"lineHeight":"20px","fontWeight":"400"}],"body-sm":["12.5px",{"lineHeight":"18px","fontWeight":"400"}],"headline-sm":["14px",{"lineHeight":"20px","letterSpacing":"-0.005em","fontWeight":"600"}],"badge":["10.5px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"600"}],"headline-lg":["20px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-sm":["11.5px",{"lineHeight":"16px","fontWeight":"500"}]}}}};</script></head><body class="bg-paper font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-16 bg-surface-container border-r border-line z-50 flex flex-col items-center py-4 select-none"><div class="w-8 h-8 rounded-[9px] bg-accent-soft border border-line flex items-center justify-center text-accent mb-6" title="SITURI LMS SMPN 1 Umbulsari"><span class="font-headline-sm text-headline-sm text-accent">U</span></div><nav class="flex-1 flex flex-col items-center gap-2 w-full px-2" data-active-classes="bg-accent-soft text-accent border border-line"><a class="w-10 h-10 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors" data-path="ringkasan-dashboard-guru" href="#" title="Beranda / Ringkasan"><span class="material-symbols-outlined text-[20px]">grid_view</span></a><a class="w-10 h-10 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors" data-path="manajemen-materi-pelajaran" href="#" title="Materi Pelajaran"><span class="material-symbols-outlined text-[20px]">menu_book</span></a><a aria-current="page" class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-accent-soft text-accent border border-line" data-path="asesmen-dan-ujian-builder" href="#" title="Asesmen & Ujian"><span class="material-symbols-outlined text-[20px]">quiz</span></a><a class="w-10 h-10 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors" data-path="koreksi-dan-penilaian-siswa" href="#" title="Koreksi / Penilaian"><span class="material-symbols-outlined text-[20px]">rate_review</span></a><a class="w-10 h-10 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors" data-path="rekap-kelas" href="#" title="Rekap Kelas"><span class="material-symbols-outlined text-[20px]">groups</span></a><a class="w-10 h-10 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors" data-path="pengaturan" href="#" title="Pengaturan LMS"><span class="material-symbols-outlined text-[20px]">settings</span></a></nav><div class="mt-auto flex flex-col items-center gap-3 pt-4 border-t border-line-soft w-full px-2"><button class="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity" title="Profil Drs. Bambang S." type="button"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></button></div></aside><div class="pl-16 min-h-screen flex flex-col bg-paper"><header class="fixed top-0 left-16 right-0 h-14 bg-surface-container/90 backdrop-blur-md border-b border-line z-40 flex items-center justify-between px-6"><div class="flex items-center gap-3"><div class="flex items-center gap-1.5 font-label-md text-label-md text-ink-2"><span class="text-ink">SMPN 1 Umbulsari</span><span class="text-ink-3">/</span><span class="text-ink-2">Portal Guru</span></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low border border-line font-badge text-badge text-ink"><span class="w-1.5 h-1.5 rounded-full bg-ok"></span>Semester Ganjil 2026/2027</span></div><div class="flex items-center gap-4"><button aria-label="Notifikasi" class="w-8 h-8 rounded-lg flex items-center justify-center text-ink-2 hover:bg-surface-bright hover:text-ink transition-colors relative" type="button"><span class="material-symbols-outlined text-[19px]">notifications</span><span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-accent"></span></button><div class="h-4 w-px bg-line-soft"></div><div class="flex items-center gap-2.5"><div class="flex flex-col text-right"><span class="font-label-md text-label-md text-ink leading-tight">Drs. Bambang S.</span><span class="font-badge text-badge text-ink-3 leading-tight">Guru Matematika & IPA</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-paper flex-1"><div class="max-w-[1180px] mr-auto px-[44px] pt-[34px] pb-[30px]"><div class="flex flex-col w-full">
+<!-- Top Action & Context Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6">
+<div class="flex flex-col space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-badge text-badge tracking-wider uppercase text-accent bg-accent-soft px-2 py-0.5 rounded">MODUL PEMBUAT SOAL</span>
+<span class="text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-3">Kurikulum Merdeka 2026/2027</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-ink font-bold tracking-tight">Asesmen Builder</h1>
+<p class="font-body-sm text-body-sm text-ink-2">Buat paket soal asesmen terpadu • 4 tipe soal otomatis & essay terintegrasi bank soal</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-3.5 py-2 rounded-lg bg-surface-container border border-line hover:bg-surface-bright text-ink font-label-md text-label-md transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[17px] text-ink-2">save</span>
+<span>Simpan Draf</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-accent hover:brightness-110 text-paper font-label-md text-label-md font-semibold transition-all flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+<span>+ Terbitkan Asesmen</span>
+</button>
+</div>
+</div>
+<!-- Metric Strip (Tabular Numbers & Hairline Delimiters) -->
+<div class="grid grid-cols-2 md:grid-cols-4 bg-surface-container border border-line rounded-xl mb-6 overflow-hidden divide-y md:divide-y-0 md:divide-x divide-line-soft">
+<div class="p-3.5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-ink-3">Jumlah Butir</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-ink tabular-nums">4</span>
+<span class="font-label-sm text-label-sm text-ink-3 tabular-nums">/ 40 target</span>
+</div>
+</div>
+<div class="p-3.5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-ink-3">Akumulasi Bobot</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-accent tabular-nums">100</span>
+<span class="font-label-sm text-label-sm text-ink-3">Poin Maks.</span>
+</div>
+</div>
+<div class="p-3.5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-ink-3">Estimasi Pengerjaan</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="font-headline-md text-headline-md font-bold text-ink tabular-nums">90</span>
+<span class="font-label-sm text-label-sm text-ink-3">Menit</span>
+</div>
+</div>
+<div class="p-3.5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-ink-3">Validasi Kunci</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-ok shadow-sm"></span>
+<span class="font-label-md text-label-md font-medium text-ink">Lengkap (100%)</span>
+</div>
+</div>
+</div>
+<!-- Konfigurasi Lembar Soal -->
+<div class="bg-surface border border-line rounded-xl p-5 mb-8 shadow-sm">
+<div class="flex items-center justify-between pb-3.5 mb-4 border-b border-line-soft">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-accent text-[20px]">tune</span>
+<span class="font-headline-sm text-headline-sm text-ink">Konfigurasi Lembar Soal</span>
+</div>
+<span class="font-badge text-badge text-ink-3">ID: REF-2026-IPA-08</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<!-- Kode Asesmen -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-ink-2">Kode Asesmen & Kategori</label>
+<div class="h-9 px-3 rounded-lg bg-surface-container-low border border-line flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-ink font-mono font-medium">IPA-VIII-STS1</span>
+<span class="font-badge text-badge bg-accent-soft text-accent px-1.5 py-0.5 rounded">STS Ganjil</span>
+</div>
+</div>
+<!-- Target Distribusi Kelas -->
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-ink-2">Target Distribusi Kelas</label>
+<span class="font-badge text-badge text-ink-3 tabular-nums">96 Siswa</span>
+</div>
+<div class="min-h-9 px-2 py-1 rounded-lg bg-surface-container-low border border-line flex flex-wrap items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container border border-line font-label-sm text-label-sm text-ink">
+            VIII-A <button class="text-ink-3 hover:text-ink" type="button">✕</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container border border-line font-label-sm text-label-sm text-ink">
+            VIII-B <button class="text-ink-3 hover:text-ink" type="button">✕</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container border border-line font-label-sm text-label-sm text-ink">
+            VIII-C <button class="text-ink-3 hover:text-ink" type="button">✕</button>
+</span>
+<button class="font-label-sm text-label-sm text-accent hover:underline px-1 py-0.5" type="button">+ Tambah</button>
+</div>
+</div>
+<!-- Mode Asesmen Switch -->
+<div class="md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-ink-2">Mode Asesmen</label>
+<div class="h-9 p-0.5 bg-surface-container-low border border-line rounded-lg flex items-center">
+<button class="flex-1 h-full rounded text-ink-3 font-label-sm text-label-sm hover:text-ink flex items-center justify-center" type="button">Latihan</button>
+<button class="flex-1 h-full rounded bg-surface-container text-accent font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1 border border-line shadow-sm" type="button">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+<span>Resmi</span>
+</button>
+</div>
+</div>
+<!-- Jadwal Akses Portal -->
+<div class="md:col-span-3 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-ink-2">Jadwal Akses Portal</label>
+<span class="font-badge text-badge text-warn">Toleransi +15m</span>
+</div>
+<div class="h-9 px-3 rounded-lg bg-surface-container-low border border-line flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-ink tabular-nums flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-ink-3">calendar_today</span>
+            22 Okt, 07:30 → 11:30
+          </span>
+<span class="material-symbols-outlined text-[15px] text-ink-3">schedule</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Header Section Butir Soal -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<h2 class="font-headline-md text-headline-md text-ink">Butir Instrumen Penilaian</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container border border-line font-badge text-badge text-ink-2">4 Butir Aktif</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 rounded-lg bg-surface hover:bg-surface-bright text-ink-2 border border-line" title="Perkecil Semua Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">unfold_less</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface hover:bg-surface-bright text-ink-2 border border-line" title="Filter Tipe Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Container Soal List -->
+<div class="flex flex-col space-y-4 mb-8">
+<!-- ITEM 01: Pilihan Ganda -->
+<div class="bg-surface border border-line rounded-xl p-5 hover:border-outline-variant transition-colors group">
+<!-- Item Meta Header -->
+<div class="flex items-start justify-between gap-3 pb-3 border-b border-line-soft">
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-ink font-mono font-bold">#01</span>
+<span class="px-2 py-0.5 rounded bg-accent-soft text-accent font-badge text-badge border border-accent/20">PG (PILIHAN GANDA)</span>
+<span class="font-label-sm text-label-sm text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-2">KD 3.2 Gerak Lurus & Gaya</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-label-sm text-label-sm text-ink-2 bg-surface-container px-2 py-1 rounded border border-line tabular-nums">Bobot: <strong class="text-ink">25</strong> Poin</span>
+<button class="w-7 h-7 rounded flex items-center justify-center text-ink-3 hover:text-ink hover:bg-surface-bright transition-colors" title="Opsi Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Pertanyaan -->
+<div class="py-3">
+<p class="font-body-md text-body-md text-ink leading-relaxed">
+          Sebuah balok bermassa 4 kg ditarik dengan gaya tetap sebesar 20 N pada bidang horizontal licin tanpa gesekan. Menurut Hukum II Newton, percepatan yang dialami oleh balok tersebut adalah...
+        </p>
+</div>
+<!-- Opsi PG -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
+<!-- Opsi A (Kunci Benar) -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container border border-ok/50 text-ink">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-ok/10 text-ok border border-ok/30 flex items-center justify-center font-label-md text-label-md font-bold">A</span>
+<span class="font-body-md text-body-md">5 m/s²</span>
+</div>
+<span class="flex items-center gap-1 font-badge text-badge text-ok bg-ok/10 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+            Kunci Benar
+          </span>
+</div>
+<!-- Opsi B -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-line text-ink-2 hover:text-ink hover:border-line-soft transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface border border-line text-ink-3 flex items-center justify-center font-label-md text-label-md">B</span>
+<span class="font-body-md text-body-md">10 m/s²</span>
+</div>
+</div>
+<!-- Opsi C -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-line text-ink-2 hover:text-ink hover:border-line-soft transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface border border-line text-ink-3 flex items-center justify-center font-label-md text-label-md">C</span>
+<span class="font-body-md text-body-md">80 m/s²</span>
+</div>
+</div>
+<!-- Opsi D -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low border border-line text-ink-2 hover:text-ink hover:border-line-soft transition-colors">
+<div class="flex items-center gap-3">
+<span class="w-6 h-6 rounded-md bg-surface border border-line text-ink-3 flex items-center justify-center font-label-md text-label-md">D</span>
+<span class="font-body-md text-body-md">0.2 m/s²</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ITEM 02: Benar / Salah -->
+<div class="bg-surface border border-line rounded-xl p-5 hover:border-outline-variant transition-colors group">
+<!-- Item Meta Header -->
+<div class="flex items-start justify-between gap-3 pb-3 border-b border-line-soft">
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-ink font-mono font-bold">#02</span>
+<span class="px-2 py-0.5 rounded bg-ok/10 text-ok font-badge text-badge border border-ok/20">BS (BENAR / SALAH)</span>
+<span class="font-label-sm text-label-sm text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-2">KD 3.3 Konsep Energi & Usaha</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-label-sm text-label-sm text-ink-2 bg-surface-container px-2 py-1 rounded border border-line tabular-nums">Bobot: <strong class="text-ink">20</strong> Poin</span>
+<button class="w-7 h-7 rounded flex items-center justify-center text-ink-3 hover:text-ink hover:bg-surface-bright transition-colors" title="Opsi Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Pertanyaan -->
+<div class="py-3">
+<p class="font-body-md text-body-md text-ink leading-relaxed">
+          Tentukan validitas pernyataan ilmiah berikut mengenai perubahan bentuk energi: <br/>
+<em class="text-ink-2 border-l-2 border-accent pl-3 my-2 block">"Ketika sebuah apel jatuh bebas dari tangkai pohon menuju tanah, energi kinetik apel berangsur-angsur berkurang sementara energi potensial gravitasinya meningkat seiring bertambahnya kecepatan."</em>
+</p>
+</div>
+<!-- Pilihan BS & Kunci -->
+<div class="pt-1 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="px-5 py-2 rounded-lg bg-surface-container-low border border-line text-ink-3 font-label-md text-label-md hover:text-ink cursor-pointer" type="button">
+            Benar
+          </button>
+<button class="px-5 py-2 rounded-lg bg-surface-container border border-ok text-ok font-label-md text-label-md font-semibold flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[17px]">check_circle</span>
+            Salah (Kunci Terpilih)
+          </button>
+</div>
+<div class="px-3 py-2 rounded-lg bg-surface-container-low border border-line-soft text-ink-2 font-body-sm text-body-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-accent">info</span>
+<span><strong>Alasan Kunci:</strong> Energi potensial berkurang dan energi kinetik membesar saat jatuh bebas.</span>
+</div>
+</div>
+</div>
+<!-- ITEM 03: Menjodohkan (Matching) -->
+<div class="bg-surface border border-line rounded-xl p-5 hover:border-outline-variant transition-colors group">
+<!-- Item Meta Header -->
+<div class="flex items-start justify-between gap-3 pb-3 border-b border-line-soft">
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-ink font-mono font-bold">#03</span>
+<span class="px-2 py-0.5 rounded bg-warn/10 text-warn font-badge text-badge border border-warn/20">MATCH (MENJODOHKAN)</span>
+<span class="font-label-sm text-label-sm text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-2">KD 3.5 Sistem Pernapasan Manusia</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-label-sm text-label-sm text-ink-2 bg-surface-container px-2 py-1 rounded border border-line tabular-nums">Bobot: <strong class="text-ink">30</strong> Poin</span>
+<button class="w-7 h-7 rounded flex items-center justify-center text-ink-3 hover:text-ink hover:bg-surface-bright transition-colors" title="Opsi Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Pertanyaan -->
+<div class="py-3">
+<p class="font-body-md text-body-md text-ink leading-relaxed">
+          Pasangkan nama organ pernapasan berikut dengan fungsi fisiologis utamanya yang tepat:
+        </p>
+</div>
+<!-- Pasangan Matching (Rows) -->
+<div class="space-y-2 pt-1">
+<!-- Row 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-lg border border-line-soft">
+<div class="md:col-span-4 flex items-center gap-2 px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-label-sm text-label-sm font-mono text-ink-3">1.</span>
+<span class="font-label-md text-label-md text-ink font-medium">Alveolus</span>
+</div>
+<div class="hidden md:flex md:col-span-1 justify-center">
+<span class="material-symbols-outlined text-ink-3 text-[18px]">swap_horiz</span>
+</div>
+<div class="md:col-span-7 flex items-center justify-between px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-body-sm text-body-sm text-ink">Tempat difusi gas oksigen (O₂) dan karbondioksida (CO₂)</span>
+<span class="font-badge text-badge text-ok bg-ok/10 px-1.5 py-0.5 rounded">Tepat</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-lg border border-line-soft">
+<div class="md:col-span-4 flex items-center gap-2 px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-label-sm text-label-sm font-mono text-ink-3">2.</span>
+<span class="font-label-md text-label-md text-ink font-medium">Trakea</span>
+</div>
+<div class="hidden md:flex md:col-span-1 justify-center">
+<span class="material-symbols-outlined text-ink-3 text-[18px]">swap_horiz</span>
+</div>
+<div class="md:col-span-7 flex items-center justify-between px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-body-sm text-body-sm text-ink">Menyaring partikel asing dengan silia dan lendir pembersih</span>
+<span class="font-badge text-badge text-ok bg-ok/10 px-1.5 py-0.5 rounded">Tepat</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center bg-surface-container-low p-2.5 rounded-lg border border-line-soft">
+<div class="md:col-span-4 flex items-center gap-2 px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-label-sm text-label-sm font-mono text-ink-3">3.</span>
+<span class="font-label-md text-label-md text-ink font-medium">Laring</span>
+</div>
+<div class="hidden md:flex md:col-span-1 justify-center">
+<span class="material-symbols-outlined text-ink-3 text-[18px]">swap_horiz</span>
+</div>
+<div class="md:col-span-7 flex items-center justify-between px-3 py-1.5 bg-surface-container rounded border border-line">
+<span class="font-body-sm text-body-sm text-ink">Mengatur jalan masuk udara dan memuat pita suara pembentuk vokal</span>
+<span class="font-badge text-badge text-ok bg-ok/10 px-1.5 py-0.5 rounded">Tepat</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ITEM 04: Uraian / Essay -->
+<div class="bg-surface border border-line rounded-xl p-5 hover:border-outline-variant transition-colors group">
+<!-- Item Meta Header -->
+<div class="flex items-start justify-between gap-3 pb-3 border-b border-line-soft">
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-ink font-mono font-bold">#04</span>
+<span class="px-2 py-0.5 rounded bg-danger/10 text-danger font-badge text-badge border border-danger/20">ESSAY (URAIAN)</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-ink-2 font-badge text-badge">Dinilai Manual</span>
+<span class="font-label-sm text-label-sm text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-2">KD 3.6 Struktur Tumbuhan & Fotosintesis</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-label-sm text-label-sm text-ink-2 bg-surface-container px-2 py-1 rounded border border-line tabular-nums">Bobot: <strong class="text-ink">25</strong> Poin</span>
+<button class="w-7 h-7 rounded flex items-center justify-center text-ink-3 hover:text-ink hover:bg-surface-bright transition-colors" title="Opsi Soal" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Pertanyaan -->
+<div class="py-3">
+<p class="font-body-md text-body-md text-ink leading-relaxed">
+          Jelaskan secara runtut tahapan reaksi terang dan reaksi gelap pada proses fotosintesis tumbuhan berklorofil, serta sebutkan produk akhir yang dihasilkan dari masing-masing reaksi tersebut!
+        </p>
+</div>
+<!-- Rubrik Penilaian Guru Callout -->
+<div class="bg-surface-container-low border border-line-soft rounded-lg p-3.5 mt-1">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-line-soft">
+<span class="font-label-md text-label-md text-ink font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-accent">fact_check</span>
+            Rubrik Penilaian Terstruktur Guru
+          </span>
+<span class="font-badge text-badge text-ink-3">Akumulasi: 25 Poin</span>
+</div>
+<div class="space-y-1.5">
+<div class="flex items-start justify-between gap-4 text-ink-2 font-body-sm text-body-sm">
+<span>• Penjelasan fotolisis air & transfer elektron di membran tilakoid</span>
+<span class="font-mono text-ink tabular-nums font-medium shrink-0">10 Poin</span>
+</div>
+<div class="flex items-start justify-between gap-4 text-ink-2 font-body-sm text-body-sm">
+<span>• Penjelasan fiksasi CO₂ & siklus Calvin pada stroma menghasilkan glukosa</span>
+<span class="font-mono text-ink tabular-nums font-medium shrink-0">10 Poin</span>
+</div>
+<div class="flex items-start justify-between gap-4 text-ink-2 font-body-sm text-body-sm">
+<span>• Kelengkapan penyebutan ATP & NADPH sebagai molekul energi perantara</span>
+<span class="font-mono text-ink tabular-nums font-medium shrink-0">5 Poin</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action & Status Dock -->
+<div class="bg-surface-container border border-line rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<div class="relative inline-block text-left w-full sm:w-auto">
+<button class="w-full sm:w-auto px-4 py-2 rounded-lg bg-surface border border-line hover:bg-surface-bright text-ink font-label-md text-label-md flex items-center justify-center gap-2 transition-colors" id="add-question-btn" type="button">
+<span class="material-symbols-outlined text-accent text-[18px]">add_circle</span>
+<span>+ Tambah Butir Soal</span>
+<span class="material-symbols-outlined text-ink-3 text-[16px]">expand_more</span>
+</button>
+</div>
+<button class="px-3 py-2 rounded-lg bg-surface border border-line hover:bg-surface-bright text-ink-2 hover:text-ink font-label-md text-label-md transition-colors hidden md:flex items-center gap-1.5" title="Impor dari Bank Soal Kemendikbud" type="button">
+<span class="material-symbols-outlined text-[17px]">cloud_download</span>
+<span>Impor Bank Soal</span>
+</button>
+</div>
+<div class="flex items-center gap-3 text-right">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-ok animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-ink-2">Perubahan tersimpan otomatis</span>
+</div>
+<span class="text-ink-3">|</span>
+<span class="font-label-md text-label-md text-ink font-semibold tabular-nums">Total 4 Soal • Bobot 100 Poin</span>
+</div>
+</div>
+</div></div></main></div></body></html>

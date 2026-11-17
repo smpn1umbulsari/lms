@@ -1,519 +1,1899 @@
-<!-- admin.html -->
+<!-- admin.html — Minimalist Blue Design (Stitch Project 1529169781025736343) -->
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panel Guru & Admin — LMS SITURI</title>
+<meta name="shell-type" content="web_dashboard">
+<title>Portal Guru — LMS SMPN 1 Umbulsari (SITURI)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #090d16; --surface-1: #0f172a; --surface-2: #1e293b; --surface-3: #334155;
-    --border: #1e293b; --text-hero: #f8fafc; --text-body: #cbd5e1; --text-muted: #64748b;
-    --accent: #3b82f6; --ok: #10b981; --warn: #f59e0b; --danger: #ef4444;
+    --paper: #f8fafc;
+    --background: #f7f9fb;
+    --surface: #ffffff;
+    --surface-low: #f2f4f6;
+    --surface-container: #eceef0;
+    --surface-high: #e6e8ea;
+    --surface-highest: #e0e3e5;
+    --line: #e2e8f0;
+    --line-soft: #f1f5f9;
+    --ink: #0f172a;
+    --ink-2: #64748b;
+    --ink-3: #94a3b8;
+    --primary: #0037b0;
+    --accent: #1d4ed8;
+    --accent-soft: #eff6ff;
+    --on-primary: #ffffff;
+    --ok: #16a34a;
+    --ok-soft: #f0fdf4;
+    --warn: #d97706;
+    --warn-soft: #fffbeb;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --badge-pg: #1d4ed8;
+    --badge-pg-bg: #eff6ff;
+    --badge-bs: #16a34a;
+    --badge-bs-bg: #f0fdf4;
+    --badge-match: #d97706;
+    --badge-match-bg: #fffbeb;
+    --badge-essay: #dc2626;
+    --badge-essay-bg: #fef2f2;
+    --shadow-modal: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
+    --backdrop: rgba(15, 23, 42, 0.45);
   }
+
+  html[data-theme="dark"], html.dark {
+    --paper: #0d1117;
+    --background: #10141a;
+    --surface: #151b23;
+    --surface-low: #0f141c;
+    --surface-container: #18202b;
+    --surface-high: #1e2633;
+    --surface-highest: #31353c;
+    --line: #252d38;
+    --line-soft: #1e252f;
+    --ink: #f2f5f7;
+    --ink-2: #a3adba;
+    --ink-3: #6f7b8a;
+    --primary: #8ed5ff;
+    --accent: #38bdf8;
+    --accent-soft: #0f2942;
+    --on-primary: #00354a;
+    --ok: #22c55e;
+    --ok-soft: #0b2919;
+    --warn: #f59e0b;
+    --warn-soft: #2b1f0b;
+    --danger: #ef4444;
+    --danger-soft: #2c1215;
+    --badge-pg: #38bdf8;
+    --badge-pg-bg: #0f2942;
+    --badge-bs: #22c55e;
+    --badge-bs-bg: #0b2919;
+    --badge-match: #f59e0b;
+    --badge-match-bg: #2b1f0b;
+    --badge-essay: #ef4444;
+    --badge-essay-bg: #2c1215;
+    --shadow-modal: 0 12px 30px -4px rgba(0, 0, 0, 0.5);
+    --backdrop: rgba(9, 13, 22, 0.72);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font: 14px/1.5 system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-body); display: flex; min-height: 100vh; }
-  
-  /* Sidebar */
-  aside { width: 230px; min-width: 230px; background: var(--surface-1); border-right: 1px solid var(--border); padding: 1.25rem; display: flex; flex-direction: column; }
-  .brand { font-size: 1.15rem; font-weight: 700; color: var(--text-hero); margin-bottom: 2rem; }
-  .sidebar-toggle-input,
-  .sidebar-hamburger,
-  .sidebar-backdrop { display: none; }
-  .sidebar-content { display: flex; flex-direction: column; flex: 1; }
-  .nav-btn { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .65rem .85rem; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font: inherit; font-weight: 600; cursor: pointer; text-align: left; margin-bottom: .4rem; }
-  .nav-btn:hover { background: var(--surface-2); color: var(--text-body); }
-  .nav-btn.active { background: var(--surface-2); color: var(--accent); border-left: 3px solid var(--accent); }
-  
-  /* Main */
-  main { flex: 1; padding: 2rem; overflow-y: auto; }
-  .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-  .panel { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
-  .panel h2 { font-size: 1.15rem; color: var(--text-hero); margin-bottom: 1rem; }
-  
-  label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .35rem; }
-  input, textarea, select { width: 100%; font: inherit; background: var(--surface-2); border: 1px solid var(--surface-3); border-radius: 8px; color: var(--text-hero); padding: .55rem .75rem; margin-bottom: .85rem; outline: none; }
-  textarea { resize: vertical; min-height: 70px; }
-  .row { display: flex; gap: .75rem; }
-  .row > div { flex: 1; }
-  
-  .btn { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 600; padding: .6rem 1.25rem; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; min-height: 44px; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-secondary { background: var(--surface-2); color: var(--text-hero); border: 1px solid var(--surface-3); }
-  .btn-danger { background: var(--danger); color: #fff; }
-  
-  /* Tables */
-  .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: .5rem; }
-  table { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 520px; }
-  th, td { padding: .75rem; text-align: left; border-bottom: 1px solid var(--border); }
-  th { color: var(--text-muted); font-weight: 600; }
-  table .btn { min-height: 34px; padding: .3rem .6rem !important; }
-  table input[type="number"] { min-height: 34px !important; margin-bottom: 0 !important; }
-  
-  /* Question Builder Card */
-  .q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; position: relative; }
-  .badge { display: inline-block; padding: .2rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 700; text-transform: uppercase; }
-  .badge-danger { background: rgba(239,68,68,.15); color: #fca5a5; }
-  .badge-ok { background: rgba(16,185,129,.15); color: #86efac; }
-  
-  .hidden { display: none !important; }
-  #log { font: 12px ui-monospace, monospace; color: var(--text-muted); background: var(--surface-2); padding: .75rem; border-radius: 8px; margin-top: 1rem; max-height: 120px; overflow-y: auto; word-break: break-all; }
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.48;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tabular-nums, .stat-val, td code, input[type="number"], .mono-num {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    user-select: none;
+  }
+
+  /* Layout Shell: Desktop 64px Icon Rail + Top Bar + Left-Aligned Main (max 1040px) */
+  body { display: flex; flex-direction: column; }
+
+  aside#sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+  }
+  .sidebar-toggle-input, .sidebar-hamburger, .sidebar-backdrop { display: none; }
+  .sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.02em;
+  }
+  .brand-text-mobile { display: none; }
+  .sidebar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 10px;
+    flex: 1;
+  }
+  .nav-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .nav-btn:hover {
+    background: var(--surface-low);
+    color: var(--ink);
+  }
+  .nav-btn.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--line);
+  }
+  .nav-btn .nav-label {
+    display: none;
+  }
+  .sidebar-user {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Top Institutional Header Bar */
+  .top-appbar {
+    position: fixed;
+    top: 0;
+    left: 64px;
+    right: 0;
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+  }
+  body.auth-mode .top-appbar {
+    left: 0;
+  }
+  .appbar-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  .appbar-crumbs strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .appbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .semester-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface-low);
+    border: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .dot-live {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ok);
+    flex-shrink: 0;
+  }
+  .icon-action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .icon-action-btn:hover {
+    background: var(--surface-low);
+    color: var(--ink);
+  }
+
+  /* Main Content Area (Left-aligned, max 1040px per Stitch Spec) */
+  main {
+    flex: 1;
+    margin-left: 64px;
+    padding: 90px 44px 48px 44px;
+    max-width: 1128px; /* 1040px inner + 88px horizontal padding */
+    width: 100%;
+  }
+  body.auth-mode main {
+    margin-left: 0;
+    max-width: 100%;
+    padding-top: 84px;
+  }
+
+  /* Typography & Page Header */
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.22;
+    color: var(--ink);
+  }
+  .page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Canonical Stat Strip (1-Row High-Density Strip with 1px Hairlines) */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .stat-cell {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--line);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell:hover { background: var(--surface-low); }
+  .stat-cell.highlight { background: var(--accent-soft); }
+  .stat-lbl {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .stat-val {
+    font-size: 29px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 4px 0 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-meta {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  /* Asymmetric 2-Column Split (1.45fr / 1fr, gap 14px) */
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  /* Panels & Cards (Hairline 1px, no heavy shadow) */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .panel h2, .panel-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* List Rows inside Panels */
+  .list-feed {
+    display: flex;
+    flex-direction: column;
+  }
+  .list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-row-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .time-pill {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--surface-low);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    min-width: 54px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* Buttons (Rule of One Primary Action per screen) */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 9px 16px;
+    min-height: 40px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.99); }
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+  }
+  html[data-theme="dark"] .btn-primary {
+    color: #061826;
+  }
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-ink {
+    background: var(--ink);
+    color: var(--surface);
+    font-weight: 600;
+  }
+  .btn-secondary, .btn-ghost {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover, .btn-ghost:hover {
+    background: var(--surface-low);
+  }
+  .btn-danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+  }
+  .btn-danger:hover {
+    background: var(--danger);
+    color: #ffffff;
+  }
+  .btn-sm {
+    min-height: 32px;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 7px;
+  }
+
+  /* Forms, Inputs, Labels */
+  label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-bottom: 5px;
+  }
+  input, textarea, select {
+    width: 100%;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 9px 12px;
+    min-height: 40px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s ease;
+  }
+  input::placeholder, textarea::placeholder { color: var(--ink-3); }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+  }
+  textarea { resize: vertical; min-height: 76px; }
+  .row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .row > div {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  /* 1-Line Compact Filter Toolbar */
+  .toolbar-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 340px;
+  }
+  .search-box .material-symbols-outlined {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-3);
+    font-size: 18px;
+    pointer-events: none;
+  }
+  .search-box input {
+    margin-bottom: 0;
+    padding-left: 34px;
+    background: var(--surface-low);
+  }
+
+  /* Chips & Taxonomy Badges */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px 11px;
+    min-height: 32px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--surface-low);
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    user-select: none;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--ink-3); }
+  .chip.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.25;
+    flex-shrink: 0;
+  }
+  .badge-pg { background: var(--badge-pg-bg); color: var(--badge-pg); }
+  .badge-bs, .badge-ok { background: var(--badge-bs-bg); color: var(--badge-bs); }
+  .badge-match, .badge-warn { background: var(--badge-match-bg); color: var(--badge-match); }
+  .badge-essay, .badge-danger { background: var(--badge-essay-bg); color: var(--badge-essay); }
+  .badge-neutral { background: var(--surface-low); color: var(--ink-2); border: 1px solid var(--line); }
+
+  /* Progress Track */
+  .progress-track {
+    width: 100%;
+    height: 5px;
+    background: var(--surface-high);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+
+  /* Data Tables (Zebra only in light mode, tabular numbers, sticky first col) */
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: middle;
+  }
+  th {
+    background: var(--surface-low);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+  }
+  html:not([data-theme="dark"]) tbody tr:nth-child(even) {
+    background: var(--paper);
+  }
+  tbody tr:hover {
+    background: var(--surface-low);
+  }
+  tbody tr:focus-within {
+    background: var(--accent-soft);
+  }
+  table .btn {
+    min-height: 32px;
+    padding: 4px 10px !important;
+    font-size: 12px;
+  }
+  table input[type="number"] {
+    min-height: 34px !important;
+    margin-bottom: 0 !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Question Builder Card with Left Taxonomy Accent */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--badge-pg);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .q-card[data-qtype="bs"] { border-left-color: var(--badge-bs); }
+  .q-card[data-qtype="match"] { border-left-color: var(--badge-match); }
+  .q-card[data-qtype="essay"] { border-left-color: var(--badge-essay); }
+
+  /* Callouts & Notices */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin-bottom: 12px;
+  }
+  .callout-warn { border-left-color: var(--warn); background: var(--warn-soft); color: var(--ink); }
+  .callout-danger { border-left-color: var(--danger); background: var(--danger-soft); color: var(--ink); }
 
   /* Inline Media Embeds */
-  .embed-video{aspect-ratio:16/9;width:100%;height:auto;border:0;border-radius:8px;background:#000}
-  .embed-pdf{width:100%;height:70vh;min-height:360px;border:0;border-radius:8px;background:#0b1220}
-  .embed-link{display:inline-block;word-break:break-all;color:#3b82f6}
-  .embed-wrap{margin:.5rem 0}
+  .embed-video { aspect-ratio: 16/9; width: 100%; height: auto; border: 0; border-radius: 8px; background: #000; }
+  .embed-pdf { width: 100%; height: 60vh; min-height: 320px; border: 0; border-radius: 8px; background: var(--surface-low); }
+  .embed-link { display: inline-flex; align-items: center; gap: 4px; word-break: break-all; color: var(--accent); font-weight: 500; text-decoration: none; }
+  .embed-link:hover { text-decoration: underline; }
+  .embed-wrap { margin: 6px 0; }
+  .link-row { display: flex; gap: 8px; margin: 6px 0; align-items: center; }
+  .link-row input { flex: 1; min-width: 0; margin-bottom: 0; }
+  .link-rm { width: 36px; height: 36px; background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; cursor: pointer; font-weight: 700; }
 
-  .link-row{display:flex;gap:.5rem;margin:.4rem 0}
-  .link-row input{flex:1;min-width:0}
-  .link-rm{padding:.3rem .6rem;background:#334155;color:#fff;border:0;border-radius:8px;cursor:pointer}
-  #btn-add-link{background:var(--surface-2);color:var(--text-hero);border:1px solid var(--surface-3);font-size:.85rem;padding:.4rem .8rem;min-height:36px;margin-bottom:.85rem}
+  /* Modal Dialog (Stitch Screens 6 & 7: Tambah Butir Soal Baru 4 Tipe & MATCH) */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--backdrop);
+    backdrop-filter: blur(2.5px);
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .modal-dialog {
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow-modal);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-body {
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface-low);
+  }
+  .seg-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface-low);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .seg-tab {
+    padding: 7px 8px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .seg-tab.active {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+  }
 
-  /* Ringkasan Cards */
-  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all .2s; }
-  .stat-card:hover { border-color: var(--accent); background: var(--surface-2); }
-  .stat-val { font-size: 2.25rem; font-weight: 700; color: var(--text-hero); line-height: 1.2; margin-bottom: .25rem; }
-  .stat-lbl { font-size: .85rem; color: var(--text-muted); font-weight: 600; }
+  /* Floating Toast Pill */
+  #toast-pill {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 120;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.92);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+    font-size: 12.5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-modal);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  #log {
+    font: 12px ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--ink-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-top: 18px;
+    max-height: 110px;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+  .hidden { display: none !important; }
 
-  /* Chips / Filter Buttons */
-  .chip-group { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-  .chip { display: inline-flex; align-items: center; justify-content: center; font: inherit; background: var(--surface-2); color: var(--text-body); border: 1px solid var(--surface-3); border-radius: 9999px; padding: .25rem .75rem; font-size: .8rem; font-weight: 600; cursor: pointer; transition: all .2s; min-height: 32px; user-select: none; }
-  .chip:hover { border-color: var(--accent); color: var(--text-hero); }
-  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  /* Mobile Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: none;
+  }
 
-  /* Responsive / Mobile styles (<= 640px) */
-  @media (max-width: 640px) {
-    body {
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden;
+  /* Responsive Rules (Mobile <= 768px & Tablet <= 991px) */
+  @media (max-width: 991px) {
+    .split-grid {
+      grid-template-columns: 1fr;
     }
-    aside {
-      width: 100%;
-      min-width: 0;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      padding: .75rem 1rem;
+    .stat-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stat-cell:nth-child(2) { border-right: none; }
+    .stat-cell:nth-child(1), .stat-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
+  }
+
+  @media (max-width: 768px) {
+    aside#sidebar {
       position: sticky;
       top: 0;
-      z-index: 100;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 16px;
+      flex-direction: row;
+      justify-content: space-between;
     }
     .sidebar-top {
-      display: flex;
-      align-items: center;
+      flex-direction: row;
       justify-content: space-between;
-      width: 100%;
-    }
-    .brand {
       margin-bottom: 0;
-      font-size: 1.1rem;
+    }
+    .brand-text-mobile {
+      display: inline-block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      margin-left: 8px;
     }
     .sidebar-hamburger {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       width: 44px;
       height: 44px;
+      border-radius: 9px;
+      background: var(--surface-low);
+      border: 1px solid var(--line);
       cursor: pointer;
-      border-radius: 8px;
-      background: var(--surface-2);
-      border: 1px solid var(--surface-3);
-      padding: 9px;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
     }
     .hamburger-bar {
-      display: block;
-      width: 20px;
+      width: 18px;
       height: 2px;
-      background: var(--text-hero);
+      background: var(--ink);
       border-radius: 2px;
-      transition: transform .2s ease, opacity .2s ease;
     }
-    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
-    }
-    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(2) {
-      opacity: 0;
-    }
-    .sidebar-toggle-input:checked ~ .sidebar-top .hamburger-bar:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
+    .sidebar-content {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+      z-index: 95;
+      align-items: stretch;
     }
     .sidebar-toggle-input:checked ~ .sidebar-content {
-      display: flex;
+      display: flex !important;
     }
     .sidebar-toggle-input:checked ~ .sidebar-backdrop {
       display: block;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
+      inset: 0;
+      top: 64px;
+      background: var(--backdrop);
       z-index: 90;
     }
-    .sidebar-content {
-      display: none;
-      flex-direction: column;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: var(--surface-1);
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.6);
-      padding: 1rem;
-      max-height: calc(100vh - 65px);
-      overflow-y: auto;
-      z-index: 95;
-    }
     .nav-btn {
-      min-height: 44px;
-      padding: .75rem 1rem;
-      font-size: .95rem;
+      width: 100%;
+      height: 44px;
+      justify-content: flex-start;
+      padding: 0 12px;
+      gap: 10px;
+    }
+    .nav-btn .nav-label {
+      display: inline;
+      font-size: 13.5px;
+      font-weight: 500;
     }
     .sidebar-user {
-      margin-top: .75rem !important;
-      padding-top: .75rem;
-      border-top: 1px solid var(--border);
-      display: flex;
+      flex-direction: row;
       justify-content: space-between;
-      align-items: center;
     }
-    #btn-logout {
-      margin-top: 0 !important;
-      min-height: 44px;
-      padding: 0 .75rem;
-      font-size: .9rem;
+    .top-appbar {
+      display: none;
     }
     main {
-      padding: 1rem .75rem;
-      width: 100%;
-      min-width: 0;
-      overflow-x: hidden;
+      margin-left: 0;
+      padding: 16px 20px 80px 20px;
+      max-width: 100%;
     }
-    .panel {
-      padding: 1rem .85rem;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-    }
-    #sec-auth {
-      margin: 2rem auto !important;
-      width: 100%;
-    }
-    .header-bar {
-      flex-direction: column;
-      align-items: stretch;
-      gap: .75rem;
-      margin-bottom: 1rem;
-    }
-    .header-bar h2 {
-      margin-bottom: 0;
-    }
-    .header-bar .btn {
-      width: 100%;
-    }
-    .header-bar > div[style*="display:flex"] {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr;
-      gap: .5rem !important;
-      width: 100%;
-    }
-    .header-bar > div[style*="display:flex"] .btn {
-      width: 100%;
-      padding: .5rem .25rem;
-      font-size: .8rem;
-    }
-    .row {
-      flex-direction: column;
-      gap: 0;
-    }
-    .row > div {
-      flex: none;
-      width: 100%;
-    }
+    .page-title { font-size: 20px; }
+    .header-actions { width: 100%; }
+    .header-actions .btn { flex: 1; }
     input, textarea, select {
-      font-size: 16px;
+      font-size: 16px !important;
       min-height: 44px;
-      padding: .65rem .75rem;
     }
     .btn {
       min-height: 44px;
-      padding: .65rem 1.25rem;
     }
-    div[style*="justify-content:flex-end"] {
-      display: flex !important;
-      gap: .5rem !important;
-      width: 100%;
+    .mobile-bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      z-index: 50;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px;
     }
-    div[style*="justify-content:flex-end"] .btn {
-      flex: 1;
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      color: var(--ink-2);
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 10.5px;
+      font-weight: 500;
+      gap: 2px;
+      cursor: pointer;
     }
-    .q-card {
-      padding: .85rem;
+    .mobile-nav-item.active {
+      color: var(--accent);
+      font-weight: 600;
     }
-    .q-card .btn-danger {
-      min-height: 36px;
-      padding: .35rem .6rem !important;
+    .modal-backdrop {
+      align-items: flex-end;
+      padding: 0;
     }
-    .stat-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: .75rem;
-    }
-    .stat-card {
-      padding: 1rem .85rem;
-    }
-    .stat-val {
-      font-size: 1.75rem;
+    .modal-dialog {
+      border-radius: 16px 16px 0 0;
+      max-height: 92vh;
     }
   }
 </style>
 </head>
-<body>
+<body class="auth-mode">
 
-<aside id="sidebar" class="hidden">
+<!-- LEFT ICON RAIL (Desktop 64px / Mobile Top Bar + Drawer) -->
+<aside id="sidebar" class="hidden" aria-label="Navigasi Portal Guru">
   <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input" aria-hidden="true">
   <label for="sidebar-toggle" class="sidebar-backdrop" aria-hidden="true"></label>
   <div class="sidebar-top">
-    <div class="brand">LMS SITURI · Guru</div>
-    <label for="sidebar-toggle" class="sidebar-hamburger" aria-label="Toggle Menu">
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-    </label>
+    <div style="display:flex; align-items:center">
+      <div class="brand-mark" title="LMS SMPN 1 Umbulsari">U</div>
+      <span class="brand-text-mobile">SMPN 1 Umbulsari · Guru</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px">
+      <button type="button" class="icon-action-btn mobile-only-theme" onclick="window._toggleTheme()" aria-label="Ubah Tema" style="display:none">
+        <span class="material-symbols-outlined">contrast</span>
+      </button>
+      <label for="sidebar-toggle" class="sidebar-hamburger" aria-label="Buka Menu Navigasi">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </label>
+    </div>
   </div>
   <div class="sidebar-content">
-    <button class="nav-btn active" data-tab="sec-ringkasan">📊 Ringkasan</button>
-    <button class="nav-btn" data-tab="sec-materi">📖 Kelola Materi</button>
-    <button class="nav-btn" data-tab="sec-tugas">📋 Penugasan</button>
-    <button class="nav-btn" data-tab="sec-asesmen">✍️ Buat Ulangan</button>
-    <button class="nav-btn" data-tab="sec-grading">⚖️ Koreksi Ujian</button>
-    <div class="sidebar-user" style="margin-top:auto; font-size:.8rem; color:var(--text-muted)">
-      <div id="u-display">-</div>
-      <button id="btn-logout" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-top:.5rem">Logout</button>
+    <button class="nav-btn active" data-tab="sec-ringkasan" title="Ringkasan Dashboard" aria-label="Ringkasan Dashboard">
+      <span class="material-symbols-outlined">grid_view</span>
+      <span class="nav-label">Ringkasan</span>
+    </button>
+    <button class="nav-btn" data-tab="sec-materi" title="Manajemen Materi Pelajaran" aria-label="Manajemen Materi Pelajaran">
+      <span class="material-symbols-outlined">menu_book</span>
+      <span class="nav-label">Materi Pembelajaran</span>
+    </button>
+    <button class="nav-btn" data-tab="sec-tugas" title="Penugasan & Kiriman Siswa" aria-label="Penugasan & Kiriman Siswa">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="nav-label">Penugasan</span>
+    </button>
+    <button class="nav-btn" data-tab="sec-asesmen" title="Asesmen & Bank Soal Builder" aria-label="Asesmen & Bank Soal Builder">
+      <span class="material-symbols-outlined">quiz</span>
+      <span class="nav-label">Asesmen & Bank Soal</span>
+    </button>
+    <button class="nav-btn" data-tab="sec-grading" title="Koreksi & Penilaian Siswa" aria-label="Koreksi & Penilaian Siswa">
+      <span class="material-symbols-outlined">fact_check</span>
+      <span class="nav-label">Koreksi & Penilaian</span>
+    </button>
+
+    <div class="sidebar-user">
+      <div id="u-display" style="font-size:11px; color:var(--ink-2); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap" title="Email Guru">-</div>
+      <button id="btn-logout" class="icon-action-btn" title="Keluar Portal Guru" aria-label="Keluar" style="color:var(--danger); border-color:transparent">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
     </div>
   </div>
 </aside>
 
+<!-- TOP INSTITUTIONAL HEADER BAR -->
+<header class="top-appbar">
+  <div class="appbar-crumbs">
+    <strong>SMPN 1 Umbulsari</strong>
+    <span>/</span>
+    <span id="crumb-section">Portal Guru · Ringkasan</span>
+  </div>
+  <div class="appbar-right">
+    <div class="semester-pill">
+      <span class="dot-live"></span>
+      <span>Semester Ganjil 2026/2027</span>
+    </div>
+    <button type="button" id="btn-theme-toggle" class="icon-action-btn" onclick="window._toggleTheme()" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
+      <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+    </button>
+    <div style="display:flex; align-items:center; gap:8px; padding-left:8px; border-left:1px solid var(--line)">
+      <div class="avatar-circle" id="header-avatar">G</div>
+      <div style="display:flex; flex-direction:column">
+        <span id="header-user-email" style="font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.1">Portal Guru</span>
+        <span style="font-size:11px; color:var(--ink-3)">Kurikulum Merdeka</span>
+      </div>
+    </div>
+  </div>
+</header>
+
 <main>
   <!-- AUTH BOX -->
-  <div id="sec-auth" class="panel" style="max-width:380px; margin:4rem auto">
-    <h2>Login Guru</h2>
-    <label>Email Guru</label>
+  <div id="sec-auth" class="panel" style="max-width:380px; margin:2.5rem auto; padding:24px">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px">
+      <div class="brand-mark">U</div>
+      <div>
+        <h1 style="font-size:18px; font-weight:600; color:var(--ink)">Login Guru</h1>
+        <p style="font-size:12px; color:var(--ink-2)">SMPN 1 Umbulsari · Portal Akademik</p>
+      </div>
+    </div>
+    <div id="auth-err" class="callout callout-warn hidden" role="alert"></div>
+    <label for="l-email">Email Guru</label>
     <input id="l-email" type="email" placeholder="guru@sekolah.sch.id" value="" autocomplete="off">
-    <label>Kata Sandi</label>
+    <label for="l-pass">Kata Sandi</label>
     <input id="l-pass" type="password" placeholder="Kata sandi" value="" autocomplete="off">
-    <button id="btn-login" class="btn btn-primary" style="width:100%">Masuk</button>
-    <div style="text-align:center; margin-top:.75rem">
-      <a href="javascript:void(0)" onclick="alert('Hubungi admin sekolah untuk reset kata sandi.')" style="font-size:.8rem; color:var(--text-muted); text-decoration:underline; cursor:pointer">Lupa sandi?</a>
+    <button id="btn-login" class="btn btn-primary" style="width:100%; margin-top:4px">Masuk ke Portal Guru</button>
+    <div style="text-align:center; margin-top:12px">
+      <a href="javascript:void(0)" onclick="window._showToast('Hubungi admin sekolah untuk reset kata sandi.', 'warn')" style="font-size:12px; color:var(--ink-2); text-decoration:underline; cursor:pointer">Lupa sandi?</a>
     </div>
   </div>
 
   <!-- MAIN APP CONTAINER -->
   <div id="app-content" class="hidden">
-    
-    <!-- SECTION 0: RINGKASAN -->
-    <div id="sec-ringkasan" class="tab-pane">
-      <div class="header-bar">
-        <h2>Ringkasan Dashboard</h2>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">
-          <div id="rk-materi" class="stat-val">–</div>
-          <div class="stat-lbl">📖 Materi</div>
-        </div>
-        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">
-          <div id="rk-tugas" class="stat-val">–</div>
-          <div class="stat-lbl">📋 Tugas</div>
-        </div>
-        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
-          <div id="rk-asesmen" class="stat-val">–</div>
-          <div class="stat-lbl">✍️ Ulangan</div>
-        </div>
-        <div class="stat-card" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
-          <div id="rk-kiriman" class="stat-val">–</div>
-          <div class="stat-lbl">⚖️ Tugas Masuk</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- SECTION 1: MATERI -->
-    <div id="sec-materi" class="tab-pane hidden">
-      <div class="header-bar">
-        <h2>Materi Pembelajaran</h2>
-        <button id="btn-mat-new" class="btn btn-primary">+ Tambah Materi</button>
+    <!-- SECTION 0: RINGKASAN DASHBOARD GURU (Stitch Screen 0c37ee8800e1490c9bb2e763a3a885c2) -->
+    <section id="sec-ringkasan" class="tab-pane">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-pg">KBM Aktif</span>
+            <span style="font-size:12px; color:var(--ink-3)">SMPN 1 Umbulsari</span>
+          </div>
+          <h1 class="page-title">Ringkasan</h1>
+          <p class="page-subtitle">Semester Ganjil · 2026/2027 · Kelas Aktif Terintegrasi</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('btn-export-tugas-csv')?.click()">
+            <span class="material-symbols-outlined" style="font-size:18px">download</span>
+            <span>Ekspor Nilai</span>
+          </button>
+          <button type="button" class="btn btn-primary" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
+            <span class="material-symbols-outlined" style="font-size:18px">add</span>
+            <span>+ Buat Ujian Baru</span>
+          </button>
+        </div>
       </div>
-      <div id="mat-form-panel" class="panel hidden">
-        <h2 id="mat-form-title">Materi Baru</h2>
-        <label>Judul Materi</label>
-        <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur Sel Tumbuhan">
+
+      <!-- 1-Row High-Density Stat Strip -->
+      <div class="stat-strip" role="region" aria-label="Statistik Ringkasan">
+        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">
+          <div class="stat-lbl">
+            <span>Materi Aktif</span>
+            <span class="material-symbols-outlined" style="font-size:17px; color:var(--ink-3)">menu_book</span>
+          </div>
+          <div id="rk-materi" class="stat-val">–</div>
+          <div class="stat-meta">Modul teks & video terbit</div>
+        </div>
+        <div class="stat-cell highlight" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">
+          <div class="stat-lbl">
+            <span style="color:var(--badge-pg)">Penugasan Aktif</span>
+            <span class="status-dot" style="background:var(--badge-pg); margin-top:0"></span>
+          </div>
+          <div id="rk-tugas" class="stat-val">–</div>
+          <div class="stat-meta">Lembar kerja & proyek kelas</div>
+        </div>
+        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
+          <div class="stat-lbl">
+            <span>Ulangan Terjadwal</span>
+            <span class="material-symbols-outlined" style="font-size:17px; color:var(--warn)">event_upcoming</span>
+          </div>
+          <div id="rk-asesmen" class="stat-val">–</div>
+          <div class="stat-meta">Penilaian harian & CBT</div>
+        </div>
+        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
+          <div class="stat-lbl">
+            <span>Tugas Masuk</span>
+            <span class="badge badge-bs">Sinkron</span>
+          </div>
+          <div id="rk-kiriman" class="stat-val">–</div>
+          <div class="stat-meta">Kiriman siswa tersimpan</div>
+        </div>
+      </div>
+
+      <!-- 2-Column Asymmetric Split (1.45fr / 1fr) -->
+      <div class="split-grid">
+        <!-- Left Column: Aktivitas Terkini & Tugas Terkumpul -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>
+              <span class="material-symbols-outlined" style="color:var(--accent)">history_edu</span>
+              <span>Aktivitas Terkini & Kurikulum Aktif</span>
+            </h2>
+            <span style="font-size:12px; color:var(--ink-3)">Sinkronisasi Real-time</span>
+          </div>
+          <div id="rk-activity-feed" class="list-feed">
+            <div class="list-row">
+              <div class="list-row-main">
+                <span class="status-dot" style="background:var(--accent)"></span>
+                <div>
+                  <div style="font-weight:500; color:var(--ink)">Memuat ringkasan aktivitas kelas...</div>
+                  <div style="font-size:12px; color:var(--ink-3)">Materi, penugasan, dan asesmen terbit akan tampil di sini.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Progres Penilaian & Jadwal Hari Ini -->
+        <div style="display:flex; flex-direction:column; gap:14px">
+          <div class="panel" style="margin-bottom:0">
+            <div class="panel-head">
+              <h2>
+                <span class="material-symbols-outlined" style="color:var(--accent)">fact_check</span>
+                <span>Progres Penilaian & Koreksi</span>
+              </h2>
+              <span class="badge badge-pg tabular-nums" id="rk-grade-pct">Siap</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-2); margin-bottom:8px">
+              <span>Status Antrean Koreksi Ujian & Essay</span>
+              <strong style="color:var(--ink)" class="tabular-nums" id="rk-grade-summary">Auto-Check + Manual</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width:100%"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px solid var(--line-soft); font-size:12px; color:var(--ink-3)">
+              <span>Koreksi Hibrida (PG/BS/Match otomatis)</span>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">Buka Antrean →</button>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:0">
+            <div class="panel-head">
+              <h2>
+                <span class="material-symbols-outlined" style="color:var(--ink-2)">calendar_today</span>
+                <span>Akses Cepat Modul Guru</span>
+              </h2>
+              <span class="badge badge-bs">Hari Ini</span>
+            </div>
+            <div class="list-feed">
+              <div class="list-row">
+                <div class="list-row-main" style="align-items:center">
+                  <span class="time-pill">07:30</span>
+                  <div>
+                    <div style="font-weight:500; color:var(--ink)">Distribusi Materi Pembelajaran</div>
+                    <div style="font-size:12px; color:var(--ink-2)">Teks ringkasan, YouTube & Google Drive</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">Buka</button>
+              </div>
+              <div class="list-row">
+                <div class="list-row-main" style="align-items:center">
+                  <span class="time-pill">09:15</span>
+                  <div>
+                    <div style="font-weight:500; color:var(--ink)">Monitoring Penugasan & Tenggat</div>
+                    <div style="font-size:12px; color:var(--ink-2)">1 kiriman deterministik per siswa</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">Buka</button>
+              </div>
+              <div class="list-row">
+                <div class="list-row-main" style="align-items:center">
+                  <span class="time-pill" style="background:var(--accent-soft); color:var(--accent); border-color:var(--accent)">11:00</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--accent)">Asesmen CBT 4 Tipe Soal</div>
+                    <div style="font-size:12px; color:var(--ink-2)">PG, Benar/Salah, Menjodohkan, Essay</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">Buka</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: MANAJEMEN MATERI PELAJARAN (Stitch Screen ae63d07c367e4271997777d4680ed5f9) -->
+    <section id="sec-materi" class="tab-pane hidden">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-pg">Kurikulum Merdeka</span>
+            <span style="font-size:12px; color:var(--ink-3)">Distribusi Materi Hemat Kuota</span>
+          </div>
+          <h1 class="page-title">Materi Pembelajaran</h1>
+          <p class="page-subtitle">Kelola modul ajar, rangkuman teks, dan video referensi kelas VII – IX</p>
+        </div>
+        <div class="header-actions">
+          <a href="./index.html" target="_blank" rel="noopener" class="btn btn-secondary">
+            <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+            <span>Pratinjau Siswa</span>
+          </a>
+          <button id="btn-mat-new" type="button" class="btn btn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px">add</span>
+            <span>+ Tambah Materi</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Panel Materi (#mat-form-panel) -->
+      <div id="mat-form-panel" class="panel hidden" style="border-left:4px solid var(--accent)">
+        <div class="panel-head">
+          <h2 id="mat-form-title">Formulir Materi Baru</h2>
+          <span class="badge badge-neutral">Teks & Tautan Eksternal</span>
+        </div>
+        <label for="m-judul">Judul Materi Pembelajaran *</label>
+        <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur dan Fungsi Jaringan Tumbuhan">
         <div class="row">
-          <div><label>Target Kelas</label><input id="m-kelas" placeholder="c1, 7A, 7B"></div>
           <div>
-            <label>Tautan Video/Drive (Opsional)</label>
+            <label for="m-kelas">Target Rombel Kelas (pisahkan dengan koma) *</label>
+            <input id="m-kelas" placeholder="c1, 7A, 7B, 8A">
+            <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
+              <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','c1')">c1</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','7A')">7A</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','8A')">8A</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','8B')">8B</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','9A')">9A</button>
+            </div>
+          </div>
+          <div>
+            <label for="m-link">URL Media Pendukung (YouTube / Google Drive / PDF)</label>
             <input id="m-link" placeholder="https://youtube.com/watch?v=...">
             <div id="m-links-extra"></div>
-            <button type="button" id="btn-add-link" class="btn">+ Tambah tautan</button>
+            <button type="button" id="btn-add-link" class="btn btn-secondary btn-sm" style="margin-bottom:8px">+ Tambah tautan</button>
           </div>
         </div>
         <div id="m-link-preview" class="embed-wrap"></div>
-        <label>Uraian Ringkasan Materi</label>
-        <textarea id="m-deskripsi" rows="5" placeholder="Ketik ringkasan modul / materi di sini..."></textarea>
-        <div style="display:flex; justify-content:flex-end; gap:.5rem">
-          <button id="btn-mat-cancel" class="btn btn-secondary">Batal</button>
-          <button id="btn-mat-save" class="btn btn-primary">Simpan Materi</button>
+        <label for="m-deskripsi">Ringkasan & Petunjuk Belajar</label>
+        <textarea id="m-deskripsi" rows="5" placeholder="Ketik ringkasan modul / materi dan petunjuk literasi bagi siswa di sini..."></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid var(--line-soft)">
+          <button id="btn-mat-cancel" type="button" class="btn btn-secondary">Batal</button>
+          <button id="btn-mat-save" type="button" class="btn btn-primary">Simpan Materi</button>
         </div>
       </div>
-      <div class="panel">
-        <div class="row" style="margin-bottom:.75rem; align-items:center">
-          <div style="flex:1; min-width:220px"><input type="search" id="materi-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
-          <div style="flex:2">
-            <select id="materi-kelas" style="display:none"><option value="">Semua Kelas</option></select>
-            <div id="materi-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+
+      <!-- 1-Line Compact Toolbar Filter -->
+      <div class="toolbar-strip">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="search" id="materi-search" placeholder="Cari judul atau isi materi..." aria-label="Cari materi">
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1; justify-content:flex-end">
+          <select id="materi-kelas" aria-label="Filter Kelas Materi" style="width:auto; min-width:150px; margin-bottom:0">
+            <option value="">Semua Kelas</option>
+          </select>
+          <div id="materi-kelas-chips" class="chip-group">
+            <button type="button" class="chip active" data-val="">Semua</button>
           </div>
         </div>
-        <div class="table-container">
-          <table id="mat-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Link</th><th>Aksi</th></tr></thead><tbody></tbody></table>
-        </div>
       </div>
-    </div>
 
-    <!-- SECTION 2: TUGAS -->
-    <div id="sec-tugas" class="tab-pane hidden">
-      <div class="header-bar">
-        <h2>Penugasan Siswa</h2>
-        <button id="btn-tug-new" class="btn btn-primary">+ Buat Tugas Baru</button>
-      </div>
-      <div id="tug-form-panel" class="panel hidden">
-        <h2>Tugas Baru</h2>
-        <label>Judul Tugas</label>
-        <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan">
-        <div class="row">
-          <div><label>Target Kelas</label><input id="t-kelas" placeholder="c1, 7A"></div>
-          <div><label>Batas Waktu Pengumpulan (Due Date)</label><input id="t-due" type="datetime-local"></div>
+      <div class="panel" style="padding:0; overflow:hidden">
+        <div class="table-container" style="border:none; border-radius:0">
+          <table id="mat-table">
+            <thead>
+              <tr>
+                <th>Judul & Ringkasan Modul</th>
+                <th>Rombel Kelas</th>
+                <th>Media & Tautan</th>
+                <th style="text-align:right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <label>Instruksi Pengerjaan</label>
-        <textarea id="t-instruksi" rows="4" placeholder="Jelaskan petunjuk pengumpulan tugas..."></textarea>
-        <label>Tautan Materi/Referensi (video/PDF — bisa lebih dari satu)</label>
+      </div>
+    </section>
+
+    <!-- SECTION 2: PENUGASAN & PENGUMPULAN SISWA -->
+    <section id="sec-tugas" class="tab-pane hidden">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-match">Penugasan Terjadwal</span>
+            <span style="font-size:12px; color:var(--ink-3)">1 Dokumen per Siswa per Tugas</span>
+          </div>
+          <h1 class="page-title">Penugasan Siswa</h1>
+          <p class="page-subtitle">Kelola instruksi tugas, batas waktu pengumpulan, dan pemeriksaan nilai</p>
+        </div>
+        <div class="header-actions">
+          <button id="btn-export-tugas-csv" type="button" class="btn btn-secondary">
+            <span class="material-symbols-outlined" style="font-size:18px">download</span>
+            <span>Unduh Rekap Nilai Tugas</span>
+          </button>
+          <button id="btn-tug-new" type="button" class="btn btn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px">add</span>
+            <span>+ Buat Tugas Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Panel Tugas (#tug-form-panel) -->
+      <div id="tug-form-panel" class="panel hidden" style="border-left:4px solid var(--accent)">
+        <div class="panel-head">
+          <h2>Formulir Penugasan</h2>
+          <span class="badge badge-pg">Tenggat Terjadwal</span>
+        </div>
+        <label for="t-judul">Judul Tugas *</label>
+        <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan & Fotosintesis">
+        <div class="row">
+          <div>
+            <label for="t-kelas">Target Kelas (pisahkan koma) *</label>
+            <input id="t-kelas" placeholder="c1, 7A, 8A">
+            <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
+              <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','c1')">c1</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','7A')">7A</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','8A')">8A</button>
+              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','8B')">8B</button>
+            </div>
+          </div>
+          <div>
+            <label for="t-due">Batas Waktu Pengumpulan (Due Date) *</label>
+            <input id="t-due" type="datetime-local">
+          </div>
+        </div>
+        <label for="t-instruksi">Instruksi Pengerjaan</label>
+        <textarea id="t-instruksi" rows="4" placeholder="Jelaskan langkah pengerjaan dan format tautan Google Drive yang harus dikumpulkan siswa..."></textarea>
+        <label for="t-link">Tautan Materi/Referensi Pendukung (Opsional)</label>
         <input id="t-link" placeholder="https://...">
         <div id="t-links-extra"></div>
-        <button type="button" id="btn-add-tlink" class="btn">+ Tambah tautan</button>
-        <div style="display:flex; justify-content:flex-end; gap:.5rem">
-          <button id="btn-tug-cancel" class="btn btn-secondary">Batal</button>
-          <button id="btn-tug-save" class="btn btn-primary">Terbitkan Tugas</button>
+        <button type="button" id="btn-add-tlink" class="btn btn-secondary btn-sm" style="margin-bottom:10px">+ Tambah tautan</button>
+        <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid var(--line-soft)">
+          <button id="btn-tug-cancel" type="button" class="btn btn-secondary">Batal</button>
+          <button id="btn-tug-save" type="button" class="btn btn-primary">Terbitkan Tugas</button>
         </div>
       </div>
-      <div class="panel">
-        <div style="display:flex; justify-content:flex-end; margin-bottom:.75rem">
-          <button id="btn-export-tugas-csv" class="btn btn-secondary">Unduh Rekap Nilai Tugas</button>
+
+      <!-- 1-Line Compact Toolbar Filter -->
+      <div class="toolbar-strip">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="search" id="tug-search" placeholder="Cari judul atau instruksi tugas..." aria-label="Cari tugas">
         </div>
-        <div class="row" style="margin-bottom:.75rem; align-items:center">
-          <div style="flex:1; min-width:220px"><input type="search" id="tug-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
-          <div style="flex:2">
-            <select id="tug-kelas" style="display:none"><option value="">Semua Kelas</option></select>
-            <div id="tug-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1; justify-content:flex-end">
+          <select id="tug-kelas" aria-label="Filter Kelas Tugas" style="width:auto; min-width:150px; margin-bottom:0">
+            <option value="">Semua Kelas</option>
+          </select>
+          <div id="tug-kelas-chips" class="chip-group">
+            <button type="button" class="chip active" data-val="">Semua</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0; overflow:hidden">
+        <div class="table-container" style="border:none; border-radius:0">
+          <table id="tug-table">
+            <thead>
+              <tr>
+                <th>Judul Tugas</th>
+                <th>Kelas</th>
+                <th>Tenggat (Due Date)</th>
+                <th>Kiriman Siswa</th>
+                <th style="text-align:right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tug-sub-panel" class="panel hidden" style="border-left:4px solid var(--ok)">
+        <div class="panel-head">
+          <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('tug-sub-panel').classList.add('hidden')">Tutup Panel</button>
+        </div>
+        <div class="table-container">
+          <table id="tug-sub-table">
+            <thead>
+              <tr>
+                <th>UID Siswa</th>
+                <th>Catatan / Teks Jawaban</th>
+                <th>Tautan Berkas</th>
+                <th>Nilai (0–100)</th>
+                <th style="text-align:right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: ASESMEN & UJIAN BUILDER + BANK SOAL (Stitch Screens a95d79285d3c4606b7a46542a61a435c, 05ab23ec449248ebae640d9225552ae9, 1dc3ed53d7584c6ba70c6718bf3c83ae, 0574317d703d4bcb81daffe9643a92f8) -->
+    <section id="sec-asesmen" class="tab-pane hidden">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-pg">Modul Pembuat Soal & CBT</span>
+            <span style="font-size:12px; color:var(--ink-3)">4 Tipe Instrumen AKM</span>
+          </div>
+          <h1 class="page-title">Asesmen & Bank Soal Builder</h1>
+          <p class="page-subtitle">Susun paket soal Pilihan Ganda, Benar/Salah, Menjodohkan, dan Essay dengan isolasi kunci otomatis</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-secondary" onclick="window._openQModal('pg')">
+            <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
+            <span>+ Modal Butir Soal</span>
+          </button>
+          <button id="btn-as-save" type="button" class="btn btn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px">publish</span>
+            <span>Simpan & Terbitkan Asesmen</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1-Row Builder Stats Strip -->
+      <div class="stat-strip" role="region" aria-label="Statistik Builder Soal">
+        <div class="stat-cell">
+          <div class="stat-lbl"><span>Jumlah Butir Aktif</span></div>
+          <div class="stat-val" id="as-stat-count">0</div>
+          <div class="stat-meta">Butir dalam paket ini</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl"><span>Akumulasi Bobot</span></div>
+          <div class="stat-val" id="as-stat-weight" style="color:var(--badge-pg)">0</div>
+          <div class="stat-meta">Total poin maksimum</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl"><span>Estimasi Durasi</span></div>
+          <div class="stat-val" id="as-stat-dur">60</div>
+          <div class="stat-meta">Menit pengerjaan CBT</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-lbl"><span>Keamanan Kunci</span></div>
+          <div class="stat-val" style="font-size:20px; color:var(--ok)" id="as-stat-mode">Latihan</div>
+          <div class="stat-meta">Isolasi otomatis mode Ujian</div>
+        </div>
+      </div>
+
+      <!-- Konfigurasi Lembar Soal Ribbon -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>
+            <span class="material-symbols-outlined" style="color:var(--accent)">tune</span>
+            <span>Konfigurasi Lembar Soal & Jadwal Akses</span>
+          </h2>
+          <span class="badge badge-bs">Siap Terbit</span>
+        </div>
+        <div class="row">
+          <div>
+            <label for="as-code">Kode Soal (otomatis bila kosong)</label>
+            <input id="as-code" placeholder="q_ipa_01" class="mono-num">
+          </div>
+          <div>
+            <label for="as-kelas">Kelas Target *</label>
+            <input id="as-kelas" value="c1" placeholder="c1">
+          </div>
+          <div>
+            <label for="as-mode">Mode Asesmen *</label>
+            <select id="as-mode" onchange="window._syncBuilderStats()">
+              <option value="latihan">Latihan (Auto-Nilai Instan)</option>
+              <option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option>
+            </select>
+          </div>
+        </div>
+        <label for="as-judul">Judul Asesmen / Paket Soal *</label>
+        <input id="as-judul" placeholder="Contoh: Asesmen Sumatif Tengah Semester (STS) - IPA Terpadu">
+        <div class="row">
+          <div>
+            <label for="as-durasi">Durasi (Menit)</label>
+            <input id="as-durasi" type="number" value="60" oninput="window._syncBuilderStats()">
+          </div>
+          <div>
+            <label for="as-tol">Toleransi Masuk (Menit)</label>
+            <input id="as-tol" type="number" value="120">
+          </div>
+          <div>
+            <label for="as-open">Waktu Buka *</label>
+            <input id="as-open" type="datetime-local">
+          </div>
+          <div>
+            <label for="as-close">Waktu Tutup *</label>
+            <input id="as-close" type="datetime-local">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tulis Soal Bar (Quick Add + Modal Trigger) -->
+      <div class="panel" style="background:var(--accent-soft); border-color:var(--accent)">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px">
+          <div>
+            <h2 style="font-size:14px; color:var(--ink)">Tulis & Tambah Butir Instrumen Penilaian</h2>
+            <p style="font-size:12px; color:var(--ink-2)">Tambahkan langsung ke daftar atau gunakan editor modal terstruktur</p>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('pg')">
+              <span class="badge badge-pg">PG</span>
+              <span>+ Pilihan Ganda</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('bs')">
+              <span class="badge badge-bs">BS</span>
+              <span>+ Benar/Salah</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('match')">
+              <span class="badge badge-match">MATCH</span>
+              <span>+ Mencocokkan</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('essay')">
+              <span class="badge badge-essay">ESSAY</span>
+              <span>+ Essay</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Butir Soal Container -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>
+            <span class="material-symbols-outlined" style="color:var(--accent)">format_list_numbered</span>
+            <span>Daftar Butir Soal Paket Ini</span>
+          </h2>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="window._openQModal('match')">
+            <span class="material-symbols-outlined" style="font-size:16px">sync_alt</span>
+            <span>Editor Pasangan MATCH</span>
+          </button>
+        </div>
+        <div id="as-questions-list">
+          <div style="text-align:center; padding:20px; color:var(--ink-3); font-size:13px">
+            Belum ada butir soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Asesmen Terbit -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Daftar Paket Asesmen Terbit</h2>
+          <span style="font-size:12px; color:var(--ink-3)">Bank Soal & Jadwal Kelas</span>
+        </div>
+        <div class="toolbar-strip" style="margin-bottom:12px; background:var(--paper)">
+          <div class="search-box">
+            <span class="material-symbols-outlined">search</span>
+            <input type="search" id="as-search" placeholder="Cari kode atau judul asesmen..." aria-label="Cari asesmen">
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1; justify-content:flex-end">
+            <select id="as-kelas" aria-label="Filter Kelas Asesmen" style="width:auto; min-width:150px; margin-bottom:0">
+              <option value="">Semua Kelas</option>
+            </select>
+            <div id="as-kelas-chips" class="chip-group">
+              <button type="button" class="chip active" data-val="">Semua</button>
+            </div>
           </div>
         </div>
         <div class="table-container">
-          <table id="tug-table"><thead><tr><th>Judul</th><th>Kelas</th><th>Due Date</th><th>Pengumpulan</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+          <table id="as-table">
+            <thead>
+              <tr>
+                <th>Kode</th>
+                <th>Judul Asesmen</th>
+                <th>Mode</th>
+                <th>Kelas</th>
+                <th>Waktu Buka</th>
+                <th style="text-align:right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-      <div id="tug-sub-panel" class="panel hidden">
-        <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
-        <div class="table-container">
-          <table id="tug-sub-table"><thead><tr><th>UID Siswa</th><th>Teks Jawaban</th><th>Link Tugas</th><th>Nilai</th><th>Aksi</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
+    </section>
 
-    <!-- SECTION 3: ASESMEN BUILDER (4 TIPE) -->
-    <div id="sec-asesmen" class="tab-pane hidden">
-      <div class="header-bar">
-        <h2>Pembuat Asesmen (4 Tipe Soal)</h2>
-        <button id="btn-as-save" class="btn btn-primary">Simpan & Terbitkan Asesmen</button>
-      </div>
-
-      <div class="panel" style="margin-bottom:1.5rem; border:1px solid var(--accent); background:rgba(59,130,246,0.05)">
-        <h2 style="font-size:1.1rem; color:var(--text-hero); margin-bottom:.75rem">Tulis Soal</h2>
-        <div style="display:flex; flex-wrap:wrap; gap:.5rem">
-          <button type="button" class="btn btn-secondary" onclick="window._addQ('pg')">+ Pilihan Ganda</button>
-          <button type="button" class="btn btn-secondary" onclick="window._addQ('bs')">+ Benar/Salah</button>
-          <button type="button" class="btn btn-secondary" onclick="window._addQ('match')">+ Mencocokkan</button>
-          <button type="button" class="btn btn-secondary" onclick="window._addQ('essay')">+ Essay</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Daftar Asesmen Terbit</h2>
-        <div class="row" style="margin-bottom:.75rem; align-items:center">
-          <div style="flex:1; min-width:220px"><input type="search" id="as-search" placeholder="Cari judul..." style="margin-bottom:.5rem"></div>
-          <div style="flex:2">
-            <select id="as-kelas" style="display:none"><option value="">Semua Kelas</option></select>
-            <div id="as-kelas-chips" class="chip-group" style="margin-bottom:.5rem"><button type="button" class="chip active" data-val="">Semua</button></div>
+    <!-- SECTION 4: KOREKSI & PENILAIAN SISWA (Stitch Screen 67ec79db05be4dcd9d3035ef6786f998) -->
+    <section id="sec-grading" class="tab-pane hidden">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-pg">Modul Koreksi Hibrida</span>
+            <span style="font-size:12px; color:var(--ink-3)">Auto-Check PG/BS/Match + Manual Essay</span>
           </div>
+          <h1 class="page-title">Penilaian & Koreksi Ujian</h1>
+          <p class="page-subtitle">Evaluasi lembar jawaban siswa dan terbitkan nilai secara kolektif (Batch Write)</p>
         </div>
-        <div class="table-container">
-          <table id="as-table"><thead><tr><th>Kode</th><th>Judul</th><th>Mode</th><th>Kelas</th><th>Buka</th><th>Aksi</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-      <div class="panel">
-        <h2>Pengaturan Asesmen</h2>
-        <div class="row">
-          <div><label>Kode soal (opsional — otomatis bila kosong)</label><input id="as-code" placeholder="q_ipa_01"></div>
-          <div><label>Kelas Target</label><input id="as-kelas" value="c1"></div>
-          <div><label>Mode</label><select id="as-mode"><option value="latihan">Latihan (Auto-Nilai Instan)</option><option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option></select></div>
-        </div>
-        <label>Judul Asesmen</label>
-        <input id="as-judul" placeholder="Penilaian Harian Bab 3 Sistem Gerak">
-        <div class="row">
-          <div><label>Durasi (Menit)</label><input id="as-durasi" type="number" value="60"></div>
-          <div><label>Toleransi Masuk (Menit)</label><input id="as-tol" type="number" value="120"></div>
-          <div><label>Waktu Buka</label><input id="as-open" type="datetime-local"></div>
-          <div><label>Waktu Tutup</label><input id="as-close" type="datetime-local"></div>
+        <div class="header-actions">
+          <button id="btn-export-csv" type="button" class="btn btn-secondary">
+            <span class="material-symbols-outlined" style="font-size:18px">download</span>
+            <span>Unduh Rekap CSV</span>
+          </button>
         </div>
       </div>
 
       <div class="panel">
-        <div class="header-bar">
-          <h2>Daftar Butir Soal</h2>
-        </div>
-        <div id="as-questions-list"></div>
-      </div>
-    </div>
-
-    <!-- SECTION 4: KOREKSI UJIAN & GRADING -->
-    <div id="sec-grading" class="tab-pane hidden">
-      <div class="header-bar">
-        <h2>Penilaian & Koreksi Ujian</h2>
-        <button id="btn-export-csv" class="btn btn-secondary">Unduh Rekap CSV</button>
-      </div>
-      <div class="panel">
-        <div class="row">
-          <div><label>Pilih Kode Kuis</label><input id="gr-code" placeholder="q_ipa_01"></div>
-          <div style="display:flex; align-items:flex-end"><button id="btn-gr-fetch" class="btn btn-primary" style="width:100%">Muat Lembar Jawaban</button></div>
+        <div class="row" style="align-items:flex-end">
+          <div style="flex:2">
+            <label for="gr-code">Pilih / Masukkan Kode Kuis untuk Dikoreksi</label>
+            <input id="gr-code" placeholder="Contoh: q_ipa_01" style="margin-bottom:0">
+          </div>
+          <div style="flex:1">
+            <button id="btn-gr-fetch" type="button" class="btn btn-primary" style="width:100%">
+              <span class="material-symbols-outlined" style="font-size:18px">Download_for_offline</span>
+              <span>Muat Lembar Jawaban</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <div id="gr-eval-panel" class="panel hidden">
-        <h2>Lembar Koreksi Siswa</h2>
-        <div id="gr-cards"></div>
-        <button id="btn-gr-publish" class="btn btn-primary" style="margin-top:1rem; width:100%">Publikasikan Nilai Batch ke Siswa</button>
-      </div>
-    </div>
+        <div class="panel-head">
+          <div>
+            <h2>Lembar Koreksi Siswa</h2>
+            <p style="font-size:12px; color:var(--ink-2)" id="gr-subtitle">Periksa skor otomatis dan berikan nilai pada butir Essay</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window._stepStudent(-1)" aria-label="Siswa Sebelumnya">‹ Sebelumnya</button>
+            <span class="badge badge-neutral tabular-nums" id="gr-student-counter">Semua Siswa</span>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window._stepStudent(1)" aria-label="Siswa Berikutnya">Berikutnya ›</button>
+          </div>
+        </div>
 
-    <div id="log">Sistem siap.</div>
+        <div class="split-grid">
+          <!-- Left: Student Evaluation Cards -->
+          <div id="gr-cards"></div>
+
+          <!-- Right: Grading Summary & Keyboard Shortcuts -->
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <div class="panel" style="margin-bottom:0; background:var(--paper)">
+              <div class="panel-head">
+                <h2>Ringkasan Batch</h2>
+                <span class="badge badge-bs" id="gr-count-badge">0 Lembar</span>
+              </div>
+              <p style="font-size:12.5px; color:var(--ink-2); margin-bottom:12px">
+                Skor Pilihan Ganda, Benar/Salah, dan Menjodohkan dihitung otomatis oleh sistem dari <code>quizKeys</code>. Masukkan skor Essay lalu klik tombol publikasi di bawah.
+              </p>
+              <button id="btn-gr-publish" type="button" class="btn btn-primary" style="width:100%">
+                <span class="material-symbols-outlined" style="font-size:18px">publish</span>
+                <span>Publikasikan Nilai Batch ke Siswa</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="log" role="status" aria-live="polite">Sistem siap.</div>
   </div>
 </main>
+
+<!-- MOBILE BOTTOM NAVIGATION BAR (4 Primary Destinations) -->
+<nav class="mobile-bottom-nav hidden" id="mobile-nav" aria-label="Navigasi Bawah Guru">
+  <button type="button" class="mobile-nav-item active" data-tab="sec-ringkasan">
+    <span class="material-symbols-outlined">grid_view</span>
+    <span>Beranda</span>
+  </button>
+  <button type="button" class="mobile-nav-item" data-tab="sec-materi">
+    <span class="material-symbols-outlined">menu_book</span>
+    <span>Materi</span>
+  </button>
+  <button type="button" class="mobile-nav-item" data-tab="sec-asesmen">
+    <span class="material-symbols-outlined">quiz</span>
+    <span>Asesmen</span>
+  </button>
+  <button type="button" class="mobile-nav-item" data-tab="sec-grading">
+    <span class="material-symbols-outlined">fact_check</span>
+    <span>Nilai</span>
+  </button>
+</nav>
+
+<!-- MODAL TAMBAH BUTIR SOAL BARU (4 TIPE & MATCH — Stitch Screens 1dc3ed53d7584c6ba70c6718bf3c83ae & 0574317d703d4bcb81daffe9643a92f8) -->
+<div id="modal-add-q" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-q-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; justify-content:space-between">
+        <div style="display:flex; align-items:center; gap:8px">
+          <h2 id="modal-q-title" style="font-size:16px; font-weight:600">Tambah Butir Soal Baru</h2>
+          <span class="badge badge-neutral">4 Tipe Soal</span>
+        </div>
+        <button type="button" class="icon-action-btn" onclick="window._closeQModal()" aria-label="Tutup Modal" style="width:30px; height:30px">
+          <span class="material-symbols-outlined" style="font-size:18px">close</span>
+        </button>
+      </div>
+      <div class="seg-tabs" role="tablist">
+        <button type="button" class="seg-tab active" data-mtype="pg" onclick="window._switchQModalType('pg')">
+          <span class="badge badge-pg">PG</span>
+          <span>Pilihan Ganda</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="bs" onclick="window._switchQModalType('bs')">
+          <span class="badge badge-bs">BS</span>
+          <span>Benar/Salah</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="match" onclick="window._switchQModalType('match')">
+          <span class="badge badge-match">MATCH</span>
+          <span>Menjodohkan</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="essay" onclick="window._switchQModalType('essay')">
+          <span class="badge badge-essay">ESSAY</span>
+          <span>Uraian</span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div style="flex:3">
+          <label for="mq-teks">Teks Pertanyaan Utama *</label>
+          <textarea id="mq-teks" rows="3" placeholder="Tuliskan pokok soal atau instruksi perjodohan di sini..."></textarea>
+        </div>
+        <div style="flex:1; min-width:110px">
+          <label for="mq-bobot">Bobot Poin</label>
+          <input id="mq-bobot" type="number" value="25" min="1" max="100">
+        </div>
+      </div>
+
+      <!-- Panel PG -->
+      <div id="mq-panel-pg">
+        <label>Opsi Pilihan Ganda & Kunci Jawaban</label>
+        <div class="row">
+          <div><label for="mq-pg-a">Opsi A</label><input id="mq-pg-a" placeholder="Teks opsi A"></div>
+          <div><label for="mq-pg-b">Opsi B</label><input id="mq-pg-b" placeholder="Teks opsi B"></div>
+        </div>
+        <div class="row">
+          <div><label for="mq-pg-c">Opsi C</label><input id="mq-pg-c" placeholder="Teks opsi C"></div>
+          <div><label for="mq-pg-d">Opsi D</label><input id="mq-pg-d" placeholder="Teks opsi D"></div>
+        </div>
+        <label for="mq-pg-key">Kunci Jawaban Benar</label>
+        <select id="mq-pg-key">
+          <option value="A">Opsi A</option>
+          <option value="B">Opsi B</option>
+          <option value="C">Opsi C</option>
+          <option value="D">Opsi D</option>
+        </select>
+      </div>
+
+      <!-- Panel BS -->
+      <div id="mq-panel-bs" class="hidden">
+        <label for="mq-bs-key">Kunci Validitas Pernyataan (Benar / Salah)</label>
+        <select id="mq-bs-key">
+          <option value="true">BENAR (True)</option>
+          <option value="false">SALAH (False)</option>
+        </select>
+      </div>
+
+      <!-- Panel MATCH (Stitch Screen 0574317d703d4bcb81daffe9643a92f8) -->
+      <div id="mq-panel-match" class="hidden">
+        <div class="callout" style="border-left-color:var(--badge-match); background:var(--badge-match-bg)">
+          <strong style="color:var(--badge-match)">Konfigurasi Pasangan Menjodohkan (Kolom A ↔ Kolom B):</strong>
+          Sistem akan mengacak urutan respon Kolom B secara deterministik di perangkat siswa.
+        </div>
+        <div id="mq-match-rows">
+          <div class="row mq-match-pair">
+            <div><label>Kolom A (Premis 1)</label><input class="mq-kiri" placeholder="Contoh: Alveolus" value=""></div>
+            <div><label>Kolom B (Pasangan Benar 1)</label><input class="mq-kanan" placeholder="Contoh: Difusi gas O2 & CO2" value=""></div>
+          </div>
+          <div class="row mq-match-pair">
+            <div><label>Kolom A (Premis 2)</label><input class="mq-kiri" placeholder="Contoh: Trakea" value=""></div>
+            <div><label>Kolom B (Pasangan Benar 2)</label><input class="mq-kanan" placeholder="Contoh: Menyaring partikel debu" value=""></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="window._addModalMatchRow()">+ Tambah Baris Pasangan</button>
+      </div>
+
+      <!-- Panel ESSAY -->
+      <div id="mq-panel-essay" class="hidden">
+        <div class="callout callout-danger">
+          <strong style="color:var(--badge-essay)">Dinilai Manual oleh Guru:</strong>
+          Butir soal Essay tidak memiliki kunci otomatis dan akan masuk ke antrean koreksi manual.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:12px; color:var(--ok); font-weight:500">✓ Format soal tervalidasi</span>
+      <div style="display:flex; gap:8px">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="window._closeQModal()">Batal</button>
+        <button type="button" class="btn btn-ink btn-sm" onclick="window._commitQModal()">Simpan Butir Soal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING TOAST PILL -->
+<div id="toast-pill" class="hidden" role="status" aria-live="polite">
+  <span class="material-symbols-outlined" style="font-size:16px; color:var(--ok)">check_circle</span>
+  <span id="toast-text">Tersimpan</span>
+</div>
 
 <script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, deleteField, writeBatch, collection, query, where, Timestamp, getCountFromServer } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+// Theme Management (Light Minimalist Blue default + Dark Mode)
+function applyTheme(theme) {
+  const t = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+  document.documentElement.classList.toggle("dark", t === "dark");
+  const icon = document.getElementById("theme-icon");
+  if (icon) icon.textContent = t === "dark" ? "light_mode" : "dark_mode";
+  try { localStorage.setItem("lms_theme", t); } catch (e) {}
+}
+window._toggleTheme = () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "light";
+  applyTheme(cur === "dark" ? "light" : "dark");
+};
+try {
+  const savedTheme = localStorage.getItem("lms_theme");
+  if (savedTheme) applyTheme(savedTheme);
+} catch (e) {}
+
+// Toast Helper
+let toastTimer = null;
+function showToast(msg) {
+  const pill = document.getElementById("toast-pill");
+  const txt = document.getElementById("toast-text");
+  if (!pill || !txt) return;
+  txt.textContent = msg;
+  pill.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => pill.classList.add("hidden"), 3000);
+}
+window._showToast = showToast;
+
+// Quick Class Chip Helper
+window._toggleQuickClass = (inputId, clsName) => {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const parts = el.value.split(",").map(s => s.trim()).filter(Boolean);
+  const idx = parts.findIndex(p => p.toLowerCase() === clsName.toLowerCase());
+  if (idx >= 0) parts.splice(idx, 1);
+  else parts.push(clsName);
+  el.value = parts.join(", ");
+};
 
 function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function mediaEmbed(link){
@@ -554,6 +1934,71 @@ let materiData = [], tugasData = [], asesmenData = [];
 window.materiData = materiData;
 window.tugasData = tugasData;
 window.asesmenData = asesmenData;
+
+function updateActivityFeed() {
+  const feed = document.getElementById("rk-activity-feed");
+  if (!feed) return;
+  const rows = [];
+  materiData.slice(0, 2).forEach(m => {
+    const d = m.data || m;
+    rows.push(`
+      <div class="list-row">
+        <div class="list-row-main">
+          <span class="status-dot" style="background:var(--badge-pg)"></span>
+          <div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap">
+              <strong style="font-weight:500; color:var(--ink)">${escAttr(d.judul || "-")}</strong>
+              <span class="badge badge-pg">MATERI</span>
+            </div>
+            <div style="font-size:12px; color:var(--ink-2)">Kelas ${(d.classes || []).join(", ") || "-"}</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-materi\\']')?.click()">Lihat</button>
+      </div>
+    `);
+  });
+  tugasData.slice(0, 2).forEach(t => {
+    const d = t.data || t;
+    rows.push(`
+      <div class="list-row">
+        <div class="list-row-main">
+          <span class="status-dot" style="background:var(--badge-match)"></span>
+          <div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap">
+              <strong style="font-weight:500; color:var(--ink)">${escAttr(d.judul || "-")}</strong>
+              <span class="badge badge-match">TUGAS</span>
+            </div>
+            <div style="font-size:12px; color:var(--ink-2)">Kelas ${(d.classes || []).join(", ") || "-"}</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-tugas\\']')?.click()">Lihat</button>
+      </div>
+    `);
+  });
+  asesmenData.slice(0, 2).forEach(q => {
+    const d = q.data || q;
+    rows.push(`
+      <div class="list-row">
+        <div class="list-row-main">
+          <span class="status-dot" style="background:var(--badge-bs)"></span>
+          <div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap">
+              <strong style="font-weight:500; color:var(--ink)">${escAttr(d.judul || q.id)}</strong>
+              <span class="badge badge-bs">CBT ${(d.mode || "latihan").toUpperCase()}</span>
+            </div>
+            <div style="font-size:12px; color:var(--ink-2)">Kode: <code>${escAttr(q.id)}</code> · Kelas ${(d.classes || []).join(", ") || "-"}</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-asesmen\\']')?.click()">Lihat</button>
+      </div>
+    `);
+  });
+  if (rows.length) {
+    feed.innerHTML = rows.join("");
+  } else {
+    feed.innerHTML = `<div style="padding:16px 4px; color:var(--ink-3); font-size:13px">Belum ada aktivitas materi, tugas, atau asesmen. Buat materi atau ujian pertama Anda.</div>`;
+  }
+}
 
 function updateClassOptions(selectEl, items) {
   if (!selectEl) return;
@@ -598,7 +2043,11 @@ function updateClassOptions(selectEl, items) {
   }
 }
 
-const log = (m) => { const el = document.getElementById("log"); el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent; };
+const log = (m) => {
+  const el = document.getElementById("log");
+  if (el) el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent;
+  showToast(m);
+};
 
 async function loadRingkasan() {
   const items = [
@@ -627,16 +2076,24 @@ onAuthStateChanged(auth, async (user) => {
       alert("Akun ini bukan admin/guru (tidak terdaftar di koleksi admins).");
       await signOut(auth); return;
     }
+    document.body.classList.remove("auth-mode");
     document.getElementById("sec-auth").classList.add("hidden");
     document.getElementById("app-content").classList.remove("hidden");
     document.getElementById("sidebar").classList.remove("hidden");
+    document.getElementById("mobile-nav")?.classList.remove("hidden");
     document.getElementById("u-display").textContent = user.email;
+    const hEmail = document.getElementById("header-user-email");
+    if (hEmail) hEmail.textContent = user.email;
+    const hAvatar = document.getElementById("header-avatar");
+    if (hAvatar && user.email) hAvatar.textContent = user.email.charAt(0).toUpperCase();
     loadRingkasan();
     loadMateriTable(); loadTugasTable(); loadAsesmenTable();
   } else {
+    document.body.classList.add("auth-mode");
     document.getElementById("sec-auth").classList.remove("hidden");
     document.getElementById("app-content").classList.add("hidden");
     document.getElementById("sidebar").classList.add("hidden");
+    document.getElementById("mobile-nav")?.classList.add("hidden");
   }
 });
 
@@ -648,18 +2105,42 @@ if (elPass) elPass.value = "";
 document.getElementById("btn-login").onclick = async () => {
   const email = document.getElementById("l-email").value.trim();
   const pass = document.getElementById("l-pass").value;
-  try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert("Login gagal: " + e.message); }
+  const errEl = document.getElementById("auth-err");
+  if (errEl) errEl.classList.add("hidden");
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    if (errEl) {
+      errEl.textContent = "Login gagal: " + e.message;
+      errEl.classList.remove("hidden");
+    }
+    alert("Login gagal: " + e.message);
+  }
 };
 document.getElementById("btn-logout").onclick = () => signOut(auth);
 
-// Nav Router
-document.querySelectorAll(".nav-btn").forEach((btn) => {
-  btn.onclick = () => {
-    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
-    document.querySelectorAll(".tab-pane").forEach((p) => p.classList.add("hidden"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.remove("hidden");
+// Nav Router (Desktop Rail + Mobile Bottom Nav)
+function switchAdminTab(tabId) {
+  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === tabId));
+  document.querySelectorAll(".mobile-nav-item").forEach((b) => b.classList.toggle("active", b.dataset.tab === tabId));
+  document.querySelectorAll(".tab-pane").forEach((p) => p.classList.toggle("hidden", p.id !== tabId));
+  const toggleInput = document.getElementById("sidebar-toggle");
+  if (toggleInput) toggleInput.checked = false;
+  const labels = {
+    "sec-ringkasan": "Portal Guru · Ringkasan",
+    "sec-materi": "Portal Guru · Materi Pembelajaran",
+    "sec-tugas": "Portal Guru · Penugasan Siswa",
+    "sec-asesmen": "Portal Guru · Asesmen & Bank Soal",
+    "sec-grading": "Portal Guru · Penilaian & Koreksi"
   };
+  const crumb = document.getElementById("crumb-section");
+  if (crumb && labels[tabId]) crumb.textContent = labels[tabId];
+}
+document.querySelectorAll(".nav-btn").forEach((btn) => {
+  btn.onclick = () => switchAdminTab(btn.dataset.tab);
+});
+document.querySelectorAll(".mobile-nav-item").forEach((btn) => {
+  btn.onclick = () => switchAdminTab(btn.dataset.tab);
 });
 
 // Filter Event Listeners
@@ -685,13 +2166,30 @@ if (asKelasFilter) {
 function renderMateriTable(rows) {
   const tbody = document.querySelector("#mat-table tbody");
   if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:24px; color:var(--ink-3)">Belum ada materi pembelajaran. Klik <strong>+ Tambah Materi</strong> untuk menerbitkan modul.</td></tr>`;
+    return;
+  }
   tbody.innerHTML = rows.map(d => {
     const m = d.data || d;
+    const hasLinks = urlsOf(m).length > 0;
+    const typeBadge = hasLinks
+      ? `<span class="badge badge-pg">Teks & Media (${urlsOf(m).length})</span>`
+      : `<span class="badge badge-neutral">Modul Teks</span>`;
     return `<tr>
-      <td><strong>${m.judul}</strong></td>
-      <td>${(m.classes||[]).join(", ")}</td>
-      <td style="min-width:240px">${embedsHTML(m) || '-'}</td>
-      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editMat('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delMat('${d.id}')">Hapus</button></td>
+      <td>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+          <strong style="color:var(--ink); font-size:13.5px">${m.judul}</strong>
+          ${typeBadge}
+        </div>
+        ${m.deskripsi ? `<div style="font-size:12px; color:var(--ink-2); margin-top:3px; max-width:440px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escAttr(m.deskripsi)}</div>` : ''}
+      </td>
+      <td><span class="badge badge-neutral">${(m.classes||[]).join(", ")}</span></td>
+      <td style="min-width:240px">${embedsHTML(m) || '<span style="color:var(--ink-3)">-</span>'}</td>
+      <td style="text-align:right; white-space:nowrap">
+        <button class="btn btn-secondary btn-sm" onclick="window._editMat('${d.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="window._delMat('${d.id}')">Hapus</button>
+      </td>
     </tr>`;
   }).join("");
 }
@@ -734,8 +2232,9 @@ async function loadMateriTable() {
   } else {
     renderMateriTable(materiData);
   }
+  updateActivityFeed();
 
-  window._delMat = async (id) => { if (confirm("Hapus materi ini?")) { await deleteDoc(doc(db, "materials", id)); loadMateriTable(); } };
+  window._delMat = async (id) => { if (confirm("Hapus materi ini?")) { await deleteDoc(doc(db, "materials", id)); loadMateriTable(); loadRingkasan(); } };
   window._editMat = async (id) => {
     const snap = await getDoc(doc(db, "materials", id));
     if (!snap.exists()) return;
@@ -759,7 +2258,10 @@ async function loadMateriTable() {
   };
 }
 window.loadMateriTable = loadMateriTable;
-document.getElementById("btn-mat-new").onclick = () => document.getElementById("mat-form-panel").classList.remove("hidden");
+document.getElementById("btn-mat-new").onclick = () => {
+  document.getElementById("mat-form-panel").classList.remove("hidden");
+  document.getElementById("m-judul")?.focus();
+};
 document.getElementById("btn-mat-cancel").onclick = () => {
   document.getElementById("mat-form-panel").classList.add("hidden");
   document.getElementById("m-link").value = "";
@@ -817,27 +2319,35 @@ document.getElementById("btn-mat-save").onclick = async () => {
   const prev = document.getElementById("m-link-preview");
   if (prev) prev.innerHTML = "";
   loadMateriTable();
+  loadRingkasan();
 };
 
 // 2. TUGAS & ASESMEN CRUD
 function renderAsesmenTable(rows) {
   const tbody = document.querySelector("#as-table tbody");
   if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--ink-3)">Belum ada paket asesmen terbit.</td></tr>`;
+    return;
+  }
   const now = new Date();
   tbody.innerHTML = rows.map(d => {
     const q = d.data || d;
     const open = q.openAt ? (q.openAt.toDate ? q.openAt.toDate() : new Date(q.openAt)) : null;
     const canDel = !open || open > now;
+    const modeBadge = q.mode === "ujian"
+      ? `<span class="badge badge-essay">Ujian Resmi</span>`
+      : `<span class="badge badge-pg">Latihan</span>`;
     const aksi = canDel
-      ? `<button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAs('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
-      : `<span style="color:#64748b; font-size:.72rem" title="Sudah dibuka — integritas ujian dijaga">terkunci</span>`;
+      ? `<button class="btn btn-secondary btn-sm" onclick="window._editAs('${d.id}')">Edit</button> <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="window._delAs('${d.id}', '${(q.classes||[]).join(',')}')">Hapus</button>`
+      : `<span class="badge badge-neutral" title="Sudah dibuka — integritas ujian dijaga">🔒 Terkunci</span>`;
     return `<tr>
       <td><code>${d.id}</code></td>
-      <td>${q.judul || '-'}</td>
-      <td>${q.mode || '-'}</td>
+      <td><strong>${q.judul || '-'}</strong></td>
+      <td>${modeBadge}</td>
       <td>${(q.classes || []).join(', ') || '-'}</td>
-      <td>${open ? open.toLocaleDateString('id-ID') : '-'}</td>
-      <td>${aksi}</td>
+      <td class="tabular-nums">${open ? open.toLocaleDateString('id-ID') : '-'}</td>
+      <td style="text-align:right; white-space:nowrap">${aksi}</td>
     </tr>`;
   }).join("");
 }
@@ -880,6 +2390,7 @@ async function loadAsesmenTable() {
   } else {
     renderAsesmenTable(asesmenData);
   }
+  updateActivityFeed();
 
   window._delAs = async (code, kelasList) => {
     if (!confirm("Hapus asesmen " + code + "? Kunci & jadwal ikut terhapus.")) return;
@@ -890,6 +2401,7 @@ async function loadAsesmenTable() {
         try { await updateDoc(doc(db, "classes", k), { ["quizzes." + code]: deleteField() }); } catch (e) {}
       }
       loadAsesmenTable();
+      loadRingkasan();
     } catch (e) {
       alert("Gagal hapus (sudah dibuka / aturan integritas): " + e.message);
     }
@@ -952,8 +2464,7 @@ async function loadAsesmenTable() {
       editingQuizCode = code;
       document.getElementById("btn-as-save").textContent = "Update Asesmen";
 
-      document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.tab === "sec-asesmen"));
-      document.querySelectorAll(".tab-pane").forEach((p) => p.classList.toggle("hidden", p.id !== "sec-asesmen"));
+      switchAdminTab("sec-asesmen");
       document.getElementById("as-code").scrollIntoView({ behavior: "smooth" });
     } catch (e) {
       alert("Gagal memuat asesmen: " + e.message);
@@ -965,14 +2476,22 @@ window.loadAsesmenTable = loadAsesmenTable;
 function renderTugasTable(rows) {
   const tbody = document.querySelector("#tug-table tbody");
   if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--ink-3)">Belum ada penugasan aktif. Klik <strong>+ Buat Tugas Baru</strong> untuk menambahkan.</td></tr>`;
+    return;
+  }
   tbody.innerHTML = rows.map(d => {
     const t = d.data || d;
+    const dueStr = t.dueAt ? new Date(t.dueAt.toDate ? t.dueAt.toDate() : t.dueAt).toLocaleDateString('id-ID') : '-';
     return `<tr>
-      <td><strong>${t.judul}</strong></td>
-      <td>${(t.classes||[]).join(", ")}</td>
-      <td>${t.dueAt ? new Date(t.dueAt.toDate ? t.dueAt.toDate() : t.dueAt).toLocaleDateString('id-ID') : '-'}</td>
-      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._viewSub('${d.id}', '${t.judul}')">Lihat Kiriman</button></td>
-      <td><button class="btn btn-secondary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._editAsg('${d.id}')">Edit</button> <button class="btn btn-danger" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._delAsg('${d.id}')">Hapus</button></td>
+      <td>
+        <strong>${t.judul}</strong>
+        ${t.instruksi ? `<div style="font-size:12px; color:var(--ink-2); max-width:360px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escAttr(t.instruksi)}</div>` : ''}
+      </td>
+      <td><span class="badge badge-neutral">${(t.classes||[]).join(", ")}</span></td>
+      <td><span class="badge badge-match tabular-nums">${dueStr}</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="window._viewSub('${d.id}', '${escAttr(t.judul)}')">Lihat Kiriman</button></td>
+      <td style="text-align:right; white-space:nowrap"><button class="btn btn-secondary btn-sm" onclick="window._editAsg('${d.id}')">Edit</button> <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="window._delAsg('${d.id}')">Hapus</button></td>
     </tr>`;
   }).join("");
 }
@@ -1015,8 +2534,9 @@ async function loadTugasTable() {
   } else {
     renderTugasTable(tugasData);
   }
+  updateActivityFeed();
 
-  window._delAsg = async (id) => { if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) { await deleteDoc(doc(db, "assignments", id)); loadTugasTable(); } };
+  window._delAsg = async (id) => { if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) { await deleteDoc(doc(db, "assignments", id)); loadTugasTable(); loadRingkasan(); } };
   window._editAsg = async (id) => {
     const snap = await getDoc(doc(db, "assignments", id));
     if (!snap.exists()) return;
@@ -1043,27 +2563,35 @@ async function loadTugasTable() {
     document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
     const sSnap = await getDocs(query(collection(db, "submissions"), where("assignmentId", "==", assignmentId)));
     const stbody = document.querySelector("#tug-sub-table tbody");
-    stbody.innerHTML = sSnap.docs.map(sd => {
-      const s = sd.data();
-      return `<tr>
-        <td><code>${s.uid.slice(0, 8)}</code></td>
-        <td style="max-width:200px; white-space:pre-wrap">${s.teks || '-'}</td>
-        <td style="min-width:240px">${s.link ? `<div class="embed-wrap">${mediaEmbed(s.link)}</div>` : '-'}</td>
-        <td><input id="score_${sd.id}" type="number" style="width:60px" value="${s.nilai !== undefined ? s.nilai : ''}" placeholder="0-100"></td>
-        <td><button class="btn btn-primary" style="padding:.2rem .5rem; font-size:.75rem" onclick="window._gradeSub('${sd.id}')">Simpan Nilai</button></td>
-      </tr>`;
-    }).join("");
+    if (!sSnap.docs.length) {
+      stbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:18px; color:var(--ink-3)">Belum ada kiriman siswa untuk tugas ini.</td></tr>`;
+    } else {
+      stbody.innerHTML = sSnap.docs.map(sd => {
+        const s = sd.data();
+        return `<tr>
+          <td><code>${s.uid.slice(0, 8)}</code></td>
+          <td style="max-width:240px; white-space:pre-wrap">${s.teks || '-'}</td>
+          <td style="min-width:220px">${s.link ? `<div class="embed-wrap">${mediaEmbed(s.link)}</div>` : '-'}</td>
+          <td><input id="score_${sd.id}" type="number" style="width:72px" value="${s.nilai !== undefined ? s.nilai : ''}" placeholder="0-100"></td>
+          <td style="text-align:right"><button class="btn btn-primary btn-sm" onclick="window._gradeSub('${sd.id}')">Simpan Nilai</button></td>
+        </tr>`;
+      }).join("");
+    }
     document.getElementById("tug-sub-panel").classList.remove("hidden");
     document.getElementById("tug-sub-panel").scrollIntoView({ behavior: 'smooth' });
   };
   window._gradeSub = async (subId) => {
     const scoreVal = parseInt(document.getElementById(`score_${subId}`).value, 10);
     await setDoc(doc(db, "submissions", subId), { nilai: scoreVal, updatedAt: Timestamp.now() }, { merge: true });
+    log("Nilai tugas tersimpan!");
     alert("Nilai tugas tersimpan!");
   };
 }
 window.loadTugasTable = loadTugasTable;
-document.getElementById("btn-tug-new").onclick = () => document.getElementById("tug-form-panel").classList.remove("hidden");
+document.getElementById("btn-tug-new").onclick = () => {
+  document.getElementById("tug-form-panel").classList.remove("hidden");
+  document.getElementById("t-judul")?.focus();
+};
 document.getElementById("btn-tug-cancel").onclick = () => { document.getElementById("tug-form-panel").classList.add("hidden"); editingAsg = null; editingAsgCreated = null; document.getElementById("btn-tug-save").textContent = "Terbitkan Tugas"; };
 document.getElementById("btn-add-tlink").onclick = () => {
   const container = document.getElementById("t-links-extra");
@@ -1095,6 +2623,7 @@ document.getElementById("btn-tug-save").onclick = async () => {
   document.getElementById("t-link").value = "";
   const tExtra = document.getElementById("t-links-extra"); if (tExtra) tExtra.innerHTML = "";
   loadTugasTable();
+  loadRingkasan();
 };
 
 // Export CSV Rekap Nilai Tugas
@@ -1138,44 +2667,132 @@ document.getElementById("btn-export-tugas-csv").onclick = async () => {
   }
 };
 
-// 3. ASESMEN BUILDER 4 TIPE
+// 3. ASESMEN BUILDER 4 TIPE & MODAL
 let editingQuizCode = null;
 let questionsList = [];
+let activeModalType = "pg";
+
+window._syncBuilderStats = () => {
+  const cEl = document.getElementById("as-stat-count");
+  const wEl = document.getElementById("as-stat-weight");
+  const dEl = document.getElementById("as-stat-dur");
+  const mEl = document.getElementById("as-stat-mode");
+  if (cEl) cEl.textContent = questionsList.length;
+  if (wEl) wEl.textContent = questionsList.reduce((acc, q) => acc + (Number(q.bobot) || 25), 0);
+  if (dEl) dEl.textContent = document.getElementById("as-durasi")?.value || 60;
+  if (mEl) {
+    const mode = document.getElementById("as-mode")?.value || "latihan";
+    mEl.textContent = mode === "ujian" ? "Ujian Resmi" : "Latihan";
+  }
+};
+
+window._openQModal = (type = "pg") => {
+  window._switchQModalType(type);
+  document.getElementById("mq-teks").value = "";
+  document.getElementById("mq-bobot").value = "25";
+  document.getElementById("mq-pg-a").value = "";
+  document.getElementById("mq-pg-b").value = "";
+  document.getElementById("mq-pg-c").value = "";
+  document.getElementById("mq-pg-d").value = "";
+  document.getElementById("modal-add-q").classList.remove("hidden");
+};
+window._closeQModal = () => {
+  document.getElementById("modal-add-q").classList.add("hidden");
+};
+window._switchQModalType = (type) => {
+  activeModalType = type;
+  document.querySelectorAll("#modal-add-q .seg-tab").forEach(b => {
+    b.classList.toggle("active", b.dataset.mtype === type);
+  });
+  ["pg", "bs", "match", "essay"].forEach(t => {
+    document.getElementById("mq-panel-" + t)?.classList.toggle("hidden", t !== type);
+  });
+};
+window._addModalMatchRow = () => {
+  const wrap = document.getElementById("mq-match-rows");
+  if (!wrap) return;
+  const idx = wrap.querySelectorAll(".mq-match-pair").length + 1;
+  const div = document.createElement("div");
+  div.className = "row mq-match-pair";
+  div.innerHTML = `
+    <div><label>Kolom A (Premis ${idx})</label><input class="mq-kiri" placeholder="Premis ${idx}"></div>
+    <div><label>Kolom B (Pasangan Benar ${idx})</label><input class="mq-kanan" placeholder="Pasangan ${idx}"></div>
+  `;
+  wrap.appendChild(div);
+};
+window._commitQModal = () => {
+  const teks = document.getElementById("mq-teks").value.trim();
+  const bobot = parseInt(document.getElementById("mq-bobot").value, 10) || 25;
+  const qid = "q" + (questionsList.length + 1);
+  const newQ = {
+    id: qid,
+    tipe: activeModalType,
+    teks,
+    bobot,
+    pilihan: {
+      A: document.getElementById("mq-pg-a").value.trim(),
+      B: document.getElementById("mq-pg-b").value.trim(),
+      C: document.getElementById("mq-pg-c").value.trim(),
+      D: document.getElementById("mq-pg-d").value.trim()
+    },
+    kunci: activeModalType === "pg"
+      ? document.getElementById("mq-pg-key").value
+      : (activeModalType === "bs" ? document.getElementById("mq-bs-key").value : ""),
+    kiri: [...document.querySelectorAll("#mq-match-rows .mq-kiri")].map(i => i.value.trim()).filter(Boolean),
+    kanan: [...document.querySelectorAll("#mq-match-rows .mq-kanan")].map(i => i.value.trim()).filter(Boolean)
+  };
+  if (newQ.kiri.length === 0) newQ.kiri = ["", ""];
+  if (newQ.kanan.length === 0) newQ.kanan = ["", ""];
+  questionsList.push(newQ);
+  renderQBuilder();
+  window._closeQModal();
+  showToast(`Butir soal #${questionsList.length} (${activeModalType.toUpperCase()}) ditambahkan`);
+};
+
 window._addQ = (type) => {
   const qid = "q" + (questionsList.length + 1);
-  questionsList.push({ id: qid, tipe: type, teks: "", bobot: 25, pilihan: { A:"", B:"", C:"", D:"" }, kunci: "", kiri: ["",""], kanan: ["",""] });
+  questionsList.push({ id: qid, tipe: type, teks: "", bobot: 25, pilihan: { A:"", B:"", C:"", D:"" }, kunci: type === "pg" ? "A" : (type === "bs" ? "true" : ""), kiri: ["",""], kanan: ["",""] });
   renderQBuilder();
 };
+window.questionsList = questionsList;
+
 function renderQBuilder() {
+  window.questionsList = questionsList;
+  window._syncBuilderStats();
   const el = document.getElementById("as-questions-list");
+  if (!questionsList.length) {
+    el.innerHTML = `<div style="text-align:center; padding:20px; color:var(--ink-3); font-size:13px">Belum ada butir soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.</div>`;
+    return;
+  }
   el.innerHTML = questionsList.map((q, idx) => {
     let specFields = "";
+    const badgeCls = `badge-${q.tipe}`;
     if (q.tipe === "pg") {
       specFields = `
         <div class="row">
-          <div><label>Opsi A</label><input value="${q.pilihan.A||''}" oninput="questionsList[${idx}].pilihan.A=this.value"></div>
-          <div><label>Opsi B</label><input value="${q.pilihan.B||''}" oninput="questionsList[${idx}].pilihan.B=this.value"></div>
-          <div><label>Opsi C</label><input value="${q.pilihan.C||''}" oninput="questionsList[${idx}].pilihan.C=this.value"></div>
-          <div><label>Opsi D</label><input value="${q.pilihan.D||''}" oninput="questionsList[${idx}].pilihan.D=this.value"></div>
-          <div><label>Kunci</label><select onchange="questionsList[${idx}].kunci=this.value">
-            ${["A","B","C","D"].map(o => `<option value="${o}" ${q.kunci===o?'selected':''}>${o}</option>`).join("")}
+          <div><label>Opsi A</label><input value="${escAttr(q.pilihan.A||'')}" oninput="questionsList[${idx}].pilihan.A=this.value"></div>
+          <div><label>Opsi B</label><input value="${escAttr(q.pilihan.B||'')}" oninput="questionsList[${idx}].pilihan.B=this.value"></div>
+          <div><label>Opsi C</label><input value="${escAttr(q.pilihan.C||'')}" oninput="questionsList[${idx}].pilihan.C=this.value"></div>
+          <div><label>Opsi D</label><input value="${escAttr(q.pilihan.D||'')}" oninput="questionsList[${idx}].pilihan.D=this.value"></div>
+          <div style="max-width:130px"><label>Kunci Benar</label><select onchange="questionsList[${idx}].kunci=this.value">
+            ${["A","B","C","D"].map(o => `<option value="${o}" ${q.kunci===o?'selected':''}>Opsi ${o}</option>`).join("")}
           </select></div>
         </div>
       `;
     } else if (q.tipe === "bs") {
       specFields = `
         <label>Kunci Jawaban Benar / Salah</label>
-        <select onchange="questionsList[${idx}].kunci=this.value">
-          <option value="true" ${q.kunci==='true'?'selected':''}>Benar</option>
-          <option value="false" ${q.kunci==='false'?'selected':''}>Salah</option>
+        <select onchange="questionsList[${idx}].kunci=this.value" style="max-width:240px">
+          <option value="true" ${q.kunci==='true'?'selected':''}>Benar (True)</option>
+          <option value="false" ${q.kunci==='false'?'selected':''}>Salah (False)</option>
         </select>
       `;
     } else if (q.tipe === "match") {
       specFields = `
-        <label>Pasangan Kiri ↔ Kanan (Pisahkan koma jika jamak)</label>
+        <label>Pasangan Kolom A (Kiri) ↔ Kolom B (Kanan) — Pisahkan koma jika jamak</label>
         <div class="row">
-          <div><input placeholder="Item Kiri: Ibukota RI, Mata Uang" value="${(q.kiri||[]).join(', ')}" oninput="questionsList[${idx}].kiri=this.value.split(',').map(x=>x.trim())"></div>
-          <div><input placeholder="Pasangan Kanan: Nusantara, Rupiah" value="${(q.kanan||[]).join(', ')}" oninput="questionsList[${idx}].kanan=this.value.split(',').map(x=>x.trim())"></div>
+          <div><input placeholder="Item Kiri: Ibukota RI, Mata Uang" value="${escAttr((q.kiri||[]).join(', '))}" oninput="questionsList[${idx}].kiri=this.value.split(',').map(x=>x.trim())"></div>
+          <div><input placeholder="Pasangan Kanan: Nusantara, Rupiah" value="${escAttr((q.kanan||[]).join(', '))}" oninput="questionsList[${idx}].kanan=this.value.split(',').map(x=>x.trim())"></div>
         </div>
       `;
     } else if (q.tipe === "essay") {
@@ -1183,18 +2800,24 @@ function renderQBuilder() {
     }
 
     return `
-      <div class="q-card">
-        <div style="display:flex; justify-content:space-between">
-          <strong>No. ${idx + 1} (${q.tipe.toUpperCase()})</strong>
-          <button class="btn btn-danger" style="padding:.2rem .4rem; font-size:.75rem" onclick="questionsList.splice(${idx},1); renderQBuilder()">Hapus</button>
+      <div class="q-card" data-qtype="${q.tipe}">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+          <div style="display:flex; align-items:center; gap:8px">
+            <span class="time-pill" style="min-width:34px">0${idx + 1}</span>
+            <strong>No. ${idx + 1}</strong>
+            <span class="badge ${badgeCls}">${q.tipe.toUpperCase()}</span>
+            <span style="font-size:12px; color:var(--ink-3)">Bobot: ${q.bobot || 25} Poin</span>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="questionsList.splice(${idx},1); renderQBuilder()">Hapus</button>
         </div>
-        <label style="margin-top:.5rem">Teks Soal</label>
-        <textarea rows="2" oninput="questionsList[${idx}].teks=this.value">${q.teks}</textarea>
+        <label>Teks Soal</label>
+        <textarea rows="2" placeholder="Ketik pokok pertanyaan di sini..." oninput="questionsList[${idx}].teks=this.value">${q.teks}</textarea>
         ${specFields}
       </div>
     `;
   }).join("");
 }
+window.renderQBuilder = renderQBuilder;
 
 document.getElementById("btn-as-save").onclick = async () => {
   let code = editingQuizCode || document.getElementById("as-code").value.trim();
@@ -1235,15 +2858,13 @@ document.getElementById("btn-as-save").onclick = async () => {
       });
       await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt });
     } else {
-      // Mode latihan: inline keys
       await setDoc(doc(db, "quizzes", code), {
         judul, mode, version, duration, toleransiMulai, openAt, closeAt, classes: [kelas], questions: questionsList
       });
     }
 
-    // Write schedule to classes
     await setDoc(doc(db, "classes", kelas), {
-      quizzes: { [code]: { openAt, closeAt, duration, toleransiMulai, version, classes: [kelas] } }
+      quizzes: { [code]: { openAt, closeAt, duration, toleransiMulai, version, classes: [kelas], judul } }
     }, { merge: true });
 
     alert(editingQuizCode ? "Asesmen berhasil diperbarui!" : "Asesmen berhasil diterbitkan!");
@@ -1251,17 +2872,30 @@ document.getElementById("btn-as-save").onclick = async () => {
     editingQuizCode = null;
     document.getElementById("btn-as-save").textContent = "Simpan & Terbitkan Asesmen";
     loadAsesmenTable();
+    loadRingkasan();
   } catch (e) {
     alert("Gagal menyimpan asesmen: " + e.message);
   }
 };
 
 // 4. KOREKSI & PENILAIAN BATCH
-let currentAttempts = [], loadedKeys = {}, activeQuizDoc = null;
+let currentAttempts = [], loadedKeys = {}, activeQuizDoc = null, activeStudentIdx = 0;
+
+window._stepStudent = (dir) => {
+  if (!currentAttempts.length) return;
+  activeStudentIdx = (activeStudentIdx + dir + currentAttempts.length) % currentAttempts.length;
+  const cards = document.querySelectorAll("#gr-cards .q-card");
+  if (cards[activeStudentIdx]) {
+    cards[activeStudentIdx].scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  const counter = document.getElementById("gr-student-counter");
+  if (counter) counter.textContent = `${activeStudentIdx + 1} / ${currentAttempts.length}`;
+};
+
 document.getElementById("btn-gr-fetch").onclick = async () => {
   const code = document.getElementById("gr-code").value.trim();
   if (!code) return alert("Masukkan kode kuis!");
-  
+
   const [keySnap, qSnap, attSnap] = await Promise.all([
     getDoc(doc(db, "quizKeys", code)),
     getDoc(doc(db, "quizzes", code)),
@@ -1272,9 +2906,19 @@ document.getElementById("btn-gr-fetch").onclick = async () => {
   loadedKeys = keySnap.data().keys || {};
   activeQuizDoc = qSnap.data();
   currentAttempts = attSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  activeStudentIdx = 0;
+
+  const countBadge = document.getElementById("gr-count-badge");
+  if (countBadge) countBadge.textContent = `${currentAttempts.length} Lembar`;
+  const counter = document.getElementById("gr-student-counter");
+  if (counter) counter.textContent = currentAttempts.length ? `1 / ${currentAttempts.length}` : "0 / 0";
 
   const container = document.getElementById("gr-cards");
-  if (!currentAttempts.length) { container.innerHTML = "<p>Belum ada siswa yang mengirimkan ujian ini.</p>"; return; }
+  if (!currentAttempts.length) {
+    container.innerHTML = "<p style='color:var(--ink-3); padding:12px 0'>Belum ada siswa yang mengirimkan ujian ini.</p>";
+    document.getElementById("gr-eval-panel").classList.remove("hidden");
+    return;
+  }
 
   container.innerHTML = currentAttempts.map((att, aIdx) => {
     let autoScore = 0, essayInputs = "";
@@ -1289,12 +2933,25 @@ document.getElementById("btn-gr-fetch").onclick = async () => {
       }
       if (q.tipe === "essay") {
         essayInputs += `
-          <div style="margin-top:.75rem; padding:.75rem; background:var(--surface-1); border-radius:8px">
-            <strong>Soal Essay:</strong> ${q.teks}<br>
-            <strong>Jawaban Siswa:</strong> <span style="color:#f8fafc">${studentAns || '<em>Tidak dijawab</em>'}</span>
-            <div style="margin-top:.5rem">
-              <label>Skor Essay (0 - 25)</label>
-              <input type="number" id="essay_${att.id}_${q.id}" value="20" style="width:80px">
+          <div style="margin-top:12px; padding:14px; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--badge-essay); border-radius:10px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+              <span class="badge badge-essay">ESSAY MANUAL</span>
+              <span style="font-size:11.5px; color:var(--ink-3)">Maks. 25 Poin</span>
+            </div>
+            <div style="font-weight:500; color:var(--ink); margin-bottom:6px">${q.teks}</div>
+            <div style="padding:10px; background:var(--surface); border:1px solid var(--line); border-radius:8px; color:var(--ink); margin-bottom:10px">
+              <span style="font-size:11.5px; color:var(--ink-3); display:block; margin-bottom:2px">Lembar Jawaban Siswa:</span>
+              ${studentAns || '<em>Tidak dijawab</em>'}
+            </div>
+            <div class="row" style="align-items:center">
+              <div style="max-width:140px">
+                <label for="essay_${att.id}_${q.id}">Skor Essay (0 - 25)</label>
+                <input type="number" id="essay_${att.id}_${q.id}" value="20" min="0" max="25" style="margin-bottom:0">
+              </div>
+              <div>
+                <label>Catatan Masukan Guru (Opsional)</label>
+                <input type="text" placeholder="Berikan umpan balik konstruktif..." style="margin-bottom:0">
+              </div>
             </div>
           </div>
         `;
@@ -1302,9 +2959,17 @@ document.getElementById("btn-gr-fetch").onclick = async () => {
     });
 
     return `
-      <div class="q-card" style="margin-bottom:1.5rem">
-        <h3>Siswa: <code>${att.uid.slice(0, 8)}</code> (Attempt No. ${att.attemptNo})</h3>
-        <p>Subtotal Auto-Graded (PG/BS/Match): <span class="badge badge-ok">${autoScore} Poin</span></p>
+      <div class="q-card" data-qtype="pg" style="margin-bottom:14px">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+          <div style="display:flex; align-items:center; gap:10px">
+            <div class="avatar-circle" style="background:var(--surface-high); color:var(--ink)">${String(aIdx + 1).padStart(2, '0')}</div>
+            <div>
+              <h3 style="font-size:14.5px; font-weight:600; color:var(--ink)">Siswa: <code>${att.uid.slice(0, 8)}</code></h3>
+              <span style="font-size:12px; color:var(--ink-2)">Attempt No. ${att.attemptNo || 1}</span>
+            </div>
+          </div>
+          <span class="badge badge-ok tabular-nums">Auto-Graded (PG/BS/Match): ${autoScore} Poin</span>
+        </div>
         ${essayInputs}
       </div>
     `;

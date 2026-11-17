@@ -1,0 +1,428 @@
+{
+  "createTime": "2026-11-17T01:01:56.428017Z",
+  "designTheme": {
+    "bodyFont": "INTER",
+    "bodyFontFamily": "Inter",
+    "colorMode": "LIGHT",
+    "colorVariant": "FIDELITY",
+    "customColor": "#1d4ed8",
+    "designMd": "---\nname: Editorial Minimalist Academic\ncolors:\n  surface: '#ffffff'\n  surface-dim: '#d8dadc'\n  surface-bright: '#f7f9fb'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f2f4f6'\n  surface-container: '#eceef0'\n  surface-container-high: '#e6e8ea'\n  surface-container-highest: '#e0e3e5'\n  on-surface: '#191c1e'\n  on-surface-variant: '#434655'\n  inverse-surface: '#2d3133'\n  inverse-on-surface: '#eff1f3'\n  outline: '#747686'\n  outline-variant: '#c4c5d7'\n  surface-tint: '#2151da'\n  primary: '#0037b0'\n  on-primary: '#ffffff'\n  primary-container: '#1d4ed8'\n  on-primary-container: '#cad3ff'\n  inverse-primary: '#b7c4ff'\n  secondary: '#505f76'\n  on-secondary: '#ffffff'\n  secondary-container: '#d0e1fb'\n  on-secondary-container: '#54647a'\n  tertiary: '#3d445a'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#545c72'\n  on-tertiary-container: '#cdd5ef'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dce1ff'\n  primary-fixed-dim: '#b7c4ff'\n  on-primary-fixed: '#001551'\n  on-primary-fixed-variant: '#0039b5'\n  secondary-fixed: '#d3e4fe'\n  secondary-fixed-dim: '#b7c8e1'\n  on-secondary-fixed: '#0b1c30'\n  on-secondary-fixed-variant: '#38485d'\n  tertiary-fixed: '#dae2fd'\n  tertiary-fixed-dim: '#bec6e0'\n  on-tertiary-fixed: '#131b2e'\n  on-tertiary-fixed-variant: '#3f465c'\n  background: '#f7f9fb'\n  on-background: '#191c1e'\n  surface-variant: '#e0e3e5'\n  paper: '#f8fafc'\n  line: '#e2e8f0'\n  line-soft: '#f1f5f9'\n  ink: '#0f172a'\n  ink-muted: '#64748b'\n  ink-tertiary: '#94a3b8'\n  badge-pg: '#1d4ed8'\n  badge-pg-bg: '#eff6ff'\n  badge-bs: '#16a34a'\n  badge-bs-bg: '#f0fdf4'\n  badge-match: '#d97706'\n  badge-match-bg: '#fffbeb'\n  badge-essay: '#dc2626'\n  badge-essay-bg: '#fef2f2'\ntypography:\n  display-stat:\n    fontFamily: Inter\n    fontSize: 29px\n    fontWeight: '600'\n    lineHeight: 36px\n    letterSpacing: -0.02em\n  headline-lg:\n    fontFamily: Inter\n    fontSize: 26px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.03em\n  headline-lg-mobile:\n    fontFamily: Inter\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 26px\n    letterSpacing: -0.02em\n  headline-md:\n    fontFamily: Inter\n    fontSize: 19px\n    fontWeight: '600'\n    lineHeight: 24px\n    letterSpacing: -0.01em\n  headline-sm:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 22px\n  panel-title:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: '600'\n    lineHeight: 18px\n  body-default:\n    fontFamily: Inter\n    fontSize: 13.5px\n    fontWeight: '400'\n    lineHeight: 20px\n  body-medium:\n    fontFamily: Inter\n    fontSize: 13.5px\n    fontWeight: '500'\n    lineHeight: 20px\n  label-default:\n    fontFamily: Inter\n    fontSize: 12.5px\n    fontWeight: '500'\n    lineHeight: 16px\n  meta-default:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 16px\n  badge-label:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: '600'\n    lineHeight: 14px\n  nav-mobile:\n    fontFamily: Inter\n    fontSize: 10.5px\n    fontWeight: '500'\n    lineHeight: 14px\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 0.875rem\n  gutter-desktop: 1rem\n  margin: 1.25rem\n  margin-desktop: 2.75rem\n  space-xxs: 0.25rem\n  space-xs: 0.5rem\n  space-sm: 0.625rem\n  space-md: 0.875rem\n  space-lg: 1rem\n  space-xl: 1.375rem\n  space-2xl: 2.125rem\n---\n\n## Brand & Style\n\nThis design system is tailored for an institutional Learning Management System (LMS) serving teachers and students at SMPN 1 Umbulsari. The personality is utilitarian, highly focused, academic, and calm. It reduces administrative fatigue and cognitive overload during prolonged classroom and home usage.\n\nThe design movement is **Editorial Minimalism** crossed with modern high-density utility:\n- **Structural Integrity:** Space is treated as a premium asset. Density is preserved using horizontal 1-row stat strips, concise tabular views, and an explicit refusal of decorative containers or frivolous illustrations.\n- **Rule of One Primary Action:** Each screen surface enforces exactly one prominent filled call-to-action to eliminate choice hesitation for students during assessments and instructors configuring curricula.\n- **Hairlines Over Shadows:** Elevation is established strictly through 1px border rules (`--line`) and subtle contrast shifts rather than heavy drop shadows.\n- **Defensive Performance:** Lightweight, robust visual architecture optimized for resource-constrained client devices, adhering strictly to standard 60fps interaction and mobile viewport stability.\n\n## Colors\n\nThe palette balances a focused institutional blue with crisp paper-white surfaces and slate-tinted canvas neutrals. The system avoids saturated fills across wide areas, deploying chroma purely for interaction states and pedagogical taxonomy.\n\n### Semantic Question Taxonomy Tokens\n- **PG (Multiple Choice):** `badge-pg` (`#1d4ed8`) on `badge-pg-bg` (`#eff6ff`). Signifies objective, standard automated scoring.\n- **BS (True/False):** `badge-bs` (`#16a34a`) on `badge-bs-bg` (`#f0fdf4`). Conveys verified binary answers and successful states.\n- **MATCH (Matching):** `badge-match` (`#d97706`) on `badge-match-bg` (`#fffbeb`). Alerts instructors to relational associative checks and pending review dates.\n- **ESSAY (Subjective):** `badge-essay` (`#dc2626`) on `badge-essay-bg` (`#fef2f2`). High-urgency indicator alerting the educator that manual grading is strictly required.\n\n### Structural Rules\n- Surfaces are layered: Canvas uses `paper` (`#f8fafc`), interactive modules rest on `surface` (`#ffffff`), and structural boundaries strictly use `line` (`#e2e8f0`).\n- Text uses high-contrast `ink` (`#0f172a`) for readability in well-lit classrooms, while metadata and timestamps lean on `ink-muted` (`#64748b`).\n- Zebra striping on data grids is faint, utilizing `line-soft` (`#f1f5f9`).\n\n## Typography\n\nThe typography system relies exclusively on a single geometric humanist sans-serif (`Inter`) to maintain performance, reduce HTTP requests, and ensure consistent rendering across low-spec student mobile devices and school desktop labs.\n\n### Rules of Engagement\n- **Tabular Figures Everywhere:** Any numeric context (grades, timers, student roll numbers, timestamps, point tallies) must activate `font-variant-numeric: tabular-nums` to preserve column alignment and stop visual jittering on updating timers.\n- **No All-Caps Tracking:** Never transform UI labels or metadata to uppercase with expanded letter-spacing. Natural sentence case or standard title capitalization preserves fast academic skimming.\n- **No Mid-Heading Italics or Eyebrow Subtitles:** Keep heading areas clean without superfluous categorization pills directly stacked on top of titles.\n- **Mobile Input Defense:** All `<input>`, `<select>`, and `<textarea>` elements on screens ≤768px must compute to an explicit `16px` font size to stop automatic zooming behaviors on WebKit browsers.\n\n## Layout & Spacing\n\nThe layout philosophy follows a strict asymmetric utility model optimized for typical 1366×768 resolution school monitors and 360–420px mobile viewports.\n\n### Desktop Layout (≥992px)\n- **Left Icon Rail:** Fixed width of `64px`, full viewport height, pinned to the left edge containing the institutional seal and core section SVGs.\n- **Main Canvas Constraint:** Fixed maximum content width of `1040px`, strictly aligned to the left of the view (never centered in a vast expanse of unused space). Main canvas padding is set to `34px 44px 30px`.\n- **Two-Column Split:** Main body uses an asymmetric split grid ratio of `1.45fr / 1fr` with a fixed gap of `14px` (`space-md`). Left side handles task lists, material feeds, and form inputs; right side handles real-time timer summaries, quick grading queues, and status bars.\n- **Vertical Constraint:** Header filters and summary strips must not exceed `100px` in total height.\n\n### Mobile Reflow (≤768px)\n- **Single Stack:** Sidebar vanishes; layout converts to a 100% wide single-column flow with `margin: 1.25rem` (`20px`) horizontal inline padding.\n- **Bottom Navigation Bar:** Fixed at the bottom containing 4 primary target destinations, height `56px`, utilizing touch-friendly `44px` square hit boxes.\n- **Viewport Protection:** Root document uses `overflow-x: clip` to completely prevent unintentional horizontal nudging during test-taking.\n\n### Spatial Safety Gap\n- Maintain an explicit spatial buffer of `≥32px` (`space-2xl`) between a primary completion action (e.g., \"Kirim Tugas\", \"Simpan Soal\") and any destructive triggers (e.g., \"Hapus Soal\", \"Batalkan Ujian\").\n\n## Elevation & Depth\n\nVisual hierarchy is constructed entirely without traditional drop shadows. The design system uses an **Architectural Hairline** model:\n\n- **Planes & Surfaces:** Elevation steps are represented via background tonality shifts—moving from the default canvas background (`paper`, `#f8fafc`) up to cards and inputs (`surface`, `#ffffff`).\n- **Hairline Definition:** Structural containment is handled with crisp `1px solid var(--line)` (`#e2e8f0`). Internal component list item dividers use the lighter `1px solid var(--line-soft)` (`#f1f5f9`).\n- **Accent Edges:** High-priority cards (such as an ongoing timed exam or active submission requirement) use a prominent left border: `4px solid var(--primary-color-hex)`.\n- **Modals and Sheets:** Drop shadows are isolated exclusively to floating dialogs, dropdown popovers, and mobile bottom action sheets, where a sharp, low-opacity ambient blur (`0 10px 25px -5px rgba(15, 23, 42, 0.08)`) is permitted to separate the active focus context from the backdrop.\n- **Feedback Toasts:** Compact floating pills feature a `backdrop-filter: blur(8px)` with semi-opaque surfaces, disappearing automatically on a 3-second timer.\n\n## Shapes\n\nThe shape system expresses clean, technical precision. Corners are controlled and compact rather than overtly bulbous, retaining maximum display area for complex assessment layouts.\n\n- **Inputs, Buttons, and Form Controls:** Formatted with `9px` to `10px` radius for a balanced, modern feel that cleanly encases text at `13.5px` and `16px`.\n- **Cards and Panels:** Fixed at `12px` to `14px` radius with `1px` exterior borders.\n- **Badges and Pills:** Rounded at `6px` for tabular question tags (`PG`, `BS`), while status flags and floating indicators (such as the active countdown timer) use full pill shapes (`999px`).\n- **Progress Track Indicators:** Small elements like slim horizontal progress strips use `2px` border radius to maintain sharp terminal boundaries.\n\n## Components\n\n### Buttons\n- **Primary Action (Only 1 Per Screen):** Solid `#1d4ed8` fill with crisp white `#ffffff` typography. Desktop padding: `9px 16px`, mobile padding: `12px 16px`. Hover state darkens slightly to `#1e40af`.\n- **Ghost / Secondary:** Surface background `#ffffff`, border `1px solid #e2e8f0`, text `#0f172a`. Hover transitions to background `#f8fafc`.\n- **Destructive:** Border `1px solid #fecaca`, text `#dc2626`, background transparent. Hover shifts to `#fef2f2`. Must be spaced `≥32px` away from primary actions.\n\n### Stat Strip (1-Row Density)\n- Replaces bulky widget cards with a single horizontal flex strip enclosed in a `1px` hairline box.\n- Columns are separated by internal vertical `1px` borders.\n- Top label: `12.5px` (`#64748b`), value: `29px` semi-bold tabular numbers (`#0f172a`), bottom caption: `12px` (`#64748b`).\n\n### Question Type Chips & Badges\n- Compact capsules (`padding: 3px 8px`, radius `6px`, font size `11px`, weight `600`).\n- **PG:** `#1d4ed8` text, `#eff6ff` background.\n- **BS:** `#16a34a` text, `#f0fdf4` background.\n- **MATCH:** `#d97706` text, `#fffbeb` background.\n- **ESSAY:** `#dc2626` text, `#fef2f2` background.\n\n### Input Fields & Controls\n- Height strictly `≥40px`. Padding: `10px 12px`. Border: `1px solid #e2e8f0`. Radius: `9px`. Background: `#ffffff`.\n- Focus ring: `outline: 2px solid #1d4ed8; outline-offset: 2px;`.\n- Touch target minimum: `44px × 44px` on mobile viewports.\n\n### Cards & Container Panels\n- Background: `#ffffff`. Border: `1px solid #e2e8f0`. Radius: `12px` (outer cards `14px`). Padding: `16px`.\n- Card list rows: Padded vertically `12px 0`, separated with hairline border-bottom `1px solid #f1f5f9`.\n\n### Assessment Timer Pill\n- Pill container (`radius: 999px`) featuring `1px solid #1d4ed8`, containing an inline stopwatch SVG icon and active tabular monospace numbers `mm:ss`. Background: `#eff6ff`.",
+    "font": "INTER",
+    "headlineFont": "INTER",
+    "headlineFontFamily": "Inter",
+    "labelFont": "INTER",
+    "labelFontFamily": "Inter",
+    "namedColors": {
+      "background": "#f7f9fb",
+      "badge-bs": "#16a34a",
+      "badge-bs-bg": "#f0fdf4",
+      "badge-essay": "#dc2626",
+      "badge-essay-bg": "#fef2f2",
+      "badge-match": "#d97706",
+      "badge-match-bg": "#fffbeb",
+      "badge-pg": "#1d4ed8",
+      "badge-pg-bg": "#eff6ff",
+      "error": "#ba1a1a",
+      "error_container": "#ffdad6",
+      "ink": "#0f172a",
+      "ink-muted": "#64748b",
+      "ink-tertiary": "#94a3b8",
+      "inverse_on_surface": "#eff1f3",
+      "inverse_primary": "#b7c4ff",
+      "inverse_surface": "#2d3133",
+      "line": "#e2e8f0",
+      "line-soft": "#f1f5f9",
+      "on_background": "#191c1e",
+      "on_error": "#ffffff",
+      "on_error_container": "#93000a",
+      "on_primary": "#ffffff",
+      "on_primary_container": "#cad3ff",
+      "on_primary_fixed": "#001551",
+      "on_primary_fixed_variant": "#0039b5",
+      "on_secondary": "#ffffff",
+      "on_secondary_container": "#54647a",
+      "on_secondary_fixed": "#0b1c30",
+      "on_secondary_fixed_variant": "#38485d",
+      "on_surface": "#191c1e",
+      "on_surface_variant": "#434655",
+      "on_tertiary": "#ffffff",
+      "on_tertiary_container": "#cdd5ef",
+      "on_tertiary_fixed": "#131b2e",
+      "on_tertiary_fixed_variant": "#3f465c",
+      "outline": "#747686",
+      "outline_variant": "#c4c5d7",
+      "paper": "#f8fafc",
+      "primary": "#0037b0",
+      "primary_container": "#1d4ed8",
+      "primary_fixed": "#dce1ff",
+      "primary_fixed_dim": "#b7c4ff",
+      "secondary": "#505f76",
+      "secondary_container": "#d0e1fb",
+      "secondary_fixed": "#d3e4fe",
+      "secondary_fixed_dim": "#b7c8e1",
+      "surface": "#ffffff",
+      "surface_bright": "#f7f9fb",
+      "surface_container": "#eceef0",
+      "surface_container_high": "#e6e8ea",
+      "surface_container_highest": "#e0e3e5",
+      "surface_container_low": "#f2f4f6",
+      "surface_container_lowest": "#ffffff",
+      "surface_dim": "#d8dadc",
+      "surface_tint": "#2151da",
+      "surface_variant": "#e0e3e5",
+      "tertiary": "#3d445a",
+      "tertiary_container": "#545c72",
+      "tertiary_fixed": "#dae2fd",
+      "tertiary_fixed_dim": "#bec6e0"
+    },
+    "overrideNeutralColor": "#f8fafc",
+    "overridePrimaryColor": "#1d4ed8",
+    "overrideSecondaryColor": "#64748b",
+    "overrideTertiaryColor": "#0f172a",
+    "roundness": "ROUND_EIGHT",
+    "spacing": {
+      "gutter": "0.875rem",
+      "gutter-desktop": "1rem",
+      "margin": "1.25rem",
+      "margin-desktop": "2.75rem",
+      "space-2xl": "2.125rem",
+      "space-lg": "1rem",
+      "space-md": "0.875rem",
+      "space-sm": "0.625rem",
+      "space-xl": "1.375rem",
+      "space-xs": "0.5rem",
+      "space-xxs": "0.25rem"
+    },
+    "spacingScale": 2,
+    "typography": {
+      "badge-label": {
+        "fontFamily": "Inter",
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "lineHeight": "14px"
+      },
+      "body-default": {
+        "fontFamily": "Inter",
+        "fontSize": "13.5px",
+        "fontWeight": "400",
+        "lineHeight": "20px"
+      },
+      "body-medium": {
+        "fontFamily": "Inter",
+        "fontSize": "13.5px",
+        "fontWeight": "500",
+        "lineHeight": "20px"
+      },
+      "display-stat": {
+        "fontFamily": "Inter",
+        "fontSize": "29px",
+        "fontWeight": "600",
+        "letterSpacing": "-0.02em",
+        "lineHeight": "36px"
+      },
+      "headline-lg": {
+        "fontFamily": "Inter",
+        "fontSize": "26px",
+        "fontWeight": "600",
+        "letterSpacing": "-0.03em",
+        "lineHeight": "32px"
+      },
+      "headline-lg-mobile": {
+        "fontFamily": "Inter",
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "letterSpacing": "-0.02em",
+        "lineHeight": "26px"
+      },
+      "headline-md": {
+        "fontFamily": "Inter",
+        "fontSize": "19px",
+        "fontWeight": "600",
+        "letterSpacing": "-0.01em",
+        "lineHeight": "24px"
+      },
+      "headline-sm": {
+        "fontFamily": "Inter",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "22px"
+      },
+      "label-default": {
+        "fontFamily": "Inter",
+        "fontSize": "12.5px",
+        "fontWeight": "500",
+        "lineHeight": "16px"
+      },
+      "meta-default": {
+        "fontFamily": "Inter",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "16px"
+      },
+      "nav-mobile": {
+        "fontFamily": "Inter",
+        "fontSize": "10.5px",
+        "fontWeight": "500",
+        "lineHeight": "14px"
+      },
+      "panel-title": {
+        "fontFamily": "Inter",
+        "fontSize": "13px",
+        "fontWeight": "600",
+        "lineHeight": "18px"
+      }
+    }
+  },
+  "deviceType": "MOBILE",
+  "metadata": {
+    "userRole": "OWNER"
+  },
+  "name": "projects/1529169781025736343",
+  "origin": "WEB",
+  "projectType": "TEXT_TO_UI_PRO",
+  "screenInstances": [
+    {
+      "height": 1024,
+      "id": "0574317d703d4bcb81daffe9643a92f8",
+      "label": "Modal Tambah Butir Soal - Tipe Menjodohkan (MATCH)",
+      "sourceScreen": "projects/1529169781025736343/screens/0574317d703d4bcb81daffe9643a92f8",
+      "width": 1280,
+      "y": 12446
+    },
+    {
+      "height": 2592,
+      "id": "05ab23ec449248ebae640d9225552ae9",
+      "label": "Bank Soal / Asesmen Guru - Detail Paket Soal",
+      "sourceScreen": "projects/1529169781025736343/screens/05ab23ec449248ebae640d9225552ae9",
+      "width": 1280,
+      "y": 8318
+    },
+    {
+      "height": 1768,
+      "id": "0b658d8d-c247-4468-9602-428cf171ff32",
+      "label": "UI UX.md",
+      "sourceScreen": "projects/1529169781025736343/screens/2585500863167716013",
+      "type": "SCREEN_INSTANCE",
+      "width": 780,
+      "x": 380,
+      "y": -3120
+    },
+    {
+      "height": 1024,
+      "id": "0c37ee8800e1490c9bb2e763a3a885c2",
+      "label": "Ringkasan Dashboard Guru",
+      "sourceScreen": "projects/1529169781025736343/screens/0c37ee8800e1490c9bb2e763a3a885c2",
+      "width": 1280,
+      "x": 2712
+    },
+    {
+      "height": 1255,
+      "id": "0f612323f39740e19f982982e37d527d",
+      "label": "Tugas & Pengumpulan",
+      "sourceScreen": "projects/1529169781025736343/screens/0f612323f39740e19f982982e37d527d",
+      "width": 390,
+      "x": 908,
+      "y": 2712
+    },
+    {
+      "height": 1024,
+      "id": "1dc3ed53d7584c6ba70c6718bf3c83ae",
+      "label": "Modal Tambah Butir Soal Baru (4 Tipe)",
+      "sourceScreen": "projects/1529169781025736343/screens/1dc3ed53d7584c6ba70c6718bf3c83ae",
+      "width": 1280,
+      "y": 11166
+    },
+    {
+      "height": 1414,
+      "id": "20ae6b27b9714bf488f38cd7be0f5067",
+      "label": "Tugas & Pengumpulan (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/20ae6b27b9714bf488f38cd7be0f5067",
+      "width": 390,
+      "x": 1932,
+      "y": 4223
+    },
+    {
+      "height": 1024,
+      "id": "2b02d4e6d9344e3a80a70fe3368385f2",
+      "label": "Manajemen Materi Pelajaran (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/2b02d4e6d9344e3a80a70fe3368385f2",
+      "width": 1280,
+      "x": 2688,
+      "y": 5893
+    },
+    {
+      "height": 1024,
+      "id": "46ede192e9784d578d827d7dde774d2c",
+      "label": "Ringkasan Dashboard Guru (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/46ede192e9784d578d827d7dde774d2c",
+      "width": 1280,
+      "x": 1344,
+      "y": 5893
+    },
+    {
+      "height": 892,
+      "id": "65b41f9b090d4b2daa5bddca500dd009",
+      "label": "Beranda Siswa",
+      "sourceScreen": "projects/1529169781025736343/screens/65b41f9b090d4b2daa5bddca500dd009",
+      "width": 390,
+      "y": 2712
+    },
+    {
+      "height": 2456,
+      "id": "67ec79db05be4dcd9d3035ef6786f998",
+      "label": "Koreksi & Penilaian Siswa",
+      "sourceScreen": "projects/1529169781025736343/screens/67ec79db05be4dcd9d3035ef6786f998",
+      "width": 1280,
+      "x": 5400
+    },
+    {
+      "height": 1062,
+      "id": "6b00090d863a409ea8abcc9bbdb3bc37",
+      "label": "Asesmen & Ujian CBT (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/6b00090d863a409ea8abcc9bbdb3bc37",
+      "width": 390,
+      "x": 2840,
+      "y": 4223
+    },
+    {
+      "height": 1169,
+      "id": "7131f5d42f5440a7a4ba30e75ec45868",
+      "label": "Pengerjaan CBT Siswa - Menjodohkan (MATCH)",
+      "sourceScreen": "projects/1529169781025736343/screens/7131f5d42f5440a7a4ba30e75ec45868",
+      "width": 390,
+      "x": 1344,
+      "y": 12446
+    },
+    {
+      "height": 940,
+      "id": "730165e512db4e8295345c6b59233b7b",
+      "label": "Beranda Siswa (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/730165e512db4e8295345c6b59233b7b",
+      "width": 390,
+      "x": 1024,
+      "y": 4223
+    },
+    {
+      "height": 1058,
+      "id": "8693c4b96d6942cbac1c920190c3f777",
+      "label": "Materi Pembelajaran",
+      "sourceScreen": "projects/1529169781025736343/screens/8693c4b96d6942cbac1c920190c3f777",
+      "width": 390,
+      "x": 454,
+      "y": 2712
+    },
+    {
+      "height": 1784,
+      "id": "89f9cbec4bed471995f3a3e3e040a4e6",
+      "label": "Asesmen & Ujian Builder (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/89f9cbec4bed471995f3a3e3e040a4e6",
+      "width": 1280,
+      "y": 5893
+    },
+    {
+      "height": 1177,
+      "id": "a868c6e7a1ba4faabe5dfcc1c70ac604",
+      "label": "Rekap Nilai Siswa",
+      "sourceScreen": "projects/1529169781025736343/screens/a868c6e7a1ba4faabe5dfcc1c70ac604",
+      "width": 390,
+      "x": 1816,
+      "y": 2712
+    },
+    {
+      "height": 1792,
+      "id": "a95d79285d3c4606b7a46542a61a435c",
+      "label": "Asesmen & Ujian Builder",
+      "sourceScreen": "projects/1529169781025736343/screens/a95d79285d3c4606b7a46542a61a435c",
+      "width": 1280,
+      "x": 4056
+    },
+    {
+      "height": 1024,
+      "id": "ae63d07c367e4271997777d4680ed5f9",
+      "label": "Manajemen Materi Pelajaran",
+      "sourceScreen": "projects/1529169781025736343/screens/ae63d07c367e4271997777d4680ed5f9",
+      "width": 1280,
+      "x": 6744
+    },
+    {
+      "height": 540,
+      "id": "assets_3c06f889f5a14ddf9200c4459f22f0f2",
+      "sourceAsset": "assets/3c06f889f5a14ddf9200c4459f22f0f2",
+      "type": "DESIGN_SYSTEM_INSTANCE",
+      "width": 960,
+      "x": -1232,
+      "y": -40
+    },
+    {
+      "height": 540,
+      "id": "assets_f5e95396ac8c4d0ab3fb9fc033308203",
+      "sourceAsset": "assets/f5e95396ac8c4d0ab3fb9fc033308203",
+      "type": "DESIGN_SYSTEM_INSTANCE",
+      "width": 960,
+      "y": 4223
+    },
+    {
+      "height": 1768,
+      "id": "b065b245-308d-472f-8e96-44b2c90190ac",
+      "label": "ui-spec.md",
+      "sourceScreen": "projects/1529169781025736343/screens/2585500863167715355",
+      "type": "SCREEN_INSTANCE",
+      "width": 780,
+      "x": -1296,
+      "y": -2800
+    },
+    {
+      "height": 1243,
+      "id": "bc01467a74464f608cb56b3ec1660c13",
+      "label": "Rekap Nilai Siswa (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/bc01467a74464f608cb56b3ec1660c13",
+      "width": 390,
+      "x": 2386,
+      "y": 4223
+    },
+    {
+      "height": 1164,
+      "id": "cb7ea798f8f8412ba6a23bd85928f6b4",
+      "label": "Materi Pembelajaran (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/cb7ea798f8f8412ba6a23bd85928f6b4",
+      "width": 390,
+      "x": 1478,
+      "y": 4223
+    },
+    {
+      "height": 937,
+      "id": "f97ca2209979488282dd2948eb48cd88",
+      "label": "Asesmen & Ujian CBT",
+      "sourceScreen": "projects/1529169781025736343/screens/f97ca2209979488282dd2948eb48cd88",
+      "width": 390,
+      "x": 1362,
+      "y": 2712
+    },
+    {
+      "height": 2169,
+      "id": "fea976ac7416426fb5f3247d3b55f24f",
+      "label": "Koreksi & Penilaian Siswa (Dark Mode)",
+      "sourceScreen": "projects/1529169781025736343/screens/fea976ac7416426fb5f3247d3b55f24f",
+      "width": 1280,
+      "x": 4032,
+      "y": 5893
+    }
+  ],
+  "sharingSettings": {
+    "accessType": "RESTRICTED",
+    "permissions": [
+      {
+        "email": "flashfajar3@gmail.com",
+        "id": "996878819624",
+        "role": "OWNER"
+      }
+    ]
+  },
+  "thumbnailScreenshot": {
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/ALJJyrAZl-NMfVTajIKlVWu9a4KhrYr01m8wJx3L8KId78LlAh0n1hG_E--5dsOGzsefFa_T4rSZyxah3q1gvOz427XS4baYmI_iMcqsHROTJG_fE1iluq7mKo0EMIjqj4oOpfRE05taq7uDwusoz5d0eDcEExwIIreqs2oxwna71ZIU1lqhu-P212E7h2L9ODgvyJ5cuvDR5wI86ov1HS80G8QdchoPbP4YPGrN9N0Tzqy9",
+    "name": "projects/1529169781025736343/screens/0c37ee8800e1490c9bb2e763a3a885c2/fileEntries/screenshot"
+  },
+  "title": "Minimalist Blue Design",
+  "updateTime": "2026-11-17T01:28:13.430954Z",
+  "visibility": "PRIVATE"
+}

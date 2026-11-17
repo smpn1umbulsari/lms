@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Cbt</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0d1117;color:#dfe2eb;}body{overscroll-behavior:none;font-family:'Inter',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-low":"#0f141c","surface-container-highest":"#31353c","on-secondary-container":"#9fb7d6","on-tertiary-fixed":"#2a1700","outline-variant":"#3e484f","primary-container":"#38bdf8","on-error":"#690005","surface-bright":"#353940","error-container":"#93000a","surface-tint":"#7bd0ff","surface":"#151b23","surface-container":"#151b23","on-primary-fixed":"#001e2c","on-primary-container":"#004965","on-background":"#dfe2eb","on-primary":"#00354a","warn":"#f59e0b","on-primary-fixed-variant":"#004c69","primary-fixed":"#c4e7ff","secondary-container":"#314863","line-soft":"#1e252f","paper":"#0d1117","inverse-surface":"#dfe2eb","tertiary-fixed-dim":"#ffb960","tertiary":"#ffc176","surface-container-lowest":"#0a0e14","accent-soft":"#0f2942","ink":"#f2f5f7","outline":"#87929a","ink-3":"#6f7b8a","surface-variant":"#31353c","danger":"#ef4444","line":"#252d38","on-surface-variant":"#bdc8d1","surface-container-high":"#262a31","tertiary-container":"#f1a02b","ok":"#22c55e","error":"#ffb4ab","background":"#10141a","surface-dim":"#10141a","inverse-on-surface":"#2d3137","on-tertiary-fixed-variant":"#653e00","primary":"#8ed5ff","on-secondary-fixed":"#011d35","on-secondary":"#19324b","on-surface":"#dfe2eb","on-error-container":"#ffdad6","secondary-fixed":"#d1e4ff","inverse-primary":"#00668a","on-tertiary-container":"#613b00","primary-fixed-dim":"#7bd0ff","secondary":"#b0c9e8","on-secondary-fixed-variant":"#314863","tertiary-fixed":"#ffddb8","secondary-fixed-dim":"#b0c9e8","ink-2":"#a3adba","on-tertiary":"#472a00","accent":"#38bdf8"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-xs":"0.25rem","space-lg":"1rem",gutter:"1rem","space-md":"0.75rem","space-xl":"1.5rem","space-sm":"0.5rem",margin:"1.5rem"},fontFamily:{"label-sm":["Inter"],badge:["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"headline-sm":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],"label-md":["Inter"]},fontSize:{"label-sm":["11.5px",{lineHeight:"16px",fontWeight:"500"}],badge:["10.5px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"headline-md":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-md":["13.5px",{lineHeight:"20px",fontWeight:"400"}],"headline-sm":["14px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"body-sm":["12.5px",{lineHeight:"18px",fontWeight:"400"}],"headline-lg":["20px",{lineHeight:"28px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-md":["12.5px",{lineHeight:"16px",fontWeight:"500"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-paper text-on-surface antialiased flex flex-col min-h-screen selection:bg-accent-soft selection:text-accent"><header class="fixed top-0 w-full z-50 bg-paper/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.25)]"><div class="h-14 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-xs min-w-0"><button aria-label="Kembali" class="w-11 h-11 flex items-center justify-center rounded-lg text-ink-2 hover:text-ink hover:bg-surface-bright transition-colors -ml-1" onclick="history.back()"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><div class="flex flex-col min-w-0"><h1 class="font-headline-sm text-headline-sm text-ink truncate">Asesmen &amp; Ujian CBT</h1><span class="font-label-sm text-label-sm text-ink-3 truncate">Cbt</span></div></div><div class="flex items-center gap-space-sm shrink-0"><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-accent-soft text-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>LIVE</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 bg-paper min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Top Session Banner & Security Lock -->
+<div class="bg-surface-container-low px-4 py-3 flex flex-col gap-3">
+<!-- Meta and Floating Timer Row -->
+<div class="flex items-center justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-badge text-badge px-2 py-0.5 rounded bg-surface-container-high text-primary tracking-wider uppercase font-semibold">SMPN 1 UMBULSARI</span>
+<span class="font-label-sm text-label-sm text-ink-3">•</span>
+<span class="font-label-sm text-label-sm text-ink-3">Kurikulum Merdeka</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-ink truncate mt-0.5">STS IPA Terpadu Kelas VIII</h2>
+</div>
+<!-- Prominent Locked Countdown Timer -->
+<div class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-soft text-primary font-mono text-xs font-bold tracking-wide shadow-sm" id="cbt-timer">
+<span class="material-symbols-outlined text-[16px] text-accent animate-pulse">timer</span>
+<span class="tracking-widest" id="timer-display">01:14:20</span>
+</div>
+</div>
+<!-- Progress Meter -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-xs">
+<span class="font-label-sm text-label-sm text-ink-2">Progres Pengerjaan: Soal 4 dari 4 (100%)</span>
+<span class="font-badge text-badge text-accent font-semibold">Lengkap</span>
+</div>
+<div class="w-full h-1 bg-surface-bright rounded-full overflow-hidden">
+<div class="h-full bg-accent rounded-full transition-all duration-300" style="width: 100%;"></div>
+</div>
+</div>
+<!-- Local Persistence Status Bar -->
+<div class="flex items-center justify-between text-xs pt-0.5">
+<div class="flex items-center gap-1.5">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-ok opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-ok"></span>
+</span>
+<span class="font-label-sm text-label-sm text-ok font-medium">Tersimpan otomatis di memori lokal</span>
+</div>
+<span class="font-label-sm text-label-sm text-ink-3">ID: 8A-IPA-0442</span>
+</div>
+</div>
+<div class="px-4 flex flex-col gap-4 mt-3">
+<!-- Visual Question Navigator Palette (4-item responsive grid) -->
+<div class="bg-surface rounded-xl p-3 shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-ink-2 font-semibold tracking-wide uppercase">Navigasi Soal CBT</span>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-ok/10 text-ok font-medium">4 Terjawab</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<!-- Soal 1: Pilihan Ganda -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-surface-container-high hover:bg-surface-bright transition-all active:scale-95 group text-center" type="button">
+<div class="flex items-center gap-1">
+<span class="font-headline-sm text-headline-sm text-ink group-hover:text-primary">01</span>
+<span class="material-symbols-outlined text-[15px] text-ok" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-badge text-[9.5px] px-1.5 py-0.2 rounded bg-surface-container-low text-primary-fixed mt-1">PG</span>
+</button>
+<!-- Soal 2: Benar-Salah -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-surface-container-high hover:bg-surface-bright transition-all active:scale-95 group text-center" type="button">
+<div class="flex items-center gap-1">
+<span class="font-headline-sm text-headline-sm text-ink group-hover:text-ok">02</span>
+<span class="material-symbols-outlined text-[15px] text-ok" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-badge text-[9.5px] px-1.5 py-0.2 rounded bg-surface-container-low text-ok mt-1">B-S</span>
+</button>
+<!-- Soal 3: Menjodohkan -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-surface-container-high hover:bg-surface-bright transition-all active:scale-95 group text-center" type="button">
+<div class="flex items-center gap-1">
+<span class="font-headline-sm text-headline-sm text-ink group-hover:text-warn">03</span>
+<span class="material-symbols-outlined text-[15px] text-warn" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-badge text-[9.5px] px-1.5 py-0.2 rounded bg-surface-container-low text-warn mt-1">JODOH</span>
+</button>
+<!-- Soal 4: Uraian / Aktif -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-error-container/30 text-error shadow-sm active:scale-95 relative text-center" type="button">
+<div class="flex items-center gap-1">
+<span class="font-headline-sm text-headline-sm font-bold text-error">04</span>
+<span class="material-symbols-outlined text-[15px] text-error">edit_note</span>
+</div>
+<span class="font-badge text-[9.5px] px-1.5 py-0.2 rounded bg-surface-container-lowest text-error mt-1 font-bold">URAIAN</span>
+<span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-danger ring-2 ring-surface"></span>
+</button>
+</div>
+</div>
+<!-- Active Question Sheet -->
+<div class="bg-surface rounded-xl p-4 shadow-sm flex flex-col gap-3">
+<!-- Question Card Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-badge text-badge px-2.5 py-0.5 rounded-md bg-error-container/40 text-error font-bold uppercase tracking-wider">ESSAY / URAIAN</span>
+<span class="font-headline-sm text-headline-sm text-ink">· Nomor 4</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded bg-surface-container-high text-tertiary-fixed font-semibold">Bobot: 20 Poin</span>
+</div>
+<!-- Question Text Body -->
+<div class="bg-surface-container-low rounded-lg p-3.5">
+<p class="font-body-md text-body-md text-ink leading-relaxed">
+          Jelaskan proses pertukaran gas O₂ dan CO₂ di alveolus serta faktor-faktor apa saja yang mempengaruhinya secara singkat dan tepat!
+        </p>
+</div>
+<!-- Scientific Reference Anchor Prompt -->
+<div class="rounded-lg bg-surface-container-low p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-accent mt-0.5 shrink-0">science</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-accent font-semibold">Petunjuk Kata Kunci Ilmiah:</span>
+<span class="font-body-sm text-body-sm text-ink-2 mt-0.5">Gunakan istilah ilmiah: <strong class="text-ink">difusi</strong>, <strong class="text-ink">membran alveolus</strong>, dan <strong class="text-ink">tekanan parsial</strong> dalam penjelasan Anda.</span>
+</div>
+</div>
+</div>
+<!-- Interactive Student Answer Area -->
+<div class="bg-surface rounded-xl p-4 shadow-sm flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-accent">edit_document</span>
+<label class="font-headline-sm text-headline-sm text-ink font-semibold" for="student-answer-input">Lembar Jawaban Siswa</label>
+</div>
+<span class="font-label-sm text-label-sm text-ink-3" id="char-counter">389 karakter terisi</span>
+</div>
+<!-- Textarea Container -->
+<div class="relative">
+<textarea class="w-full bg-surface-container-low rounded-lg p-3 text-ink font-body-md text-body-md leading-relaxed outline-none focus:ring-1 focus:ring-accent resize-none placeholder:text-ink-3" id="student-answer-input" placeholder="Tuliskan jawaban lengkap Anda di sini..." rows="6">Pertukaran gas terjadi di dinding alveolus yang tipis secara difusi pasif. Gas oksigen (O2) dari udara bertekanan tinggi di dalam alveolus menembus membran kapiler darah dan diikat oleh hemoglobin menjadi oksihemoglobin. Pada saat bersamaan, karbondioksida (CO2) dalam darah berdifusi kembali ke rongga alveolus untuk dihembuskan keluar. Faktor yang mempengaruhi antara lain ketebalan membran dan luas permukaan alveolus.</textarea>
+</div>
+<!-- Textarea Utility Status Footer -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-xs text-ok">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+<span class="font-label-sm text-label-sm">Draf tersimpan otomatis (08:44 WIB)</span>
+</div>
+<button class="flex items-center gap-1 text-ink-2 hover:text-ink text-xs font-label-sm text-label-sm transition-colors py-1 px-2 rounded hover:bg-surface-bright" type="button">
+<span class="material-symbols-outlined text-[14px]">format_bold</span>
+<span>Format Teks</span>
+</button>
+</div>
+</div>
+<!-- Exam Submission & Navigation Controls -->
+<div class="flex items-center gap-3 pt-1">
+<button class="flex-1 py-3 px-4 rounded-lg bg-surface hover:bg-surface-bright active:scale-[0.98] text-ink font-medium text-center transition-all flex items-center justify-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span class="font-body-md text-body-md">Soal Sebelumnya</span>
+</button>
+<button class="flex-1 py-3 px-4 rounded-lg bg-accent hover:bg-primary active:scale-[0.98] text-on-primary font-bold text-center transition-all flex items-center justify-center gap-1.5 shadow-lg" onclick="confirmSubmission()" type="button">
+<span class="font-body-md text-body-md font-bold">Kumpulkan Ujian</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</button>
+</div>
+<!-- Exam Security Mode Disclaimer Pill -->
+<div class="bg-surface-container-lowest rounded-lg p-2.5 flex items-center justify-center gap-2 text-center text-ink-3">
+<span class="material-symbols-outlined text-[15px] text-warn shrink-0">shield_lock</span>
+<span class="font-label-sm text-label-sm">Mode Terkunci: Dilarang beralih tab atau menutup peramban selama ujian berlangsung.</span>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic Character Counter & Local Persistence Mock
+  const answerInput = document.getElementById('student-answer-input');
+  const charCounter = document.getElementById('char-counter');
+
+  if (answerInput && charCounter) {
+    answerInput.addEventListener('input', (e) => {
+      const count = e.target.value.length;
+      charCounter.textContent = `${count} karakter terisi`;
+    });
+  }
+
+  // Interactive submission visual prompt
+  function confirmSubmission() {
+    if (window.confirm("Apakah Anda yakin ingin menyelesaikan dan mengumpulkan seluruh lembar ujian?")) {
+      alert("Jawaban Anda berhasil dikirim ke server CBT SMPN 1 Umbulsari!");
+    }
+  }
+
+  // Timer Tick Simulation
+  (function initCbtTimer() {
+    let totalSeconds = 1 * 3600 + 14 * 60 + 20; // 01:14:20
+    const display = document.getElementById('timer-display');
+    if (!display) return;
+
+    setInterval(() => {
+      if (totalSeconds > 0) {
+        totalSeconds--;
+        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const seconds = String(totalSeconds % 60).padStart(2, '0');
+        display.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }, 1000);
+  })();
+</script></main></body></html>

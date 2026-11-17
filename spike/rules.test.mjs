@@ -68,6 +68,37 @@ await ok("results: admin create", assertSucceeds(setDoc(doc(adm, "results", "sA_
 await ok("results: admin update (revisi in-place)", assertSucceeds(updateDoc(doc(adm, "results", "sA_q1_1"), { score: 85 })));
 await no("results: siswa baca milik orang lain", assertFails(getDoc(doc(sB, "results", "sA_q1_1"))));
 
+// ---- SISWA (roster impor Excel) ----
+await ok("siswa: admin tulis roster", assertSucceeds(setDoc(doc(adm, "siswa", "1001"), { nama: "A", kelas: "c1", claimedBy: null })));
+await no("siswa: siswa tulis roster ditolak", assertFails(setDoc(doc(sA, "siswa", "9999"), { nama: "X", kelas: "c1" })));
+await ok("siswa: claim NIS sendiri (first-come)", assertSucceeds(updateDoc(doc(sA, "siswa", "1001"), { claimedBy: "sA" })));
+// ponytail: roster tanpa pemetaan email↔NIS, jadi claim = first-come-first-served.
+// Yang dicegah: dua akun memegang NIS yang sama. Yang tidak dicegah: siswa mengklaim
+// NIS teman yang belum diklaim. Perbaikan butuh kolom email di Excel + cek token.email.
+await no("siswa: claim NIS yang sudah diklaim ditolak", assertFails(updateDoc(doc(sB, "siswa", "1001"), { claimedBy: "sB" })));
+await no("siswa: ubah claimedBy yang sudah ada ditolak", assertFails(updateDoc(doc(sA, "siswa", "1001"), { claimedBy: "sB" })));
+await ok("siswa: admin tulis roster kedua", assertSucceeds(setDoc(doc(adm, "siswa", "1002"), { nama: "A2", kelas: "c1", claimedBy: null })));
+
+// ---- USERS via roster ----
+const sC = env.authenticatedContext("sC").firestore();
+await no("users: bind kelas salah ditolak", assertFails(setDoc(doc(sC, "users", "sC"), { nama: "A", kelas: "c2", nis: "1001" })));
+await no("users: bind nama salah ditolak", assertFails(setDoc(doc(sC, "users", "sC"), { nama: "Bukan A", kelas: "c1", nis: "1001" })));
+await no("users: bind roster sudah diklaim ditolak", assertFails(setDoc(doc(sC, "users", "sC"), { nama: "A", kelas: "c1", nis: "1001" })));
+await ok("users: bind roster bebas (kelas+nama cocok)", assertSucceeds(setDoc(doc(sC, "users", "sC"), { nama: "A2", kelas: "c1", nis: "1002" })));
+
+// ---- GURU (invite impor Excel, doc ID lowercase) ----
+const guru = env.authenticatedContext("gA", { email: "Budi@Sekolah.sch.id" }).firestore();
+const guru2 = env.authenticatedContext("gB", { email: "siti@sekolah.sch.id" }).firestore();
+await ok("guruInvites: admin tulis invite", assertSucceeds(setDoc(doc(adm, "guruInvites", "budi@sekolah.sch.id"), { nama: "Budi", nip: "1", mapel: "Info", aktif: true })));
+await ok("guruInvites: guru baca invite sendiri (email beda kapital)", assertSucceeds(getDoc(doc(guru, "guruInvites", "budi@sekolah.sch.id"))));
+await no("guruInvites: guru lain baca ditolak", assertFails(getDoc(doc(guru2, "guruInvites", "budi@sekolah.sch.id"))));
+await ok("admins: guru aktivasi dgn invite aktif", assertSucceeds(setDoc(doc(guru, "admins", "gA"), { nama: "Budi" })));
+await no("admins: tanpa invite ditolak", assertFails(setDoc(doc(guru2, "admins", "gB"), { nama: "Siti" })));
+await env.withSecurityRulesDisabled(async (c) => {
+  await setDoc(doc(c.firestore(), "guruInvites", "siti@sekolah.sch.id"), { nama: "Siti", aktif: false });
+});
+await no("admins: invite aktif=false ditolak", assertFails(setDoc(doc(guru2, "admins", "gB"), { nama: "Siti" })));
+
 await env.cleanup();
 console.log(`\n=== ${pass} PASS / ${fail} FAIL ===`);
 process.exit(fail ? 1 : 0);

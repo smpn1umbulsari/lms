@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'surface-container-highest': '#e0e3e5', 'inverse-primary': '#b7c4ff', 'line-soft': '#f1f5f9', 'on-secondary-fixed': '#0b1c30', 'surface-variant': '#e0e3e5', 'surface-container-low': '#f2f4f6', 'on-secondary': '#ffffff', 'tertiary': '#3d445a', 'background': '#f7f9fb', 'ink-muted': '#64748b', 'on-surface-variant': '#434655', 'on-primary': '#ffffff', 'badge-bs-bg': '#f0fdf4', 'on-tertiary': '#ffffff', 'on-secondary-container': '#54647a', 'badge-match': '#d97706', 'on-error-container': '#93000a', 'badge-pg': '#1d4ed8', 'surface-bright': '#f7f9fb', 'badge-bs': '#16a34a', 'paper': '#f8fafc', 'on-tertiary-fixed-variant': '#3f465c', 'on-secondary-fixed-variant': '#38485d', 'secondary': '#505f76', 'primary': '#0037b0', 'ink-tertiary': '#94a3b8', 'on-primary-fixed': '#001551', 'tertiary-container': '#545c72', 'surface-container-lowest': '#ffffff', 'primary-fixed-dim': '#b7c4ff', 'on-primary-fixed-variant': '#0039b5', 'outline': '#747686', 'line': '#e2e8f0', 'on-tertiary-fixed': '#131b2e', 'tertiary-fixed': '#dae2fd', 'inverse-surface': '#2d3133', 'on-error': '#ffffff', 'badge-essay': '#dc2626', 'outline-variant': '#c4c5d7', 'inverse-on-surface': '#eff1f3', 'badge-match-bg': '#fffbeb', 'on-surface': '#191c1e', 'error-container': '#ffdad6', 'surface': '#ffffff', 'primary-fixed': '#dce1ff', 'on-background': '#191c1e', 'badge-pg-bg': '#eff6ff', 'on-primary-container': '#cad3ff', 'surface-container-high': '#e6e8ea', 'primary-container': '#1d4ed8', 'surface-tint': '#2151da', 'surface-dim': '#d8dadc', 'surface-container': '#eceef0', 'secondary-fixed-dim': '#b7c8e1', 'secondary-fixed': '#d3e4fe', 'badge-essay-bg': '#fef2f2', 'on-tertiary-container': '#cdd5ef', 'secondary-container': '#d0e1fb', 'error': '#ba1a1a', 'tertiary-fixed-dim': '#bec6e0', 'ink': '#0f172a' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.625rem', 'gutter': '0.875rem', 'space-xxs': '0.25rem', 'space-2xl': '2.125rem', 'margin-desktop': '2.75rem', 'space-xs': '0.5rem', 'space-md': '0.875rem', 'space-lg': '1rem', 'gutter-desktop': '1rem', 'space-xl': '1.375rem', 'margin': '1.25rem' }, fontFamily: { 'body-medium': ['Inter'], 'nav-mobile': ['Inter'], 'headline-lg': ['Inter'], 'label-default': ['Inter'], 'headline-md': ['Inter'], 'meta-default': ['Inter'], 'display-stat': ['Inter'], 'headline-sm': ['Inter'], 'body-default': ['Inter'], 'panel-title': ['Inter'], 'headline-lg-mobile': ['Inter'], 'badge-label': ['Inter'] }, fontSize: { 'body-medium': ['13.5px', { lineHeight: '20px', fontWeight: '500' }], 'nav-mobile': ['10.5px', { lineHeight: '14px', fontWeight: '500' }], 'headline-lg': ['26px', { lineHeight: '32px', letterSpacing: '-0.03em', fontWeight: '600' }], 'label-default': ['12.5px', { lineHeight: '16px', fontWeight: '500' }], 'headline-md': ['19px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }], 'meta-default': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'display-stat': ['29px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'headline-sm': ['16px', { lineHeight: '22px', fontWeight: '600' }], 'body-default': ['13.5px', { lineHeight: '20px', fontWeight: '400' }], 'panel-title': ['13px', { lineHeight: '18px', fontWeight: '600' }], 'headline-lg-mobile': ['20px', { lineHeight: '26px', letterSpacing: '-0.02em', fontWeight: '600' }], 'badge-label': ['11px', { lineHeight: '14px', fontWeight: '600' }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;overflow-x:clip;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background font-body-default text-body-default text-ink min-h-screen flex flex-col antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs min-w-0"><button aria-label="Kembali" class="w-11 h-11 -ml-2 flex items-center justify-center text-ink hover:text-primary transition-colors shrink-0" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span></button><h1 class="font-headline-sm text-headline-sm text-ink truncate">Asesmen &amp; Ujian Cbt</h1></div><div class="flex items-center gap-space-xs shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-safe bg-background px-margin"><div class="flex flex-col w-full pb-8 space-y-4">
+<!-- Exam Metadata Header & Timer Card -->
+<section class="bg-surface rounded-xl p-space-md shadow-sm space-y-3">
+<div class="flex items-center justify-between gap-space-xs">
+<div class="min-w-0">
+<span class="inline-block px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-badge-label text-badge-label mb-1">SMPN 1 UMBULSARI</span>
+<h2 class="font-headline-sm text-headline-sm text-ink truncate">STS IPA Terpadu Kelas VIII</h2>
+</div>
+<!-- Timer Pill with Subtle Pulse -->
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-badge-pg-bg text-badge-pg shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[17px] animate-pulse">timer</span>
+<span class="font-panel-title text-panel-title tabular-nums" id="exam-timer">01:14:22</span>
+</div>
+</div>
+<!-- Progress Status & Offline Sync Pill -->
+<div class="space-y-1.5 pt-1">
+<div class="flex justify-between items-center text-ink-muted">
+<span class="font-label-default text-label-default">Progres Pengerjaan</span>
+<span class="font-label-default text-label-default font-semibold text-primary">Soal 4 dari 4 (100%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 100%;"></div>
+</div>
+<div class="flex items-center justify-between pt-0.5">
+<div class="flex items-center gap-1.5 text-badge-bs">
+<span class="w-2 h-2 rounded-full bg-badge-bs animate-ping"></span>
+<span class="font-meta-default text-meta-default font-medium">Tersimpan otomatis di memori lokal</span>
+</div>
+<span class="font-meta-default text-meta-default text-ink-muted">Kurikulum Merdeka</span>
+</div>
+</div>
+</section>
+<!-- Number Navigation Sheet Trigger & Quick Strip -->
+<section class="bg-surface rounded-xl p-space-sm shadow-sm space-y-2">
+<div class="flex items-center justify-between px-1">
+<span class="font-panel-title text-panel-title text-ink">Lembar Nomor Soal</span>
+<span class="font-meta-default text-meta-default text-ink-muted">4 Soal Tersedia</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<!-- Q1 PG -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-badge-pg-bg transition-colors active:scale-95 text-left" type="button">
+<div class="flex items-center gap-1">
+<span class="font-panel-title text-panel-title text-badge-pg">1</span>
+<span class="material-symbols-outlined text-[14px] text-badge-pg font-bold">check_circle</span>
+</div>
+<span class="font-badge-label text-badge-label text-badge-pg uppercase mt-0.5">PG</span>
+</button>
+<!-- Q2 BS -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-badge-bs-bg transition-colors active:scale-95 text-left" type="button">
+<div class="flex items-center gap-1">
+<span class="font-panel-title text-panel-title text-badge-bs">2</span>
+<span class="material-symbols-outlined text-[14px] text-badge-bs font-bold">check_circle</span>
+</div>
+<span class="font-badge-label text-badge-label text-badge-bs uppercase mt-0.5">B-S</span>
+</button>
+<!-- Q3 MATCH -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-badge-match-bg transition-colors active:scale-95 text-left" type="button">
+<div class="flex items-center gap-1">
+<span class="font-panel-title text-panel-title text-badge-match">3</span>
+<span class="material-symbols-outlined text-[14px] text-badge-match font-bold">check_circle</span>
+</div>
+<span class="font-badge-label text-badge-label text-badge-match uppercase mt-0.5">Jodoh</span>
+</button>
+<!-- Q4 ESSAY Active -->
+<button class="flex flex-col items-center justify-center p-2 rounded-lg bg-badge-essay-bg shadow-sm active:scale-95 text-left" type="button">
+<div class="flex items-center gap-1">
+<span class="font-panel-title text-panel-title text-badge-essay">4</span>
+<span class="material-symbols-outlined text-[14px] text-badge-essay">edit_note</span>
+</div>
+<span class="font-badge-label text-badge-label text-badge-essay uppercase mt-0.5">Uraian</span>
+</button>
+</div>
+</section>
+<!-- Question Sheet Card -->
+<section class="bg-surface rounded-xl p-space-md shadow-sm space-y-4">
+<!-- Question Type Bar -->
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-badge-essay-bg text-badge-essay font-badge-label text-badge-label uppercase tracking-wide">
+          ESSAY / URAIAN
+        </span>
+<span class="font-meta-default text-meta-default text-ink-muted">· Nomor 4</span>
+</div>
+<div class="px-2.5 py-1 rounded bg-surface-container-high text-on-surface-variant font-label-default text-label-default">
+        Bobot: <strong class="text-ink">20 Poin</strong>
+</div>
+</div>
+<!-- Question Body -->
+<div class="space-y-3">
+<p class="font-body-medium text-body-medium text-ink leading-relaxed">
+        Jelaskan proses pertukaran gas O<sub>2</sub> dan CO<sub>2</sub> di alveolus serta faktor-faktor apa saja yang mempengaruhinya secara singkat dan tepat!
+      </p>
+<!-- Context Visual Reference (Micro Illustration / Concept Tag) -->
+<div class="p-space-sm bg-surface-container-low rounded-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[22px]">file_copy</span>
+</div>
+<div class="min-w-0">
+<div class="font-label-default text-label-default text-ink font-semibold">Sistem Pernapasan Manusia</div>
+<div class="font-meta-default text-meta-default text-ink-muted truncate">Gunakan istilah ilmiah: difusi, membran alveolus-kapiler, gradien tekanan.</div>
+</div>
+</div>
+</div>
+<!-- Student Answer Workspace -->
+<div class="space-y-2 pt-1">
+<div class="flex justify-between items-center">
+<label class="font-panel-title text-panel-title text-ink flex items-center gap-1.5" for="student-answer">
+<span class="material-symbols-outlined text-[18px] text-primary">draw</span>
+          Lembar Jawaban Siswa
+        </label>
+<span class="font-meta-default text-meta-default text-ink-muted tabular-nums" id="char-counter">389 karakter terisi</span>
+</div>
+<div class="relative">
+<textarea class="w-full bg-paper rounded-lg p-3 font-body-default text-body-default text-ink resize-none focus:outline-none focus:bg-surface focus:shadow-md transition-all placeholder:text-ink-tertiary" id="student-answer" placeholder="Tuliskan uraian jawabanmu dengan jelas dan terstruktur..." rows="6">Pertukaran gas terjadi di dinding alveolus yang tipis secara difusi pasif. Gas oksigen (O2) dari udara bertekanan tinggi di dalam alveolus menembus membran kapiler darah dan diikat oleh hemoglobin menjadi oksihemoglobin. Pada saat bersamaan, karbondioksida (CO2) dalam darah berdifusi kembali ke rongga alveolus untuk dihembuskan keluar. Faktor yang mempengaruhi antara lain ketebalan membran dan luas permukaan paru-paru.</textarea>
+</div>
+<!-- Auto-save Pill Feedback -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5 text-badge-bs font-meta-default text-meta-default">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+<span>Draf tersimpan otomatis (08:44 WIB)</span>
+</div>
+<button class="font-meta-default text-meta-default text-primary hover:underline flex items-center gap-0.5" onclick="formatAnswerHint()" type="button">
+<span class="material-symbols-outlined text-[14px]">auto_fix_high</span>
+          Format Teks
+        </button>
+</div>
+</div>
+</section>
+<!-- Contextual Safety Gap & Navigation Controls -->
+<div class="h-4"></div>
+<!-- Bottom Navigation Actions -->
+<footer class="space-y-3">
+<div class="grid grid-cols-2 gap-3">
+<!-- Previous Question -->
+<button class="h-11 px-3 rounded-lg bg-surface hover:bg-surface-container active:scale-[0.98] text-ink font-body-medium text-body-medium shadow-sm flex items-center justify-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Soal Sebelumnya</span>
+</button>
+<!-- Primary Action: Submit & Finish -->
+<button class="h-11 px-3 rounded-lg bg-primary hover:bg-primary-container active:scale-[0.98] text-on-primary font-body-medium text-body-medium shadow-md flex items-center justify-center gap-1.5 transition-all" onclick="triggerSubmitDialog()" type="button">
+<span>Kumpulkan Ujian</span>
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+</button>
+</div>
+<!-- Exam Safety Guard Prompt -->
+<div class="text-center">
+<span class="font-meta-default text-meta-default text-ink-muted">
+        Mode Terkunci: Dilarang beralih tab atau menutup peramban selama ujian berlangsung.
+      </span>
+</div>
+</footer>
+<!-- Confirmation Sheet Modal (Hidden by Default) -->
+<div class="fixed inset-0 z-50 bg-ink/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4" id="submit-modal">
+<div class="w-full max-w-sm bg-surface rounded-2xl p-space-lg shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+<div class="w-12 h-12 rounded-full bg-badge-pg-bg text-badge-pg flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[28px]">verified</span>
+</div>
+<div class="text-center space-y-1">
+<h3 class="font-headline-sm text-headline-sm text-ink">Kumpulkan Hasil Ujian?</h3>
+<p class="font-body-default text-body-default text-ink-muted">
+          Semua 4 soal telah terjawab lengkap. Jawaban yang sudah dikirimkan tidak dapat diperbaiki lagi.
+        </p>
+</div>
+<!-- Quick Checklist -->
+<div class="p-3 bg-surface-container-low rounded-xl space-y-1.5 text-left">
+<div class="flex items-center justify-between text-ink font-meta-default text-meta-default">
+<span>Pilihan Ganda (1 Soal)</span>
+<span class="text-badge-bs font-medium">✓ Terjawab</span>
+</div>
+<div class="flex items-center justify-between text-ink font-meta-default text-meta-default">
+<span>Benar / Salah (1 Soal)</span>
+<span class="text-badge-bs font-medium">✓ Terjawab</span>
+</div>
+<div class="flex items-center justify-between text-ink font-meta-default text-meta-default">
+<span>Menjodohkan (1 Soal)</span>
+<span class="text-badge-bs font-medium">✓ Terjawab</span>
+</div>
+<div class="flex items-center justify-between text-ink font-meta-default text-meta-default">
+<span>Uraian / Essay (1 Soal)</span>
+<span class="text-badge-bs font-medium">✓ 389 Karakter</span>
+</div>
+</div>
+<div class="space-y-2 pt-2">
+<button class="w-full h-11 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-body-medium text-body-medium shadow-sm transition-all flex items-center justify-center gap-1.5" onclick="confirmFinalSubmit()" type="button">
+<span>Ya, Selesai dan Kirim</span>
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+</button>
+<button class="w-full h-10 rounded-lg bg-surface text-ink-muted hover:text-ink font-body-medium text-body-medium transition-colors" onclick="closeSubmitDialog()" type="button">
+          Periksa Kembali Soal
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Character count tracker
+  const textarea = document.getElementById('student-answer');
+  const counter = document.getElementById('char-counter');
+  if (textarea && counter) {
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      counter.textContent = `${len} karakter terisi`;
+    });
+  }
+
+  // Timer countdown simulation
+  let totalSeconds = 74 * 60 + 22;
+  const timerElem = document.getElementById('exam-timer');
+  setInterval(() => {
+    if (totalSeconds > 0) {
+      totalSeconds--;
+      const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const secs = String(totalSeconds % 60).padStart(2, '0');
+      if (timerElem) {
+        timerElem.textContent = `${hrs}:${mins}:${secs}`;
+      }
+    }
+  }, 1000);
+
+  // Modal interactions
+  function triggerSubmitDialog() {
+    const modal = document.getElementById('submit-modal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeSubmitDialog() {
+    const modal = document.getElementById('submit-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function confirmFinalSubmit() {
+    const modal = document.getElementById('submit-modal');
+    if (modal) {
+      modal.innerHTML = `
+        <div class="w-full max-w-sm bg-surface rounded-2xl p-space-lg shadow-xl text-center space-y-3">
+          <div class="w-12 h-12 rounded-full bg-badge-bs-bg text-badge-bs flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-[28px]">check</span>
+          </div>
+          <h3 class="font-headline-sm text-headline-sm text-ink">Jawaban Terkirim!</h3>
+          <p class="font-body-default text-body-default text-ink-muted">Terima kasih. Lembar ujian STS Anda telah tersimpan aman di server sekolah.</p>
+        </div>
+      `;
+    }
+  }
+
+  function formatAnswerHint() {
+    if (textarea) {
+      textarea.focus();
+    }
+  }
+</script></main></body></html>
