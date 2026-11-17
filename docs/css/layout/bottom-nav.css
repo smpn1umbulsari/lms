@@ -1,4 +1,4 @@
-/* Mobile Bottom Navigation Bar (4 Destinations) */
+/* Mobile Bottom Navigation Bar (5 Destinasi Guru & 4 Destinasi Siswa) */
 .mobile-bottom-nav {
   display: none;
 }
@@ -18,31 +18,39 @@
     justify-content: space-around;
     padding: 0 4px;
     box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
-  .mobile-nav-btn {
+  .mobile-nav-btn, .mobile-nav-item {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    min-height: 48px;
+    min-width: 0;
     background: none;
     border: none;
-    color: var(--ink-2);
+    color: var(--ink-3);
     font-family: inherit;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 500;
     gap: 2px;
     cursor: pointer;
+    padding: 4px 1px;
+    border-radius: 8px;
+    transition: color 0.15s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .mobile-nav-btn.active {
+  .mobile-nav-btn.active, .mobile-nav-item.active {
     color: var(--accent);
     font-weight: 600;
   }
 
-  .mobile-nav-btn .material-symbols-outlined {
-    font-size: 22px;
+  .mobile-nav-btn .material-symbols-outlined,
+  .mobile-nav-item .material-symbols-outlined {
+    font-size: 21px;
   }
 }

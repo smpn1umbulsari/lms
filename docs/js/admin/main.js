@@ -48,10 +48,7 @@ function refreshActivity() {
 // Router & Tab Switching
 export function switchAdminTab(tabId) {
   document
-    .querySelectorAll(".nav-btn")
-    .forEach((b) => b.classList.toggle("active", b.dataset.tab === tabId));
-  document
-    .querySelectorAll(".mobile-nav-item")
+    .querySelectorAll(".nav-btn, .mobile-nav-btn, .mobile-nav-item")
     .forEach((b) => b.classList.toggle("active", b.dataset.tab === tabId));
   document
     .querySelectorAll(".tab-pane")
@@ -61,14 +58,16 @@ export function switchAdminTab(tabId) {
   if (toggleInput) toggleInput.checked = false;
 
   const labels = {
-    "sec-ringkasan": "Portal Guru · Ringkasan",
-    "sec-materi": "Portal Guru · Materi Pembelajaran",
-    "sec-tugas": "Portal Guru · Penugasan Siswa",
-    "sec-asesmen": "Portal Guru · Asesmen & Ujian",
-    "sec-grading": "Portal Guru · Penilaian & Koreksi"
+    "sec-ringkasan": "Ringkasan Dashboard",
+    "sec-materi": "Materi Pembelajaran",
+    "sec-tugas": "Penugasan Siswa",
+    "sec-asesmen": "Asesmen & Bank Soal",
+    "sec-grading": "Penilaian & Koreksi"
   };
   const titleEl = document.getElementById("current-page-title");
-  if (titleEl) titleEl.textContent = labels[tabId] || "Portal Guru";
+  if (titleEl) titleEl.textContent = "Portal Guru · " + (labels[tabId] || "Dashboard");
+  const crumbEl = document.getElementById("crumb-section");
+  if (crumbEl) crumbEl.textContent = labels[tabId] || "Portal Guru";
 
   if (tabId === "sec-ringkasan") loadRingkasan();
   else if (tabId === "sec-materi") loadMateriTable(refreshActivity);
@@ -77,10 +76,7 @@ export function switchAdminTab(tabId) {
 }
 window.switchAdminTab = switchAdminTab;
 
-document.querySelectorAll(".nav-btn").forEach((b) => {
-  b.onclick = () => switchAdminTab(b.dataset.tab);
-});
-document.querySelectorAll(".mobile-nav-item").forEach((b) => {
+document.querySelectorAll(".nav-btn, .mobile-nav-btn, .mobile-nav-item").forEach((b) => {
   b.onclick = () => switchAdminTab(b.dataset.tab);
 });
 
@@ -125,6 +121,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("app-content")?.classList.remove("hidden");
     document.getElementById("sidebar")?.classList.remove("hidden");
     document.getElementById("mobile-nav")?.classList.remove("hidden");
+    document.getElementById("admin-topbar")?.classList.remove("hidden");
 
     const uDisplay = document.getElementById("u-display");
     if (uDisplay) uDisplay.textContent = user.email;
@@ -145,6 +142,7 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("app-content")?.classList.add("hidden");
     document.getElementById("sidebar")?.classList.add("hidden");
     document.getElementById("mobile-nav")?.classList.add("hidden");
+    document.getElementById("admin-topbar")?.classList.add("hidden");
   }
 });
 
@@ -165,4 +163,6 @@ document.getElementById("btn-login")?.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("btn-logout")?.addEventListener("click", () => signOut(auth));
+document.querySelectorAll("#btn-logout, #btn-header-logout, .btn-logout-icon").forEach((b) => {
+  b.addEventListener("click", () => signOut(auth));
+});

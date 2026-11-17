@@ -72,13 +72,18 @@ body.auth-mode main {
 @media (max-width: 768px) {
   main {
     margin-left: 0;
-    padding: 16px 20px 80px 20px;
+    padding: 68px 16px 84px 16px;
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  body.auth-mode main {
+    padding: 24px 16px;
   }
 
   .container {
-    padding: 0 20px 84px 20px;
+    padding: 0 16px 84px 16px;
   }
 
   .stat-strip {
