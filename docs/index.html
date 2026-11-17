@@ -24,30 +24,45 @@
 <link rel="stylesheet" href="css/layout/bottom-nav.css">
 <link rel="stylesheet" href="css/pages/siswa.css">
 </head>
-<body>
-<div class="container">
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-mark">U</div>
-      <div>
-        <div style="line-height:1.2">SMPN 1 Umbulsari</div>
-        <div style="font-size:11px; font-weight:400; color:var(--ink-2)">Portal Belajar Siswa · SITURI</div>
+<body class="siswa-portal auth-mode">
+
+<!-- TOP INSTITUTIONAL HEADER BAR (SISWA) -->
+<header class="top-appbar hidden" id="student-topbar">
+  <div class="appbar-crumbs">
+    <div class="brand-mark" style="width:28px; height:28px; font-size:13px; border-radius:8px; flex-shrink:0">U</div>
+    <div style="display:flex; flex-direction:column; min-width:0">
+      <div style="display:flex; align-items:center; gap:6px">
+        <strong style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis">SMPN 1 Umbulsari</strong>
+        <span class="badge badge-neutral" style="font-size:10px; padding:2px 6px">Siswa</span>
       </div>
+      <span id="crumb-section" class="hide-mobile" style="font-size:11px; color:var(--ink-3)">Materi Pembelajaran</span>
     </div>
-    <div class="header-right">
-      <button type="button" class="icon-action-btn" onclick="window._toggleTheme()" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
-        <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
-      </button>
-      <div id="user-info" class="user-badge hidden">
-        <div id="u-avatar" class="avatar">S</div>
-        <div>
-          <span id="u-name" style="font-weight:600; color:var(--ink)">-</span>
-          <span id="u-class" class="badge badge-pg" style="margin-left:4px">(-)</span>
+  </div>
+  <div class="appbar-right">
+    <div class="semester-pill hide-mobile">
+      <span class="dot-live"></span>
+      <span>Semester Ganjil 2026/2027</span>
+    </div>
+    <button type="button" id="btn-theme-toggle" class="icon-action-btn" onclick="window._toggleTheme()" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
+      <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+    </button>
+    <div id="user-info" class="hidden" style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--line)">
+      <div class="avatar-circle" id="u-avatar" style="width:28px; height:28px; font-size:12px; flex-shrink:0">S</div>
+      <div class="hide-mobile" style="display:flex; flex-direction:column">
+        <div style="display:flex; align-items:center; gap:4px">
+          <span id="u-name" style="font-size:12px; font-weight:600; color:var(--ink); line-height:1.1; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">-</span>
+          <span id="u-class" class="badge badge-pg" style="font-size:10px; padding:1px 5px">(-)</span>
         </div>
-        <button id="btn-logout" style="background:none; border:none; color:var(--danger); cursor:pointer; margin-left:4px; font-size:12px; font-weight:500">Keluar</button>
+        <span style="font-size:10.5px; color:var(--ink-3)">Kurikulum Merdeka</span>
       </div>
     </div>
-  </header>
+    <button type="button" id="btn-logout" class="icon-action-btn btn-logout-icon" title="Keluar Portal Siswa" aria-label="Keluar">
+      <span class="material-symbols-outlined" style="font-size:19px; color:var(--danger)">logout</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
 
   <!-- LOGIN PANEL (Bento Split Slate) -->
   <div id="sec-login" class="auth-wrap">

@@ -20,6 +20,15 @@ body.auth-mode main {
   margin: 0 auto;
   padding: 0 24px 88px 24px;
   width: 100%;
+  box-sizing: border-box;
+}
+
+body.siswa-portal:not(.auth-mode) .container {
+  padding-top: 76px;
+}
+
+body.siswa-portal.auth-mode .container {
+  padding-top: 24px;
 }
 
 /* Typography & Page Header */
@@ -84,6 +93,14 @@ body.auth-mode main {
 
   .container {
     padding: 0 16px 84px 16px;
+  }
+
+  body.siswa-portal:not(.auth-mode) .container {
+    padding-top: 68px;
+  }
+
+  body.siswa-portal.auth-mode .container {
+    padding-top: 20px;
   }
 
   .stat-strip {

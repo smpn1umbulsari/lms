@@ -41,7 +41,7 @@ header.app-header {
   min-width: 0;
 }
 
-.avatar {
+.avatar, .avatar-circle {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -55,7 +55,7 @@ header.app-header {
   flex-shrink: 0;
 }
 
-/* Top Institutional Bar (Guru) */
+/* Top Institutional Bar (Guru & Siswa) */
 .top-appbar {
   position: fixed;
   top: 0;
@@ -69,10 +69,25 @@ header.app-header {
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
+  box-sizing: border-box;
 }
 
 body.auth-mode .top-appbar {
   display: none !important;
+}
+
+/* Siswa Portal has no sidebar, so topbar spans full width */
+body.siswa-portal .top-appbar,
+body:not(.has-sidebar) .top-appbar {
+  left: 0;
+  padding: 0 24px;
+}
+
+@media (min-width: 1088px) {
+  body.siswa-portal .top-appbar {
+    padding: 0 calc((100% - 1040px) / 2 + 24px);
+  }
+}
 }
 
 .appbar-crumbs {

@@ -47,6 +47,15 @@ export function activateStudentTab(tabId) {
     .querySelectorAll(".tab-content")
     .forEach((c) => c.classList.toggle("hidden", c.id !== tabId));
 
+  const tabLabels = {
+    "tab-materi": "Materi Pembelajaran",
+    "tab-tugas": "Penugasan Siswa",
+    "tab-asesmen": "Asesmen & CBT",
+    "sec-nilai": "Rekapitulasi Nilai"
+  };
+  const crumbEl = document.getElementById("crumb-section");
+  if (crumbEl) crumbEl.textContent = tabLabels[tabId] || "Portal Belajar";
+
   if (tabId === "sec-nilai" && !nilaiLoaded && currentUser && userProfile) {
     loadNilai(currentUser, userProfile).then((ok) => {
       if (ok) nilaiLoaded = true;
@@ -160,6 +169,8 @@ onAuthStateChanged(auth, async (user) => {
     if (uAvatar) uAvatar.textContent = userProfile.nama.charAt(0).toUpperCase();
     if (heroName) heroName.textContent = `${userProfile.nama} · Kelas ${userProfile.kelas}`;
 
+    document.body.classList.remove("auth-mode");
+    document.getElementById("student-topbar")?.classList.remove("hidden");
     document.getElementById("user-info")?.classList.remove("hidden");
     document.getElementById("sec-login")?.classList.add("hidden");
     document.getElementById("sec-dashboard")?.classList.remove("hidden");
@@ -170,6 +181,8 @@ onAuthStateChanged(auth, async (user) => {
     currentUser = null;
     userProfile = null;
     nilaiLoaded = false;
+    document.body.classList.add("auth-mode");
+    document.getElementById("student-topbar")?.classList.add("hidden");
     document.getElementById("user-info")?.classList.add("hidden");
     document.getElementById("sec-login")?.classList.remove("hidden");
     document.getElementById("sec-dashboard")?.classList.add("hidden");
@@ -194,4 +207,6 @@ document.getElementById("btn-login")?.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("btn-logout")?.addEventListener("click", () => signOut(auth));
+document.querySelectorAll("#btn-logout, .btn-logout-icon").forEach((b) => {
+  b.addEventListener("click", () => signOut(auth));
+});
