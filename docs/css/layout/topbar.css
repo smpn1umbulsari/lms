@@ -1,4 +1,61 @@
-/* Top Institutional & Student App Bars */
+/* Student Sticky App Header */
+header.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  margin: 0 -24px 20px -24px;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-low);
+  padding: 4px 10px 4px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  min-width: 0;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* Top Institutional Bar (Guru) */
 .top-appbar {
   position: fixed;
   top: 0;
@@ -58,59 +115,6 @@ body.auth-mode .top-appbar {
   flex-shrink: 0;
 }
 
-/* Student Sticky App Header */
-header.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  margin: 0 -24px 20px -24px;
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface-low);
-  padding: 4px 10px 4px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-}
-
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 12px;
-}
-
 @media (max-width: 768px) {
   .top-appbar {
     display: none;
@@ -118,5 +122,19 @@ header.app-header {
   header.app-header {
     margin: 0 -20px 16px -20px;
     padding: 10px 20px;
+  }
+  #u-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+}
+
+@media (max-width: 640px) {
+  .semester-pill, .hide-xs {
+    display: none !important;
   }
 }

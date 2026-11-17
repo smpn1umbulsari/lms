@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .greeting-row {
@@ -14,12 +14,12 @@
 }
 
 .greeting-hi {
-  font-size: 12px;
-  color: var(--ink-2);
+  font-size: 12.5px;
+  color: var(--ink-3);
 }
 
 .greeting-name {
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -43,7 +43,10 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   background: var(--surface);
-  border: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -51,24 +54,24 @@
 .stat-col-3 {
   padding: 12px 14px;
   text-align: center;
-  border-right: 1px solid var(--line-soft);
+  border-left: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.stat-col-3:last-child {
-  border-right: none;
+.stat-col-3:first-child {
+  border-left: none;
 }
 
 .stat-col-lbl {
-  font-size: 12px;
-  color: var(--ink-2);
+  font-size: 12.5px;
+  color: var(--ink-3);
   font-weight: 500;
 }
 
 .stat-col-val {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--ink);
   margin: 2px 0;
@@ -76,8 +79,8 @@
 }
 
 .stat-col-meta {
-  font-size: 11px;
-  color: var(--ink-3);
+  font-size: 12px;
+  color: var(--ink-2);
 }
 
 /* Tabs Navigation (Desktop Top Bar) */
@@ -109,7 +112,7 @@
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
 }
 
 .tab-btn:hover {
@@ -122,6 +125,32 @@
   color: var(--accent);
   border-color: var(--line);
   font-weight: 600;
+}
+
+/* Lanjut Belajar List Feed */
+.lanjut-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  cursor: pointer;
+}
+
+.lanjut-row:last-child {
+  border-bottom: none;
+}
+
+.thumb-44 {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* Exam Runner CBT */
@@ -167,7 +196,6 @@
   color: var(--danger);
 }
 
-/* Question Number Palette Strip */
 .q-palette {
   display: flex;
   gap: 8px;
@@ -210,17 +238,9 @@
   margin-bottom: 14px;
 }
 
-.q-item[data-qtype="bs"] {
-  border-left-color: var(--badge-bs);
-}
-
-.q-item[data-qtype="match"] {
-  border-left-color: var(--badge-match);
-}
-
-.q-item.essay-border, .q-item[data-qtype="essay"] {
-  border-left-color: var(--badge-essay);
-}
+.q-item[data-qtype="bs"] { border-left-color: var(--badge-bs); }
+.q-item[data-qtype="match"] { border-left-color: var(--badge-match); }
+.q-item.essay-border, .q-item[data-qtype="essay"] { border-left-color: var(--badge-essay); }
 
 .opt-label {
   display: flex;
@@ -232,7 +252,6 @@
   border: 1px solid var(--line);
   margin-bottom: 8px;
   cursor: pointer;
-  font-weight: 400;
   color: var(--ink);
 }
 
@@ -261,7 +280,6 @@
   min-height: 44px;
   border-radius: 999px;
   font-weight: 600;
-  text-align: center;
   cursor: pointer;
   background: var(--surface-low);
   border: 1px solid var(--line);
@@ -271,17 +289,8 @@
   justify-content: center;
 }
 
-.bs-btn.active-benar {
-  background: var(--ok);
-  color: #fff;
-  border-color: var(--ok);
-}
-
-.bs-btn.active-salah {
-  background: var(--danger);
-  color: #fff;
-  border-color: var(--danger);
-}
+.bs-btn.active-benar { background: var(--ok); color: #fff; border-color: var(--ok); }
+.bs-btn.active-salah { background: var(--danger); color: #fff; border-color: var(--danger); }
 
 .match-row {
   display: grid;
@@ -295,9 +304,7 @@
   border-radius: 9px;
 }
 
-.match-row select {
-  margin-bottom: 0;
-}
+.match-row select { margin-bottom: 0; }
 
 .notice {
   padding: 11px 14px;
@@ -310,12 +317,11 @@
   color: var(--ink);
 }
 
-.notice-warn {
-  background: var(--warn-soft);
-  border-left-color: var(--warn);
-}
+.notice-warn { background: var(--warn-soft); border-left-color: var(--warn); }
+.notice-ok { background: var(--ok-soft); border-left-color: var(--ok); }
 
-.notice-ok {
-  background: var(--ok-soft);
-  border-left-color: var(--ok);
+@media (max-width: 768px) {
+  .tabs { display: none; }
+  #hero-cta-btn { width: 100%; padding: 12px 16px; }
+  .match-row { grid-template-columns: 1fr; }
 }

@@ -18,7 +18,7 @@
 }
 
 .panel h2, .panel-title {
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--ink);
   display: flex;
@@ -67,12 +67,15 @@
   border-top: 1px solid var(--line-soft);
 }
 
-/* Canonical Stat Strip */
+/* Canonical Stat Strip (1-row horizontal hairline strip) */
 .stat-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   background: var(--surface);
-  border: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   border-radius: 12px;
   margin-bottom: 20px;
   overflow: hidden;
@@ -83,13 +86,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
-.stat-cell:last-child {
-  border-right: none;
+.stat-cell:first-child {
+  border-left: none;
 }
 
 .stat-cell:hover {
@@ -103,7 +106,7 @@
 .stat-lbl {
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--ink-2);
+  color: var(--ink-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -122,7 +125,7 @@
 
 .stat-meta {
   font-size: 12px;
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 
 /* List Rows inside Panels */
@@ -189,7 +192,7 @@
   gap: 5px;
   padding: 5px 11px;
   min-height: 32px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
   background: var(--surface-low);
@@ -229,19 +232,19 @@
 .badge-essay, .badge-danger { background: var(--badge-essay-bg); color: var(--badge-essay); }
 .badge-neutral { background: var(--surface-low); color: var(--ink-2); border: 1px solid var(--line); }
 
-/* Progress Track */
+/* Progress Track (3px canonical height, 2px radius) */
 .progress-track {
   width: 100%;
-  height: 5px;
-  background: var(--surface-high);
-  border-radius: 999px;
+  height: 3px;
+  background: var(--line);
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: var(--accent);
-  border-radius: 999px;
+  border-radius: 2px;
 }
 
 /* Callouts & Notices */
@@ -266,4 +269,18 @@
   border-left-color: var(--danger);
   background: var(--danger-soft);
   color: var(--ink);
+}
+
+/* Skeleton Shimmer */
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface-low) 25%, var(--surface-high) 50%, var(--surface-low) 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s infinite linear;
 }

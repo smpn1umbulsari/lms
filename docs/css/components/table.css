@@ -11,11 +11,11 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 0.78rem;
 }
 
 th, td {
-  padding: 10px 14px;
+  padding: 6px 10px;
   text-align: left;
   border-bottom: 1px solid var(--line-soft);
   vertical-align: middle;
@@ -27,6 +27,19 @@ th {
   font-size: 12px;
   font-weight: 600;
   border-bottom: 1px solid var(--line);
+}
+
+th:first-child, td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: inherit;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+tbody tr {
+  background: var(--surface);
 }
 
 html:not([data-theme="dark"]) tbody tr:nth-child(even) {
