@@ -90,16 +90,14 @@ Semua komponen **wajib** dibangun dari token, bukan warna, agar dark mode = gant
 ### 3.1 Desktop (≥ 992px)
 
 ```
-┌──────┬─────────────────────────────────────────────┐
-│ rail │  header: h1 + sub (kiri) · ghost + primary   │
-│ 64px │  strip stats 1 baris (4 kolom, hairline)     │
-│      │  konten: 2 kolom (1.45fr / 1fr)              │
-└──────┴─────────────────────────────────────────────┘
+┌─────────┬─────────────────────────────────────────────┐
+│ sidebar │  header: h1 + sub (kiri) · ghost + primary   │
+│ 240px   │  strip stats 1 baris (4 kolom, hairline)     │
+│ (teks)  │  konten: 2 kolom (1.45fr / 1fr)              │
+└─────────┴─────────────────────────────────────────────┘
 ```
 
-- **Rail 64px, ikon saja**: mark (32px, radius 9) → 6 ikon (Beranda, Materi, Asesmen, Penilaian,
-  Kelas, Pengaturan) → spacer → avatar 32px. Aktif = ikon accent + bg `--accent-soft`, radius 10.
-  Tidak ada teks di rail (hemat lebar, appeared "modern").
+- **Sidebar 240px, Ikon + Teks Menu**: mark (36px, radius 10) + nama sekolah & subjudul portal guru → menu navigasi dengan ikon dan label teks terbaca jelas (Ringkasan, Materi Pembelajaran, Penugasan, Asesmen & Bank Soal, Koreksi & Penilaian) → footer profil guru (avatar inisial, email guru, dan tombol logout). Aktif = ikon accent + teks accent + bg `--accent-soft` + hairline border. Teks label menu muncul jelas di desktop mode.
 - **Main**: padding 34px 44px 30px, `max-width: 1040px`, rata kiri (bukan center) — halaman konten
   tidak boleh ter-center di layar lebar.
 - **Header**: h1 + satu baris sub (`. ·` sebagai pemisah meta boleh di subjudul, bukan di label

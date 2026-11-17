@@ -1,0 +1,83 @@
+/* Layout Containers & Grids */
+main {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  padding: 84px 36px 48px 36px;
+  max-width: 1360px;
+  width: calc(100% - var(--sidebar-w));
+  box-sizing: border-box;
+}
+
+body.auth-mode main {
+  margin-left: 0;
+  max-width: 100%;
+  width: 100%;
+  padding-top: 84px;
+}
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 24px 88px 24px;
+  width: 100%;
+}
+
+/* Typography & Page Header */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+/* Asymmetric 2-Column Split (1.45fr / 1fr, gap 14px) */
+.split-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 991px) {
+  .split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  main {
+    margin-left: 0;
+    padding: 16px 20px 80px 20px;
+    width: 100%;
+  }
+
+  .container {
+    padding: 0 20px 84px 20px;
+  }
+
+  .stat-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+}

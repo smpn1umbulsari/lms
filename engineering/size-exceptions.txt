@@ -1,0 +1,10 @@
+# Size exceptions list
+# Format: Relative path (case-insensitive substring or exact match) followed by reason
+# Generated on: 2026-11-17
+
+# Admin HTML shell containing 5 tab sections (Ringkasan, Materi, Penugasan, Asesmen, Koreksi)
+docs/admin.html # Shell HTML untuk 5 panel portal guru (JS & CSS sudah modular)
+docs/index.html # Shell HTML untuk portal siswa (JS & CSS sudah modular)
+
+# Design mockups
+design/stitch/screens/ # Raw exported UI mockups from Stitch

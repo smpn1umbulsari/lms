@@ -1,0 +1,54 @@
+/* Data Tables (Zebra only in light mode, tabular numbers, sticky first col) */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+
+th {
+  background: var(--surface-low);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+}
+
+html:not([data-theme="dark"]) tbody tr:nth-child(even) {
+  background: var(--paper);
+}
+
+tbody tr:hover {
+  background: var(--surface-low);
+}
+
+tbody tr:focus-within {
+  background: var(--accent-soft);
+}
+
+table .btn {
+  min-height: 32px;
+  padding: 4px 10px !important;
+  font-size: 12px;
+}
+
+table input[type="number"] {
+  min-height: 34px !important;
+  margin-bottom: 0 !important;
+  font-variant-numeric: tabular-nums;
+}

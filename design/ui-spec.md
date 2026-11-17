@@ -34,7 +34,7 @@ Border: 1px solid `line`. Shadow: none (flat dark). Badge = kapsul `padding 3–
 - **Button** — `prim`(accent solid), `ghost`(bg #0b1220 + border).
 
 ## 3. Frame: GURU — Asesmen Builder
-- **Desktop 1150×auto** — Grid 2 kolom: `Sidebar 224` + `Main`.
+- **Desktop 1150×auto** — Grid 2 kolom: `Sidebar 240` + `Main`.
   - Sidebar: brand + nav list (Materi, Tugas, **Asesmen aktif**, Penilaian, Kelas) + footer.
   - Main (Auto Layout vertikal, gap 14): Header (H1 + user chip) → Sub → Tabs (4) → Card form (Judul+Kelas; Durasi+Seg) → Soal×4 (PG, BS, Match, Essay) → Footer (+Tambah / Simpan).
 - **Mobile 420×auto** — sidebar hidden; semua stack 1 kolom (gap 12). Form row → vertikal.

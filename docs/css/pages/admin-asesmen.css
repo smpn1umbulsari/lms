@@ -1,0 +1,34 @@
+/* Question Builder Card & Assessment Styles */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--badge-pg);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.q-card[data-qtype="bs"] {
+  border-left-color: var(--badge-bs);
+}
+
+.q-card[data-qtype="match"] {
+  border-left-color: var(--badge-match);
+}
+
+.q-card[data-qtype="essay"] {
+  border-left-color: var(--badge-essay);
+}
+
+.q-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.q-card-actions {
+  display: flex;
+  gap: 6px;
+}
