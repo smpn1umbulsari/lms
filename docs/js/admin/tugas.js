@@ -15,7 +15,7 @@ import {
 import { escAttr } from "../core/dom.js";
 import { mediaEmbed } from "../core/media.js";
 import { updateClassOptions } from "./ringkasan.js";
-import { showToast } from "../core/toast.js";
+import { showToast, showConfirmDialog } from "../core/toast.js";
 
 let tugasData = [];
 let editingAsg = null;
@@ -106,10 +106,16 @@ export async function loadTugasTable(onDataChanged) {
   }
 
   window._delAsg = async (id) => {
-    if (confirm("Hapus tugas ini? (kiriman siswa tidak ikut terhapus)")) {
-      await deleteDoc(doc(db, "assignments", id));
-      loadTugasTable(onDataChanged);
-    }
+    const ok = await showConfirmDialog({
+      title: "Hapus Penugasan?",
+      message: "Tugas ini akan dihapus dari portal siswa (arsip kiriman siswa yang sudah masuk tetap aman).",
+      confirmText: "Ya, Hapus Tugas",
+      isDanger: true
+    });
+    if (!ok) return;
+    await deleteDoc(doc(db, "assignments", id));
+    showToast("Tugas berhasil dihapus.", "ok");
+    loadTugasTable(onDataChanged);
   };
 
   window._editAsg = async (id) => {
@@ -187,7 +193,7 @@ export async function loadTugasTable(onDataChanged) {
   window._gradeSub = async (subId) => {
     const el = document.getElementById("score_" + subId);
     const n = parseInt(el.value, 10);
-    if (isNaN(n) || n < 0 || n > 100) return alert("Nilai harus 0-100");
+    if (isNaN(n) || n < 0 || n > 100) return showToast("Nilai harus berada di rentang 0-100", "warn");
     await updateDoc(doc(db, "submissions", subId), {
       nilai: n,
       gradedAt: Timestamp.now()
@@ -250,7 +256,7 @@ export function initTugasHandlers(onDataChanged) {
       .map((i) => i.value.trim())
       .filter(Boolean);
     const links = [tLink, ...extraLinks].filter(Boolean);
-    if (!judul || !kelasStr) return alert("Judul dan Kelas harus diisi!");
+    if (!judul || !kelasStr) return showToast("Judul dan Kelas harus diisi!", "warn");
     const classes = kelasStr
       .split(",")
       .map((s) => s.trim())

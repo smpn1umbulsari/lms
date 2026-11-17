@@ -77,6 +77,12 @@
           <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
         </div>
         <button id="btn-login" class="btn btn-primary auth-submit">Masuk ke Portal Siswa →</button>
+        <div class="auth-demo-chips">
+          <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
+            👤 Siswa Kelas 7 (c1)
+          </button>
+        </div>
         <div class="auth-footer-note">
           <span style="display:inline-flex; align-items:center; gap:5px; color:var(--ink-3)">
             <span class="material-symbols-outlined" style="font-size:15px; color:var(--ok)">verified_user</span>

@@ -2,6 +2,7 @@
 import { db, doc, getDoc, setDoc, serverTimestamp, Timestamp } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { fnv1a, mulberry32, shuffle } from "../shared/quiz-utils.js";
+import { showConfirmDialog } from "../core/toast.js";
 
 let examState = null;
 let autoSaveTimer = null;
@@ -313,8 +314,13 @@ export async function finishExam() {
 }
 
 export function initExamRunnerControls() {
-  document.getElementById("btn-ex-finish")?.addEventListener("click", () => {
-    if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim ujian ini?")) finishExam();
+  document.getElementById("btn-ex-finish")?.addEventListener("click", async () => {
+    const ok = await showConfirmDialog({
+      title: "Kirim Lembar Ujian?",
+      message: "Pastikan seluruh butir soal telah diperiksa. Setelah dikirim, lembar ujian akan langsung masuk ke penilaian guru.",
+      confirmText: "Ya, Kirim Ujian"
+    });
+    if (ok) finishExam();
   });
   document.getElementById("btn-res-back")?.addEventListener("click", () => {
     document.getElementById("sec-result")?.classList.add("hidden");

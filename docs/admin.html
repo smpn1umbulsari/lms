@@ -1,11 +1,11 @@
-<!-- admin.html â€” Minimalist Blue Design (Stitch Project 1529169781025736343) -->
+<!-- admin.html — Minimalist Blue Design (Stitch Project 1529169781025736343) -->
 <!doctype html>
 <html lang="id" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="shell-type" content="web_dashboard">
-<title>Portal Guru â€” LMS SMPN 1 Umbulsari (SITURI)</title>
+<title>Portal Guru — LMS SMPN 1 Umbulsari (SITURI)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
@@ -95,7 +95,7 @@
   <div class="appbar-crumbs">
     <strong>SMPN 1 Umbulsari</strong>
     <span>/</span>
-    <span id="crumb-section">Portal Guru Â· Ringkasan</span>
+    <span id="crumb-section">Portal Guru · Ringkasan</span>
   </div>
   <div class="appbar-right">
     <div class="semester-pill">
@@ -144,6 +144,12 @@
           <input id="l-pass" type="password" placeholder="••••••••" value="" autocomplete="current-password">
         </div>
         <button id="btn-login" class="btn btn-ink auth-submit">Masuk ke Portal Guru →</button>
+        <div class="auth-demo-chips">
+          <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@sekolah.sch.id'; document.getElementById('l-pass').value='guru123';">
+            🎓 Guru Pengampu (Admin)
+          </button>
+        </div>
         <div class="auth-footer-note">
           <span style="display:inline-flex; align-items:center; gap:5px; color:var(--ink-3)">
             <span class="material-symbols-outlined" style="font-size:15px; color:var(--ok)">security</span>
@@ -195,7 +201,7 @@
             <span style="font-size:12px; color:var(--ink-3)">SMPN 1 Umbulsari</span>
           </div>
           <h1 class="page-title">Ringkasan</h1>
-          <p class="page-subtitle">Semester Ganjil Â· 2026/2027 Â· Kelas Aktif Terintegrasi</p>
+          <p class="page-subtitle">Semester Ganjil · 2026/2027 · Kelas Aktif Terintegrasi</p>
         </div>
         <div class="header-actions">
           <button type="button" class="btn btn-secondary" onclick="document.getElementById('btn-export-tugas-csv')?.click()">
@@ -216,7 +222,7 @@
             <span>Materi Aktif</span>
             <span class="material-symbols-outlined" style="font-size:17px; color:var(--ink-3)">menu_book</span>
           </div>
-          <div id="rk-materi" class="stat-val">â€“</div>
+          <div id="rk-materi" class="stat-val">–</div>
           <div class="stat-meta">Modul teks & video terbit</div>
         </div>
         <div class="stat-cell highlight" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">
@@ -224,7 +230,7 @@
             <span style="color:var(--badge-pg)">Penugasan Aktif</span>
             <span class="status-dot" style="background:var(--badge-pg); margin-top:0"></span>
           </div>
-          <div id="rk-tugas" class="stat-val">â€“</div>
+          <div id="rk-tugas" class="stat-val">–</div>
           <div class="stat-meta">Lembar kerja & proyek kelas</div>
         </div>
         <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
@@ -232,7 +238,7 @@
             <span>Ulangan Terjadwal</span>
             <span class="material-symbols-outlined" style="font-size:17px; color:var(--warn)">event_upcoming</span>
           </div>
-          <div id="rk-asesmen" class="stat-val">â€“</div>
+          <div id="rk-asesmen" class="stat-val">–</div>
           <div class="stat-meta">Penilaian harian & CBT</div>
         </div>
         <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
@@ -240,7 +246,7 @@
             <span>Tugas Masuk</span>
             <span class="badge badge-bs">Sinkron</span>
           </div>
-          <div id="rk-kiriman" class="stat-val">â€“</div>
+          <div id="rk-kiriman" class="stat-val">–</div>
           <div class="stat-meta">Kiriman siswa tersimpan</div>
         </div>
       </div>
@@ -288,7 +294,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px solid var(--line-soft); font-size:12px; color:var(--ink-3)">
               <span>Koreksi Hibrida (PG/BS/Match otomatis)</span>
-              <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">Buka Antrean â†’</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">Buka Antrean →</button>
             </div>
           </div>
 
@@ -346,7 +352,7 @@
             <span style="font-size:12px; color:var(--ink-3)">Distribusi Materi Hemat Kuota</span>
           </div>
           <h1 class="page-title">Materi Pembelajaran</h1>
-          <p class="page-subtitle">Kelola modul ajar, rangkuman teks, dan video referensi kelas VII â€“ IX</p>
+          <p class="page-subtitle">Kelola modul ajar, rangkuman teks, dan video referensi kelas VII – IX</p>
         </div>
         <div class="header-actions">
           <a href="./index.html" target="_blank" rel="noopener" class="btn btn-secondary">
@@ -535,7 +541,7 @@
                 <th>UID Siswa</th>
                 <th>Catatan / Teks Jawaban</th>
                 <th>Tautan Berkas</th>
-                <th>Nilai (0â€“100)</th>
+                <th>Nilai (0–100)</th>
                 <th style="text-align:right">Aksi</th>
               </tr>
             </thead>
@@ -830,7 +836,7 @@
   </button>
 </nav>
 
-<!-- MODAL TAMBAH BUTIR SOAL BARU (4 TIPE & MATCH â€” Stitch Screens 1dc3ed53d7584c6ba70c6718bf3c83ae & 0574317d703d4bcb81daffe9643a92f8) -->
+<!-- MODAL TAMBAH BUTIR SOAL BARU (4 TIPE & MATCH — Stitch Screens 1dc3ed53d7584c6ba70c6718bf3c83ae & 0574317d703d4bcb81daffe9643a92f8) -->
 <div id="modal-add-q" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-q-title">
   <div class="modal-dialog">
     <div class="modal-header">
@@ -906,7 +912,7 @@
       <!-- Panel MATCH (Stitch Screen 0574317d703d4bcb81daffe9643a92f8) -->
       <div id="mq-panel-match" class="hidden">
         <div class="callout" style="border-left-color:var(--badge-match); background:var(--badge-match-bg)">
-          <strong style="color:var(--badge-match)">Konfigurasi Pasangan Menjodohkan (Kolom A â†” Kolom B):</strong>
+          <strong style="color:var(--badge-match)">Konfigurasi Pasangan Menjodohkan (Kolom A ↔ Kolom B):</strong>
           Sistem akan mengacak urutan respon Kolom B secara deterministik di perangkat siswa.
         </div>
         <div id="mq-match-rows">

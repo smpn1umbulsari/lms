@@ -1,27 +1,5 @@
 /* Admin Pages: Ringkasan, Materi, Tugas, Asesmen, Koreksi */
 
-/* Auth Card */
-.auth-card {
-  max-width: 420px;
-  margin: 24px auto;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 28px 24px;
-}
-
-.auth-card h2 {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin-bottom: 4px;
-}
-
-.auth-card .muted {
-  margin-bottom: 18px;
-}
-
 /* Question Builder Cards & Left Accent Borders */
 .q-card {
   background: var(--surface);

@@ -10,6 +10,7 @@ import {
   collection
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
+import { showToast, showConfirmDialog } from "../core/toast.js";
 import { updateClassOptions } from "./ringkasan.js";
 import {
   setQuestionsList,
@@ -96,7 +97,13 @@ export async function loadAsesmenTable(onDataChanged) {
   }
 
   window._delAs = async (code, kelasList) => {
-    if (!confirm("Hapus asesmen " + code + "? Kunci & jadwal ikut terhapus.")) return;
+    const ok = await showConfirmDialog({
+      title: "Hapus Asesmen?",
+      message: `Asesmen ${code} beserta kunci & jadwal akan ikut terhapus permanen dari sistem.`,
+      confirmText: "Ya, Hapus Asesmen",
+      isDanger: true
+    });
+    if (!ok) return;
     try {
       await deleteDoc(doc(db, "quizKeys", code));
       await deleteDoc(doc(db, "quizzes", code));
@@ -105,16 +112,17 @@ export async function loadAsesmenTable(onDataChanged) {
           await updateDoc(doc(db, "classes", k), { ["quizzes." + code]: deleteField() });
         } catch (e) {}
       }
+      showToast(`Asesmen ${code} berhasil dihapus.`, "ok");
       loadAsesmenTable(onDataChanged);
     } catch (e) {
-      alert("Gagal hapus (sudah dibuka / aturan integritas): " + e.message);
+      showToast("Gagal hapus: " + e.message, "error");
     }
   };
 
   window._editAs = async (code) => {
     try {
       const snapDoc = await getDoc(doc(db, "quizzes", code));
-      if (!snapDoc.exists()) return alert("Asesmen tidak ditemukan!");
+      if (!snapDoc.exists()) return showToast("Asesmen tidak ditemukan!", "warn");
       const qData = snapDoc.data();
 
       document.getElementById("as-code").value = code;
@@ -171,7 +179,7 @@ export async function loadAsesmenTable(onDataChanged) {
       document.getElementById("btn-as-save").textContent = "Update & Publikasikan Perubahan";
       document.getElementById("sec-asesmen").scrollIntoView({ behavior: "smooth" });
     } catch (e) {
-      alert("Gagal memuat asesmen untuk diedit: " + e.message);
+      showToast("Gagal memuat asesmen: " + e.message, "error");
     }
   };
 }

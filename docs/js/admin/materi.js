@@ -12,7 +12,7 @@ import {
 import { escAttr } from "../core/dom.js";
 import { urlsOf, embedsHTML } from "../core/media.js";
 import { updateClassOptions } from "./ringkasan.js";
-import { showToast } from "../core/toast.js";
+import { showToast, showConfirmDialog } from "../core/toast.js";
 
 let materiData = [];
 let editingMat = null;
@@ -104,17 +104,23 @@ export async function loadMateriTable(onDataChanged) {
   }
 
   window._delMat = async (id) => {
-    if (confirm("Hapus materi ini?")) {
-      const mat = materiData.find((x) => x.id === id);
-      const cls = mat?.classes || [];
-      await deleteDoc(doc(db, "materials", id));
-      for (const k of cls) {
-        try {
-          await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
-        } catch (e) {}
-      }
-      loadMateriTable(onDataChanged);
+    const ok = await showConfirmDialog({
+      title: "Hapus Materi Pembelajaran?",
+      message: "Materi ini akan dihapus permanen dari portal belajar siswa.",
+      confirmText: "Ya, Hapus Materi",
+      isDanger: true
+    });
+    if (!ok) return;
+    const mat = materiData.find((x) => x.id === id);
+    const cls = mat?.classes || [];
+    await deleteDoc(doc(db, "materials", id));
+    for (const k of cls) {
+      try {
+        await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
+      } catch (e) {}
     }
+    showToast("Materi berhasil dihapus.", "ok");
+    loadMateriTable(onDataChanged);
   };
 
   window._editMat = async (id) => {
@@ -215,7 +221,7 @@ export function initMateriHandlers(onDataChanged) {
     const kelasStr = document.getElementById("m-kelas").value.trim();
     const deskripsi = document.getElementById("m-deskripsi").value.trim();
     const links = currentLinkValues();
-    if (!judul || !kelasStr) return alert("Judul dan Kelas harus diisi!");
+    if (!judul || !kelasStr) return showToast("Judul dan Kelas harus diisi!", "warn");
     const classes = kelasStr
       .split(",")
       .map((s) => s.trim())
