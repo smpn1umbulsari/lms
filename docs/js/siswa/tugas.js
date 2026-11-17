@@ -12,6 +12,7 @@ import {
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { embedsHTML } from "../core/media.js";
+import { showToast } from "../core/toast.js";
 
 let activeAssignment = null;
 
@@ -100,7 +101,7 @@ export function initTugasHandlers(getCurrentUser, onSubmitted) {
     const teks = document.getElementById("sub-teks").value.trim();
     const link = document.getElementById("sub-link").value.trim();
     if (!teks && !link) {
-      alert("Isi minimal catatan teks atau link tugas!");
+      showToast("Isi minimal catatan teks atau link tugas!", "warn");
       return;
     }
     const subId = `${user.uid}__${activeAssignment.id}`;

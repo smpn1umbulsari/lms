@@ -103,7 +103,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
     if (!adminSnap || !adminSnap.exists()) {
-      alert("Akun ini bukan admin/guru (tidak terdaftar di koleksi admins).");
+      showToast("Akun ini bukan admin/guru (tidak terdaftar di koleksi admins).", "error");
       await signOut(auth);
       return;
     }
@@ -148,7 +148,7 @@ document.getElementById("btn-login")?.addEventListener("click", async () => {
       errEl.textContent = "Login gagal: " + e.message;
       errEl.classList.remove("hidden");
     }
-    alert("Login gagal: " + e.message);
+    showToast("Login gagal. Periksa kembali email & kata sandi.", "error");
   }
 });
 

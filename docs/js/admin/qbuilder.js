@@ -251,7 +251,7 @@ export async function saveAssessment(onSaved) {
   const openVal = document.getElementById("as-open").value;
   const closeVal = document.getElementById("as-close").value;
   if (!code || !kelas || !judul || !questionsList.length || !openVal || !closeVal) {
-    alert("Lengkapi metadata dan butir soal!");
+    showToast("Lengkapi metadata dan butir soal!", "warn");
     return;
   }
 
@@ -328,12 +328,12 @@ export async function saveAssessment(onSaved) {
       { merge: true }
     );
 
-    alert(editingQuizCode ? "Asesmen berhasil diperbarui!" : "Asesmen berhasil diterbitkan!");
+    showToast(editingQuizCode ? "Asesmen berhasil diperbarui!" : "Asesmen berhasil diterbitkan!", "ok");
     editingQuizCode = null;
     document.getElementById("btn-as-save").textContent = "Simpan & Terbitkan Asesmen";
     if (typeof onSaved === "function") onSaved(code);
   } catch (e) {
-    alert("Gagal menyimpan asesmen: " + e.message);
+    showToast("Gagal menyimpan asesmen: " + e.message, "error");
   }
 }
 

@@ -36,7 +36,7 @@ export function stepStudent(dir) {
 
 export async function fetchAttemptsForGrading() {
   const code = document.getElementById("gr-code").value.trim();
-  if (!code) return alert("Masukkan kode kuis!");
+  if (!code) return showToast("Masukkan kode kuis!", "warn");
 
   const [keySnap, qSnap, attSnap] = await Promise.all([
     getDoc(doc(db, "quizKeys", code)),
@@ -44,7 +44,7 @@ export async function fetchAttemptsForGrading() {
     getDocs(query(collection(db, "attempts"), where("quizId", "==", code)))
   ]);
 
-  if (!keySnap.exists()) return alert("quizKeys tidak ditemukan untuk kuis ini!");
+  if (!keySnap.exists()) return showToast("quizKeys tidak ditemukan untuk kuis ini!", "warn");
   loadedKeys = keySnap.data().keys || {};
   activeQuizDoc = qSnap.data();
   currentAttempts = attSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -318,8 +318,7 @@ export async function publishBatchGrades() {
   });
 
   await batch.commit();
-  alert(`Berhasil menerbitkan nilai batch untuk ${currentAttempts.length} siswa!`);
-  showToast(`Nilai ujian ${code} sukses dipublikasikan.`);
+  showToast(`Nilai ujian ${code} sukses dipublikasikan untuk ${currentAttempts.length} siswa!`, "ok");
 }
 
 export function initKoreksi() {

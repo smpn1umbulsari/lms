@@ -46,16 +46,16 @@ export async function exportTugasCSV() {
     link.href = URL.createObjectURL(blob);
     link.download = "Rekap_Nilai_Tugas.csv";
     link.click();
-    showToast("Rekap nilai tugas berhasil diunduh.");
+    showToast("Rekap nilai tugas berhasil diunduh.", "ok");
   } catch (e) {
-    alert("Gagal mengunduh rekap nilai tugas: " + e.message);
+    showToast("Gagal mengunduh rekap nilai tugas: " + e.message, "error");
   }
 }
 
 export async function exportUjianCSV() {
   const currentAttempts = getCurrentAttempts();
   if (!currentAttempts.length) {
-    alert("Muat lembar jawaban terlebih dahulu!");
+    showToast("Muat lembar jawaban terlebih dahulu!", "warn");
     return;
   }
   const code = document.getElementById("gr-code").value.trim();
@@ -185,7 +185,7 @@ export async function exportRekapTerpaduCSV() {
 
     const students = Object.values(studentMap);
     if (!students.length) {
-      alert("Tidak ditemukan data siswa untuk kriteria kelas ini.");
+      showToast("Tidak ditemukan data siswa untuk kriteria kelas ini.", "warn");
       return;
     }
 
@@ -261,10 +261,10 @@ export async function exportRekapTerpaduCSV() {
     link.href = URL.createObjectURL(blob);
     link.download = `Rekap_Terpadu_SITURI_${targetKelas || "Semua"}.csv`;
     link.click();
-    showToast("Rekap nilai terpadu (tugas + ujian) berhasil diunduh.");
+    showToast("Rekap nilai terpadu (tugas + ujian) berhasil diunduh.", "ok");
   } catch (err) {
     console.error("Gagal mengekspor rekap terpadu:", err);
-    alert("Gagal mengekspor rekap terpadu: " + err.message);
+    showToast("Gagal mengekspor rekap terpadu: " + err.message, "error");
   }
 }
 

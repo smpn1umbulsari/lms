@@ -1,5 +1,6 @@
 // Quiz Builder Live Preview Utility
 import { escAttr } from "../core/dom.js";
+import { showToast } from "../core/toast.js";
 
 let isPhoneViewport = false;
 let previewAnswers = {};
@@ -17,7 +18,7 @@ function shuffle(arr) {
 
 export function openPreviewModal(questions, metadata = {}) {
   if (!questions || !questions.length) {
-    alert("Tambahkan minimal 1 butir soal sebelum melihat pratinjau!");
+    showToast("Tambahkan minimal 1 butir soal sebelum melihat pratinjau!", "warn");
     return;
   }
 

@@ -248,4 +248,32 @@
   #hero-cta-btn { width: 100%; padding: 12px 16px; }
   .match-board { gap: 6px; }
   .match-card { padding: 8px 10px; font-size: 12px; }
+
+  /* Mobile Scorecard: Transform tables to card rows */
+  #panel-nilai-tugas thead, #panel-nilai-ujian thead { display: none; }
+  #panel-nilai-tugas .table-container, #panel-nilai-ujian .table-container { border: none; background: transparent; }
+  #panel-nilai-tugas tbody tr, #panel-nilai-ujian tbody tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  #panel-nilai-tugas td, #panel-nilai-ujian td {
+    padding: 0;
+    border: none;
+    position: static;
+  }
+  #panel-nilai-tugas td:first-child, #panel-nilai-ujian td:first-child {
+    flex: 1 1 100%;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
 }
