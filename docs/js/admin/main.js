@@ -15,6 +15,7 @@ import { loadMateriTable, initMateriHandlers, getMateriData } from "./materi.js"
 import { loadTugasTable, initTugasHandlers, getTugasData } from "./tugas.js";
 import { loadAsesmenTable, initAsesmenHandlers, getAsesmenData } from "./asesmen.js";
 import { initQBuilder, renderQBuilder } from "./qbuilder.js";
+import { initQPreview } from "./qpreview.js";
 import { initKoreksi } from "./koreksi.js";
 import { initCSVExport } from "./export-csv.js";
 
@@ -92,6 +93,7 @@ initQBuilder((code) => {
   loadAsesmenTable(refreshActivity);
   loadRingkasan();
 });
+initQPreview();
 initKoreksi();
 initCSVExport();
 renderQBuilder();

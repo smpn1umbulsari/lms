@@ -7,6 +7,7 @@ import {
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
+import { openPreviewModal } from "./qpreview.js";
 
 let questionsList = [
   {
@@ -348,5 +349,8 @@ export function initQBuilder(onSaved) {
 
   document.getElementById("btn-as-save")?.addEventListener("click", () => {
     saveAssessment(onSaved);
+  });
+  document.getElementById("btn-as-preview")?.addEventListener("click", () => {
+    openPreviewModal(questionsList);
   });
 }

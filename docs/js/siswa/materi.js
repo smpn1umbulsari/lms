@@ -1,18 +1,36 @@
 // Student Materi (Materials) Feature
-import { db, collection, query, where, getDocs } from "../core/firebase.js";
+import { db, doc, getDoc, collection, query, where, getDocs } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { urlsOf, embedsHTML } from "../core/media.js";
 
-export async function loadMateri(userProfile) {
+export async function loadMateri(userProfile, classMeta = null) {
   if (!userProfile?.kelas) return;
-  const cacheKey = `lms_mat_${userProfile.kelas}`;
+  let version = classMeta?.materialsVersion;
+  if (version === undefined) {
+    try {
+      const cSnap = await getDoc(doc(db, "classes", userProfile.kelas));
+      if (cSnap.exists()) version = cSnap.data().materialsVersion || 1;
+      else version = 1;
+    } catch (e) {
+      version = 1;
+    }
+  }
+  const cacheKey = `lms_mat_${userProfile.kelas}_v${version}`;
   let list = JSON.parse(localStorage.getItem(cacheKey) || "null");
   if (!list) {
     const qSnap = await getDocs(
       query(collection(db, "materials"), where("classes", "array-contains", userProfile.kelas))
     );
     list = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    localStorage.setItem(cacheKey, JSON.stringify(list));
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(`lms_mat_${userProfile.kelas}_`) && k !== cacheKey) {
+          localStorage.removeItem(k);
+        }
+      }
+      localStorage.setItem(cacheKey, JSON.stringify(list));
+    } catch (e) {}
   }
   const stMat = document.getElementById("st-count-materi");
   if (stMat) stMat.textContent = list.length;

@@ -105,7 +105,14 @@ export async function loadMateriTable(onDataChanged) {
 
   window._delMat = async (id) => {
     if (confirm("Hapus materi ini?")) {
+      const mat = materiData.find((x) => x.id === id);
+      const cls = mat?.classes || [];
       await deleteDoc(doc(db, "materials", id));
+      for (const k of cls) {
+        try {
+          await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
+        } catch (e) {}
+      }
       loadMateriTable(onDataChanged);
     }
   };
@@ -224,6 +231,11 @@ export function initMateriHandlers(onDataChanged) {
       createdAt,
       updatedAt: Timestamp.now()
     });
+    for (const k of classes) {
+      try {
+        await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
+      } catch (e) {}
+    }
     showToast(editingMat ? "Materi berhasil diperbarui!" : "Materi baru berhasil diterbitkan!");
     document.getElementById("mat-form-panel")?.classList.add("hidden");
     loadMateriTable(onDataChanged);

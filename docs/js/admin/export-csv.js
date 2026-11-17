@@ -99,7 +99,177 @@ export async function exportUjianCSV() {
   link.click();
 }
 
+export async function exportRekapTerpaduCSV() {
+  const targetKelasInput = prompt(
+    "Masukkan kode kelas target untuk rekap terpadu (kosongkan untuk semua kelas):",
+    "c1"
+  );
+  if (targetKelasInput === null) return;
+  const targetKelas = targetKelasInput.trim().toLowerCase();
+
+  try {
+    const [uSnap, asgSnap, subSnap, qSnap, resSnap] = await Promise.all([
+      getDocs(collection(db, "users")),
+      getDocs(collection(db, "assignments")),
+      getDocs(collection(db, "submissions")),
+      getDocs(collection(db, "quizzes")),
+      getDocs(collection(db, "results"))
+    ]);
+
+    const assignments = asgSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((a) => {
+        if (!targetKelas) return true;
+        const cls = Array.isArray(a.classes) ? a.classes : [a.classes];
+        return cls.map((c) => String(c).toLowerCase()).includes(targetKelas);
+      });
+
+    const quizzes = qSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((q) => {
+        if (!targetKelas) return true;
+        const cls = Array.isArray(q.classes) ? q.classes : [q.classes];
+        return cls.map((c) => String(c).toLowerCase()).includes(targetKelas);
+      });
+
+    const subMap = {};
+    subSnap.docs.forEach((d) => {
+      const s = d.data();
+      if (!s.uid) return;
+      if (!subMap[s.uid]) subMap[s.uid] = {};
+      if (s.nilai !== undefined && s.nilai !== null && s.nilai !== "") {
+        subMap[s.uid][s.assignmentId] = Number(s.nilai);
+      }
+    });
+
+    const resMap = {};
+    resSnap.docs.forEach((d) => {
+      const r = d.data();
+      if (!r.uid) return;
+      if (!resMap[r.uid]) resMap[r.uid] = {};
+      const score =
+        r.totalScore !== undefined
+          ? r.totalScore
+          : r.score !== undefined
+          ? r.score
+          : r.nilai;
+      if (score !== undefined && score !== null && score !== "") {
+        resMap[r.uid][r.quizId || d.id] = Number(score);
+      }
+    });
+
+    const studentMap = {};
+    uSnap.docs.forEach((d) => {
+      const u = d.data();
+      const k = String(u.kelas || "").toLowerCase();
+      if (!targetKelas || k === targetKelas) {
+        studentMap[d.id] = {
+          uid: d.id,
+          nama: u.nama || d.id.slice(0, 8),
+          kelas: u.kelas || targetKelas || "-"
+        };
+      }
+    });
+
+    Object.keys(subMap)
+      .concat(Object.keys(resMap))
+      .forEach((uid) => {
+        if (!studentMap[uid] && (!targetKelas || targetKelas === "c1")) {
+          studentMap[uid] = {
+            uid,
+            nama: uid.slice(0, 8),
+            kelas: targetKelas || "c1"
+          };
+        }
+      });
+
+    const students = Object.values(studentMap);
+    if (!students.length) {
+      alert("Tidak ditemukan data siswa untuk kriteria kelas ini.");
+      return;
+    }
+
+    students.sort((a, b) => a.nama.localeCompare(b.nama));
+
+    const asgHeaders = assignments.map((a) => `"${(a.judul || a.id).replace(/"/g, '""')}"`);
+    const qHeaders = quizzes.map((q) => `"${(q.judul || q.id).replace(/"/g, '""')}"`);
+    const headerRow = [
+      '"UID"',
+      '"Nama Siswa"',
+      '"Kelas"',
+      ...asgHeaders,
+      '"Rata-rata Tugas"',
+      ...qHeaders,
+      '"Rata-rata Ujian"',
+      '"Nilai Akhir (40% Tugas + 60% Ujian)"'
+    ].join(",");
+
+    const rows = students.map((s) => {
+      const sSubs = subMap[s.uid] || {};
+      const sRes = resMap[s.uid] || {};
+
+      let sumTugas = 0,
+        countTugas = 0;
+      const tugasCols = assignments.map((a) => {
+        const val = sSubs[a.id];
+        if (val !== undefined) {
+          sumTugas += val;
+          countTugas++;
+          return `"${val}"`;
+        }
+        return '""';
+      });
+      const avgTugas = countTugas ? Math.round(sumTugas / countTugas) : null;
+
+      let sumUjian = 0,
+        countUjian = 0;
+      const qCols = quizzes.map((q) => {
+        const val = sRes[q.id];
+        if (val !== undefined) {
+          sumUjian += val;
+          countUjian++;
+          return `"${val}"`;
+        }
+        return '""';
+      });
+      const avgUjian = countUjian ? Math.round(sumUjian / countUjian) : null;
+
+      let finalScore = "";
+      if (avgTugas !== null && avgUjian !== null) {
+        finalScore = Math.round(avgTugas * 0.4 + avgUjian * 0.6);
+      } else if (avgTugas !== null) {
+        finalScore = avgTugas;
+      } else if (avgUjian !== null) {
+        finalScore = avgUjian;
+      }
+
+      return [
+        `"${s.uid}"`,
+        `"${s.nama.replace(/"/g, '""')}"`,
+        `"${s.kelas.replace(/"/g, '""')}"`,
+        ...tugasCols,
+        `"${avgTugas !== null ? avgTugas : ""}"`,
+        ...qCols,
+        `"${avgUjian !== null ? avgUjian : ""}"`,
+        `"${finalScore}"`
+      ].join(",");
+    });
+
+    const csvContent = [headerRow, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Rekap_Terpadu_SITURI_${targetKelas || "Semua"}.csv`;
+    link.click();
+    showToast("Rekap nilai terpadu (tugas + ujian) berhasil diunduh.");
+  } catch (err) {
+    console.error("Gagal mengekspor rekap terpadu:", err);
+    alert("Gagal mengekspor rekap terpadu: " + err.message);
+  }
+}
+
 export function initCSVExport() {
   document.getElementById("btn-export-csv")?.addEventListener("click", exportUjianCSV);
   document.getElementById("btn-export-tugas-csv")?.addEventListener("click", exportTugasCSV);
+  document.getElementById("btn-export-rekap-terpadu")?.addEventListener("click", exportRekapTerpaduCSV);
 }

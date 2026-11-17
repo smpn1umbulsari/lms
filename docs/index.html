@@ -49,21 +49,71 @@
     </div>
   </header>
 
-  <!-- LOGIN PANEL -->
-  <div id="sec-login" class="panel" style="max-width: 400px; margin: 2.5rem auto; padding: 24px">
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
-      <div class="brand-mark">U</div>
-      <div>
-        <h2 style="margin-bottom:0">Masuk Siswa</h2>
-        <p style="color:var(--ink-2); font-size:12px">Portal Pembelajaran & CBT SMPN 1 Umbulsari</p>
+  <!-- LOGIN PANEL (Bento Split Slate) -->
+  <div id="sec-login" class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-main">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px">
+          <div style="display:flex; align-items:center; gap:8px">
+            <div class="brand-mark" style="width:28px; height:28px; font-size:13px">U</div>
+            <span style="font-weight:600; font-size:13px">SITURI LMS</span>
+          </div>
+          <span class="badge badge-neutral" style="font-size:11px">Siswa · 2026/2027</span>
+        </div>
+        <div class="auth-header">
+          <h2>Masuk Siswa</h2>
+          <p>Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari</p>
+        </div>
+        <div id="login-err" class="callout callout-warn hidden" role="alert"></div>
+        <div class="field" style="margin-bottom:12px">
+          <label for="l-email">Email Siswa</label>
+          <input id="l-email" type="email" placeholder="nisn@smpn1umbulsari.sch.id" autocomplete="username">
+        </div>
+        <div class="field" style="margin-bottom:12px">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
+            <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
+            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi wali kelas untuk reset sandi.', 'warn') : alert('Hubungi wali kelas untuk reset sandi.')" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+          </div>
+          <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button id="btn-login" class="btn btn-primary auth-submit">Masuk ke Portal Siswa →</button>
+        <div class="auth-footer-note">
+          <span style="display:inline-flex; align-items:center; gap:5px; color:var(--ink-3)">
+            <span class="material-symbols-outlined" style="font-size:15px; color:var(--ok)">verified_user</span>
+            Autosave lokal aktif
+          </span>
+          <span style="color:var(--ink-3)">Kurikulum Merdeka</span>
+        </div>
       </div>
+      <aside class="auth-aside" aria-label="Informasi Sesi Belajar">
+        <div>
+          <span class="auth-aside-badge" style="background:var(--ok-soft); color:var(--ok)">
+            <span class="material-symbols-outlined" style="font-size:14px">check_circle</span>
+            Server Sekolah Terhubung
+          </span>
+          <h3 class="auth-aside-title">Jadwal & Agenda Hari Ini</h3>
+          <p class="auth-aside-desc">Selasa, 17 Nov 2026 · 27 Rombel Terhubung</p>
+          <div class="auth-feature-list">
+            <div class="auth-feature-item">
+              <span>Asesmen Terjadwal</span>
+              <span class="tabular-nums" style="color:var(--accent); font-weight:600">08.00 – 12.00</span>
+            </div>
+            <div class="auth-feature-item">
+              <span>Batas Unggah Tugas</span>
+              <span class="tabular-nums" style="color:var(--ink-2)">Tenggat 15.00</span>
+            </div>
+            <div class="auth-feature-item">
+              <span>Materi Pembelajaran</span>
+              <span style="color:var(--ok); font-weight:500">Tersedia Online</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; font-size:11.5px; color:var(--ink-2)">
+          <div style="font-weight:600; color:var(--ink); margin-bottom:2px">Anti-Kehilangan Data</div>
+          Jawaban ujian otomatis dicadangkan di penyimpanan browser Anda meski jaringan terputus.
+        </div>
+      </aside>
     </div>
-    <div id="login-err" class="notice notice-warn hidden" role="alert"></div>
-    <label for="l-email">Email Siswa</label>
-    <input id="l-email" type="email" placeholder="siswa@sekolah.sch.id" autocomplete="username">
-    <label for="l-pass">Kata Sandi</label>
-    <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-    <button id="btn-login" class="btn btn-primary" style="width:100%">Masuk ke Portal</button>
   </div>
 
   <!-- DASHBOARD PANEL -->
