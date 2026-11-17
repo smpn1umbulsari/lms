@@ -1,20 +1,13 @@
 // Quiz Builder Live Preview Utility
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
+import { fnv1a, mulberry32, shuffle } from "../shared/quiz-utils.js";
+import { matchBoardHTML } from "../core/match-board.js";
 
 let isPhoneViewport = false;
 let previewAnswers = {};
 let previewSelectedPremise = {};
 let activePreviewQuestions = [];
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 export function openPreviewModal(questions, metadata = {}) {
   if (!questions || !questions.length) {
@@ -27,15 +20,9 @@ export function openPreviewModal(questions, metadata = {}) {
   previewSelectedPremise = {};
   isPhoneViewport = false;
 
-  const modal = document.getElementById("modal-preview-q");
-  const dialog = document.getElementById("preview-dialog-box");
-  const modeLbl = document.getElementById("preview-mode-lbl");
-
-  if (dialog) dialog.style.maxWidth = "820px";
-  if (modeLbl) modeLbl.textContent = "Mode HP (375px)";
-
   renderPreviewContent(metadata);
-  modal?.classList.remove("hidden");
+  applyViewport();
+  document.getElementById("modal-preview-q")?.classList.remove("hidden");
 }
 
 export function closePreviewModal() {
@@ -45,14 +32,15 @@ export function closePreviewModal() {
 
 export function togglePreviewViewport() {
   isPhoneViewport = !isPhoneViewport;
+  applyViewport();
+}
+
+// Dialog menyempit, viewport tidak → media query CSS tidak ikut. Set manual.
+function applyViewport() {
   const dialog = document.getElementById("preview-dialog-box");
-  const modeLbl = document.getElementById("preview-mode-lbl");
-  if (dialog) {
-    dialog.style.maxWidth = isPhoneViewport ? "420px" : "820px";
-  }
-  if (modeLbl) {
-    modeLbl.textContent = isPhoneViewport ? "Mode Laptop / Penuh" : "Mode HP (375px)";
-  }
+  if (dialog) dialog.style.maxWidth = isPhoneViewport ? "375px" : "820px";
+  const lbl = document.getElementById("preview-mode-lbl");
+  if (lbl) lbl.textContent = isPhoneViewport ? "Mode HP (375px)" : "Mode Laptop / Penuh";
 }
 
 function renderPreviewContent(meta = {}) {
@@ -72,7 +60,7 @@ function renderPreviewContent(meta = {}) {
         qContent = Object.entries(q.pilihan || {})
           .map(
             ([k, val]) => `
-          <label class="opt-label" style="display:flex; align-items:center; gap:8px; padding:8px 12px; margin-bottom:6px; background:var(--paper); border:1px solid var(--line); border-radius:8px; cursor:pointer">
+          <label class="opt-label">
             <input type="radio" name="prev_ans_${q.id}" value="${k}" ${
               previewAnswers[q.id] === k ? "checked" : ""
             } onchange="window._onPrevAns('${q.id}', '${k}')">
@@ -83,27 +71,28 @@ function renderPreviewContent(meta = {}) {
       } else if (q.tipe === "bs") {
         const cur = previewAnswers[q.id];
         qContent = `
-          <div class="bs-group" style="display:flex; gap:10px; margin-top:8px">
-            <button type="button" class="btn ${
-              cur === "true" ? "btn-primary" : "btn-secondary"
-            }" style="flex:1" onclick="window._onPrevAns('${q.id}', 'true')">✓ BENAR</button>
-            <button type="button" class="btn ${
-              cur === "false" ? "btn-primary" : "btn-secondary"
-            }" style="flex:1" onclick="window._onPrevAns('${q.id}', 'false')">✕ SALAH</button>
+          <div class="bs-group">
+            <button type="button" class="bs-btn ${cur === "true" ? "active-benar" : ""}" onclick="window._onPrevAns('${q.id}', 'true')">✓ BENAR</button>
+            <button type="button" class="bs-btn ${cur === "false" ? "active-salah" : ""}" onclick="window._onPrevAns('${q.id}', 'false')">✕ SALAH</button>
           </div>`;
       } else if (q.tipe === "match") {
         qContent = `<div id="prev_match_${q.id}">${generatePreviewMatchHTML(q)}</div>`;
       } else if (q.tipe === "essay") {
+        const curText = previewAnswers[q.id] || "";
         qContent = `
-          <div style="margin-top:8px">
-            <textarea placeholder="Siswa akan mengetik jawaban uraian di sini..." rows="3" style="width:100%; resize:vertical" oninput="window._onPrevAns('${
-              q.id
-            }', this.value)"></textarea>
-          </div>`;
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+            <span class="badge badge-essay">Dinilai Manual Guru</span>
+            <span class="tabular-nums" style="font-size:12px; color:var(--ink-2)" id="prevchar_${q.id}">${curText.length} karakter terisi</span>
+          </div>
+          <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." oninput="window._onPrevAns('${
+            q.id
+          }', this.value); const c=document.getElementById('prevchar_${
+            q.id
+          }'); if(c) c.textContent=this.value.length+' karakter terisi';">${escAttr(curText)}</textarea>`;
       }
 
       return `
-        <div class="q-card" style="background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px">
+        <div class="q-card" data-qtype="${q.tipe}" style="background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
             <span class="badge ${
               q.tipe === "match"
@@ -145,64 +134,15 @@ function renderPreviewContent(meta = {}) {
 }
 
 function generatePreviewMatchHTML(q) {
-  const curMap = previewAnswers[q.id] || {};
-  const activeLeft = previewSelectedPremise[q.id];
-  const rightOptions =
-    q._shuffledRight || (q._shuffledRight = shuffle(q.kanan || []));
-
-  const leftCards = (q.kiri || [])
-    .map((leftItem, lIdx) => {
-      const paired = curMap[leftItem];
-      const isSel = activeLeft === leftItem;
-      return `
-      <div class="match-card ${isSel ? "is-selected" : ""} ${
-        paired ? "is-paired" : ""
-      }" onclick="window._onPrevSelectPremise('${q.id}', '${escAttr(leftItem)}')">
-        <div style="font-weight:600; color:var(--ink)"><span class="badge badge-match" style="margin-right:6px">A${
-          lIdx + 1
-        }</span>${escAttr(leftItem)}</div>
-        ${
-          paired
-            ? `<div class="match-card-meta"><span style="color:var(--ok); font-weight:600">↳ ${escAttr(
-                paired
-              )}</span><button type="button" class="match-unpair-btn" title="Hapus" onclick="window._onPrevUnpair('${
-                q.id
-              }', '${escAttr(leftItem)}', event)">✕</button></div>`
-            : isSel
-            ? `<div class="match-card-meta" style="color:var(--accent)">Pilih respon di Kolom B...</div>`
-            : ""
-        }
-      </div>`;
-    })
-    .join("");
-
-  const rightCards = rightOptions
-    .map((opt, rIdx) => {
-      const pairedPremise = Object.keys(curMap).find((k) => curMap[k] === opt);
-      return `
-      <div class="match-card ${
-        pairedPremise ? "is-paired" : ""
-      }" onclick="window._onPrevSelectOption('${q.id}', '${escAttr(opt)}')">
-        <div style="font-weight:500; color:var(--ink)"><span class="badge badge-neutral" style="margin-right:6px">B${
-          rIdx + 1
-        }</span>${escAttr(opt)}</div>
-        ${
-          pairedPremise
-            ? `<div class="match-card-meta"><span style="color:var(--ok); font-weight:600">✓ Pasangan (${escAttr(
-                pairedPremise
-              )})</span></div>`
-            : ""
-        }
-      </div>`;
-    })
-    .join("");
-
-  return `
-    <div style="margin-bottom:6px; font-size:12px; color:var(--ink-2)">Ketuk kartu di <strong>Kolom A</strong>, lalu ketuk jawaban pasangannya di <strong>Kolom B</strong>:</div>
-    <div class="match-board">
-      <div><div class="match-col-title">Kolom A (Premis)</div>${leftCards}</div>
-      <div><div class="match-col-title">Kolom B (Pilihan)</div>${rightCards}</div>
-    </div>`;
+  const rnd = mulberry32(fnv1a(q.id));
+  return matchBoardHTML(q, {
+    answers: previewAnswers,
+    selected: previewSelectedPremise,
+    rightOptions: q._shuffledRight || (q._shuffledRight = shuffle(q.kanan || [], rnd)),
+    select: "window._onPrevSelectPremise",
+    option: "window._onPrevSelectOption",
+    unpair: "window._onPrevUnpair",
+  });
 }
 
 export function initQPreview() {
@@ -214,6 +154,7 @@ export function initQPreview() {
     const q = activePreviewQuestions.find((x) => x.id === qid);
     if (q && q.tipe === "bs") {
       renderPreviewContent();
+      applyViewport();
     }
   };
 

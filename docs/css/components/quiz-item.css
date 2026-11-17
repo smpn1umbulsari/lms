@@ -1,0 +1,95 @@
+/* Widget jawaban bersama — dipakai ujian siswa (index.html) & pratinjau admin (admin.html).
+   Dimuat SEBELUM siswa.css agar override halaman tetap menang. */
+
+.opt-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--surface-low);
+  border: 1px solid var(--line);
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.opt-label:hover { border-color: var(--accent); background: var(--accent-soft); }
+.opt-label input { width: 18px; height: 18px; min-height: 18px; margin-bottom: 0; accent-color: var(--accent); }
+
+.bs-group { display: flex; gap: 10px; margin-top: 8px; }
+.bs-btn {
+  flex: 1;
+  padding: 10px 14px;
+  min-height: 44px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface-low);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bs-btn.active-benar { background: var(--ok); color: #fff; border-color: var(--ok); }
+.bs-btn.active-salah { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+.match-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.match-col-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.match-card {
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--surface-low);
+  border: 1px solid var(--line);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.match-card:hover { border-color: var(--accent); }
+.match-card.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.match-card.is-paired { border-color: var(--ok); background: var(--ok-soft); }
+.match-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+}
+.match-unpair-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+  font-weight: 700;
+}
+
+/* Di 375px dua kolom menyisakan ~150px per kartu — tumpuk jadi satu kolom. */
+@media (max-width: 480px) {
+  .match-board { grid-template-columns: 1fr; gap: 8px; }
+  .match-card { padding: 8px 10px; font-size: 12px; }
+}
+/* Pratinjau admin menyempitkan dialog, bukan viewport → container query, bukan media query. */
+#preview-dialog-box { container-type: inline-size; }
+@container (max-width: 480px) {
+  .match-board { grid-template-columns: 1fr; gap: 8px; }
+  .match-card { padding: 8px 10px; font-size: 12px; }
+}
