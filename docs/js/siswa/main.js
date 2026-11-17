@@ -90,13 +90,16 @@ export function setLoginRole(role) {
     if (title) title.textContent = "Login Guru & Pendidik";
     if (sub) sub.textContent = "Sistem Manajemen Pembelajaran SMPN 1 Umbulsari";
     if (lblEmail) lblEmail.textContent = "Email Guru / Admin";
-    if (inEmail) inEmail.placeholder = "guru@sekolah.sch.id";
+    if (inEmail) inEmail.placeholder = "guru@smpn1umbulsari.sch.id";
     if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Guru →";
     if (chipContainer) {
       chipContainer.innerHTML = `
         <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@sekolah.sch.id'; document.getElementById('l-pass').value='guru123';">
-          🎓 Guru Pengampu (Admin)
+        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          🎓 Guru Pengampu
+        </button>
+        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='admin@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          🛡️ Admin Utama
         </button>
       `;
     }
