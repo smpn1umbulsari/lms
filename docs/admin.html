@@ -73,6 +73,10 @@
         <span class="material-symbols-outlined">fact_check</span>
         <span class="nav-label">Koreksi & Penilaian</span>
       </button>
+      <button class="nav-btn" data-tab="sec-import" title="Import & Export Excel" aria-label="Import & Export Excel">
+        <span class="material-symbols-outlined">upload_file</span>
+        <span class="nav-label">Import / Export</span>
+      </button>
     </div>
 
     <div class="sidebar-user">
@@ -835,6 +839,76 @@
 
     <div id="log" role="status" aria-live="polite">Sistem siap.</div>
   </div>
+<!-- SECTION 5: IMPORT & EXPORT EXCEL (Soal, Siswa, Guru) -->
+    <section id="sec-import" class="tab-pane hidden">
+      <div class="page-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
+            <span class="badge badge-pg">Excel</span>
+            <span style="font-size:12px; color:var(--ink-3)">SheetJS · parse → preview → simpan</span>
+          </div>
+          <h1 class="page-title">Import & Export Excel</h1>
+          <p class="page-subtitle">Unggah bank soal, roster siswa, dan undangan guru sekaligus. Semua data ditampilkan dulu sebelum disimpan.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0">1. Bank Soal</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Kode | Tipe | Teks | Opsi A | Opsi B | Opsi C | Opsi D | Kunci | Kiri | Kanan</code>. Setelah diparse, soal masuk ke Builder Asesmen — terbitkan lewat tombol simpan yang sudah ada.</p>
+        <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
+          <div style="flex:2; min-width:220px">
+            <label for="imp-file-soal">Berkas Excel (.xlsx)</label>
+            <input id="imp-file-soal" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
+          </div>
+          <button id="btn-tpl-soal" type="button" class="btn btn-secondary">Unduh Template</button>
+          <button id="btn-export-soal-xlsx" type="button" class="btn btn-secondary">Export Bank Soal</button>
+        </div>
+        <div id="imp-ribbon-soal" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
+        <div id="imp-errors-soal" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-preview-soal"></div>
+        <div style="margin-top:12px">
+          <button id="btn-imp-save-soal" type="button" class="btn btn-primary" disabled>Isi Builder Asesmen</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0">2. Roster Siswa</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>NIS | Nama | Kelas</code>. NIS disimpan sebagai teks (nol depan aman). Siswa mengikat akunnya sendiri saat login pertama.</p>
+        <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
+          <div style="flex:2; min-width:220px">
+            <label for="imp-file-siswa">Berkas Excel (.xlsx)</label>
+            <input id="imp-file-siswa" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
+          </div>
+          <button id="btn-tpl-siswa" type="button" class="btn btn-secondary">Unduh Template</button>
+          <button id="btn-export-siswa-xlsx" type="button" class="btn btn-secondary">Export Roster</button>
+        </div>
+        <div id="imp-ribbon-siswa" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
+        <div id="imp-errors-siswa" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-preview-siswa"></div>
+        <div style="margin-top:12px">
+          <button id="btn-imp-save-siswa" type="button" class="btn btn-primary" disabled>Simpan Roster</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0">3. Undangan Guru</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Email | Nama | NIP | Mapel | Aktif</code>. Email jadi kunci undangan (huruf kecil). Guru mendaftar sendiri, lalu otomatis jadi admin bila undangannya aktif.</p>
+        <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
+          <div style="flex:2; min-width:220px">
+            <label for="imp-file-guru">Berkas Excel (.xlsx)</label>
+            <input id="imp-file-guru" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
+          </div>
+          <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Export / Template Guru</button>
+        </div>
+        <div id="imp-ribbon-guru" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
+        <div id="imp-errors-guru" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-preview-guru"></div>
+        <div style="margin-top:12px">
+          <button id="btn-imp-save-guru" type="button" class="btn btn-primary" disabled>Simpan Undangan</button>
+        </div>
+      </div>
+    </section>
+
 </main>
 
 <!-- MOBILE BOTTOM NAVIGATION BAR (5 Destinasi Guru) -->
@@ -858,6 +932,10 @@
   <button type="button" class="mobile-nav-btn" data-tab="sec-grading">
     <span class="material-symbols-outlined">fact_check</span>
     <span>Nilai</span>
+  </button>
+  <button type="button" class="mobile-nav-btn" data-tab="sec-import">
+    <span class="material-symbols-outlined">upload_file</span>
+    <span>Import</span>
   </button>
 </nav>
 
@@ -1005,6 +1083,7 @@
   <span id="toast-text">Tersimpan</span>
 </div>
 
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
 <script src="firebase-config.js"></script>
 <script type="module" src="js/admin/main.js"></script>
 </body>

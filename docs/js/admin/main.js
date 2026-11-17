@@ -18,6 +18,7 @@ import { initQBuilder, renderQBuilder } from "./qbuilder.js";
 import { initQPreview } from "./qpreview.js";
 import { initKoreksi } from "./koreksi.js";
 import { initCSVExport } from "./export-csv.js";
+import { initImportExport } from "./import-export.js";
 
 // Initialize core utilities
 initTheme();
@@ -62,7 +63,8 @@ export function switchAdminTab(tabId) {
     "sec-materi": "Materi Pembelajaran",
     "sec-tugas": "Penugasan Siswa",
     "sec-asesmen": "Asesmen & Bank Soal",
-    "sec-grading": "Penilaian & Koreksi"
+    "sec-grading": "Penilaian & Koreksi",
+    "sec-import": "Import / Export Excel"
   };
   const titleEl = document.getElementById("current-page-title");
   if (titleEl) titleEl.textContent = "Portal Guru · " + (labels[tabId] || "Dashboard");
@@ -92,6 +94,7 @@ initQBuilder((code) => {
 initQPreview();
 initKoreksi();
 initCSVExport();
+initImportExport();
 renderQBuilder();
 
 // Role Switcher on Admin Login
