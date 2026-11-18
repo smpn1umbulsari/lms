@@ -1,0 +1,27 @@
+name: Verify LMS Build & Standards
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify Code Size Standards
+        run: node tools/check-size.mjs
+
+      - name: Run Scoring & Import Unit Tests
+        run: |
+          node spike/scoring.test.mjs
+          node spike/import.test.mjs
