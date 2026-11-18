@@ -26,24 +26,27 @@ export async function loadNilai(currentUser, userProfile) {
 
   // 1. Ambil Nilai Tugas (submissions)
   try {
-    const qSnap = await getDocs(
-      query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas))
-    );
+    const [qSnap, subSnap] = await Promise.all([
+      getDocs(query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas))),
+      getDocs(query(collection(db, "submissions"), where("uid", "==", currentUser.uid)))
+    ]);
     const assignments = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    const subDocs = await Promise.all(
-      assignments.map((t) => getDoc(doc(db, "submissions", `${currentUser.uid}__${t.id}`)))
-    );
+    const subMap = new Map();
+    subSnap.docs.forEach((d) => {
+      const s = d.data();
+      if (s.assignmentId) subMap.set(s.assignmentId, s);
+      subMap.set(d.id, s);
+    });
     const tugasRows = [];
-    assignments.forEach((t, i) => {
-      const subDoc = subDocs[i];
-      if (subDoc && subDoc.exists()) {
-        const s = subDoc.data();
-        const hasNilai = s && s.nilai !== undefined && s.nilai !== null && s.nilai !== "";
+    assignments.forEach((t) => {
+      const s = subMap.get(t.id) || subMap.get(`${currentUser.uid}__${t.id}`) || null;
+      if (s) {
+        const hasNilai = s.nilai !== undefined && s.nilai !== null && s.nilai !== "";
         tugasRows.push(`
           <tr>
-            <td><strong>${escAttr(t.judul)}</strong></td>
-            <td class="tabular-nums">${hasNilai ? `${s.nilai}/100` : "-"}</td>
-            <td><span class="badge ${
+            <td data-label="Judul"><strong>${escAttr(t.judul)}</strong></td>
+            <td data-label="Nilai" class="tabular-nums">${hasNilai ? `${s.nilai}/100` : "-"}</td>
+            <td data-label="Status"><span class="badge ${
               hasNilai ? "badge-ok" : "badge-warn"
             }">${hasNilai ? "Sudah dinilai" : "Belum dinilai"}</span></td>
           </tr>
@@ -135,8 +138,8 @@ export async function loadNilai(currentUser, userProfile) {
           (quizzesMeta[qid] && quizzesMeta[qid].judul) || resData?.quizTitle || qid;
         ujianRows.push(`
           <tr>
-            <td><strong>${escAttr(examTitle)}</strong></td>
-            <td>${scoreText}</td>
+            <td data-label="Ujian"><strong>${escAttr(examTitle)}</strong></td>
+            <td data-label="Skor">${scoreText}</td>
           </tr>
         `);
       }

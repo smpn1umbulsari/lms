@@ -79,6 +79,10 @@ export async function startQuiz(quizId, currentUser, userProfile, quizzesMeta, o
   const exTitle = document.getElementById("ex-title");
   if (exTitle) exTitle.textContent = qDoc.judul || quizId;
 
+  try {
+    sessionStorage.setItem("lms_active_quiz", quizId);
+  } catch (e) {}
+
   renderExam();
   startExamTimer();
   updateConnectionIndicator();
@@ -229,7 +233,10 @@ export async function finishExam() {
   clearInterval(examState.timerId);
   clearTimeout(autoSaveTimer);
   await saveAttemptToServer(true);
-  try { sessionStorage.removeItem("lms_attempt_" + examState.startId); } catch (e) {}
+  try {
+    sessionStorage.removeItem("lms_attempt_" + examState.startId);
+    sessionStorage.removeItem("lms_active_quiz");
+  } catch (e) {}
   document.getElementById("sec-exam")?.classList.add("hidden");
   document.getElementById("sec-result")?.classList.remove("hidden");
 
@@ -356,3 +363,12 @@ export function initExamRunnerControls() {
     if (typeof examState?.onFinish === "function") examState.onFinish();
   });
 }
+
+export function getActiveExamId() {
+  try {
+    return sessionStorage.getItem("lms_active_quiz");
+  } catch (e) {
+    return null;
+  }
+}
+

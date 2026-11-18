@@ -65,3 +65,53 @@ table input[type="number"] {
   margin-bottom: 0 !important;
   font-variant-numeric: tabular-nums;
 }
+
+/* Mobile Responsive Card Layout for Tables */
+@media (max-width: 640px) {
+  .table-cards-mobile thead {
+    display: none;
+  }
+  .table-cards-mobile,
+  .table-cards-mobile tbody,
+  .table-cards-mobile tr,
+  .table-cards-mobile td {
+    display: block;
+    width: 100%;
+  }
+  .table-cards-mobile tr {
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .table-cards-mobile td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .table-cards-mobile td:last-child {
+    border-bottom: none;
+  }
+  .table-cards-mobile td:first-child {
+    position: static;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+  .table-cards-mobile td::before {
+    content: attr(data-label);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .table-cards-mobile td:first-child::before {
+    content: none;
+  }
+}
+

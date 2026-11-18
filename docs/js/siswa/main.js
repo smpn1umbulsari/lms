@@ -19,7 +19,7 @@ import { initGlobalErrorObserver } from "../core/error-handler.js";
 import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
 import { loadAsesmen } from "./asesmen.js";
-import { startQuiz, initExamRunnerControls } from "./exam-runner.js";
+import { startQuiz, initExamRunnerControls, getActiveExamId } from "./exam-runner.js";
 import { loadNilai, initNilaiHandlers } from "./nilai.js";
 
 let currentUser = null;
@@ -144,6 +144,22 @@ function enterStudentDashboard() {
   document.getElementById("sec-nis")?.classList.add("hidden");
   document.getElementById("sec-dashboard")?.classList.remove("hidden");
   document.getElementById("mobile-student-nav")?.classList.remove("hidden");
+
+  const activeQuizId = getActiveExamId();
+  if (activeQuizId) {
+    getClassMeta().then((meta) => {
+      if (meta?.quizzes?.[activeQuizId]) {
+        showToast("Melanjutkan sesi ujian aktif...", "ok");
+        startQuiz(activeQuizId, currentUser, userProfile, meta.quizzes, () => {
+          loadedStudentTabs.delete("sec-nilai");
+          activateStudentTab("tab-asesmen");
+        });
+      } else {
+        loadStudentTab("tab-materi");
+      }
+    });
+    return;
+  }
 
   loadStudentTab("tab-materi");
 }
