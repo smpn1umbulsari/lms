@@ -1,10 +1,11 @@
 // SITURI LMS Lightweight Service Worker
-const CACHE_NAME = "situri-shell-v1";
+const CACHE_NAME = "situri-shell-v2";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./admin.html",
   "./manifest.json",
+  "./vendor/xlsx.full.min.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon.svg",

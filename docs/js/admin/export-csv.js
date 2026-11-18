@@ -76,6 +76,36 @@ export async function exportUjianCSV() {
   }
 }
 
+export async function exportSingleQuizNilaiCSV(code) {
+  if (!code) return showToast("Kode kuis tidak valid!", "warn");
+  try {
+    const [qSnap, resSnap] = await Promise.all([
+      getDoc(doc(db, "quizzes", code)),
+      getDocs(query(collection(db, "results"), where("quizId", "==", code)))
+    ]);
+    if (!qSnap.exists()) return showToast(`Asesmen ${code} tidak ditemukan.`, "warn");
+    const students = await loadStudents(classesOf(qSnap.data()));
+    const rows = [["NIS", "Nama Siswa", "Kelas", "Kode Kuis", "Nilai"]];
+    const scoredList = [];
+    resSnap.docs.forEach((d) => {
+      const r = d.data();
+      scoredList.push({ w: who(students, r.uid), sc: scoreOf(r) });
+    });
+    if (!scoredList.length) {
+      return showToast(`Belum ada hasil nilai untuk asesmen ${code}.`, "warn");
+    }
+    scoredList
+      .sort((x, y) => x.w.kelas.localeCompare(y.w.kelas) || x.w.nama.localeCompare(y.w.nama))
+      .forEach(({ w, sc }) => {
+        rows.push([w.nis, w.nama, w.kelas, code, sc ?? "(belum dinilai)"]);
+      });
+    downloadCSV(`Rekap_Nilai_${code}.csv`, rows);
+    showToast(`Rekap nilai ${code} (${rows.length - 1} siswa) berhasil diunduh.`, "ok");
+  } catch (e) {
+    showToast(`Gagal mengunduh rekap nilai ${code}: ` + e.message, "error");
+  }
+}
+
 export async function exportRekapTerpaduCSV() {
   const kelas = (document.getElementById("rekap-kelas")?.value || "").trim().toLowerCase();
   try {

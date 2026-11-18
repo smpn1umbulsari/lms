@@ -36,11 +36,14 @@ export function renderAsesmenTable(rows) {
     .map((d) => {
       const q = d.data || d;
       const open = q.openAt ? (q.openAt.toDate ? q.openAt.toDate() : new Date(q.openAt)) : null;
-      const aksi = `<button type="button" class="btn btn-secondary btn-sm" data-action="edit-asesmen" data-code="${escAttr(
-        d.id
-      )}">Edit</button> <button type="button" class="btn btn-danger btn-sm" style="margin-left:6px" data-action="delete-asesmen" data-code="${escAttr(
-        d.id
-      )}" data-kelas="${escAttr((q.classes || []).join(","))}">Hapus</button>`;
+      const aksi = `
+        <button type="button" class="btn btn-secondary btn-sm" data-action="edit-asesmen" data-code="${escAttr(d.id)}" title="Edit Soal & Jadwal">Edit</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="export-quiz-soal" data-code="${escAttr(d.id)}" title="Export Soal Kuis ini ke Excel (.xlsx)">Soal</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="export-quiz-nilai" data-code="${escAttr(d.id)}" title="Unduh Nilai Kuis ini ke CSV">Nilai</button>
+        <button type="button" class="btn btn-danger btn-sm" style="margin-left:4px" data-action="delete-asesmen" data-code="${escAttr(
+          d.id
+        )}" data-kelas="${escAttr((q.classes || []).join(","))}" title="Hapus Asesmen">Hapus</button>
+      `;
       const modeBadge =
         q.mode === "ujian"
           ? '<span class="badge badge-pg">UJIAN RESMI</span>'
@@ -197,6 +200,12 @@ export function initAsesmenHandlers(onDataChanged) {
       const code = btn.dataset.code;
       if (btn.dataset.action === "edit-asesmen") {
         await editAsesmen(code);
+      } else if (btn.dataset.action === "export-quiz-soal") {
+        const { exportSingleQuizXLSX } = await import("./import/export-templates.js");
+        await exportSingleQuizXLSX(code, { db, doc, getDoc, showToast });
+      } else if (btn.dataset.action === "export-quiz-nilai") {
+        const { exportSingleQuizNilaiCSV } = await import("./export-csv.js");
+        await exportSingleQuizNilaiCSV(code);
       } else if (btn.dataset.action === "delete-asesmen") {
         await deleteAsesmen(code, btn.dataset.kelas || "", onDataChanged);
       }

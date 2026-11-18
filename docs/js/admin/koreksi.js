@@ -14,6 +14,7 @@ import {
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
 import { renderItemAnalysis } from "./koreksi-stats.js";
+import { initKoreksiImport } from "./koreksi-import.js";
 
 export { renderItemAnalysis };
 
@@ -198,4 +199,5 @@ export function initKoreksi() {
   });
   document.getElementById("btn-gr-fetch")?.addEventListener("click", fetchAttemptsForGrading);
   document.getElementById("btn-gr-publish")?.addEventListener("click", publishBatchGrades);
+  initKoreksiImport();
 }

@@ -7,6 +7,7 @@ import { buildRekapRows, scoreOf } from "../docs/js/admin/export/rekap.js";
 import { buildSoalRows } from "../docs/js/admin/import/soal-exporter.js";
 import { parseSoal } from "../docs/js/admin/import/soal-importer.js";
 import { parseSiswa, parseGuru } from "../docs/js/admin/import/user-importer.js";
+import { parseNilaiImport } from "../docs/js/admin/import/nilai-importer.js";
 
 let pass = 0;
 const t = (name, fn) => {
@@ -123,6 +124,44 @@ t("siswa: NIS dengan '/' ditolak; guru: email tanpa domain ditolak", () => {
   const g = parseGuru([["Email", "Nama"], ["abc@x", "A"], ["ok@x.id", "B"]]);
   assert.equal(g.items.length, 1);
   assert.equal(g.errors.length, 1);
+});
+
+// ---- Nilai importer ----
+t("nilai: parse nilai valid, hitung rata-rata, min, max, dan sanitasi catatan", () => {
+  const H = ["NIS", "Nama Siswa", "Kelas", "Nilai", "Catatan Guru"];
+  const res = parseNilaiImport([
+    H,
+    ["1001", "Ani", "7A", "85", "Sangat baik"],
+    ["1002", "Budi", "7A", "95", "Luar biasa"],
+    ["1003", "Cici", "7A", "60", "Perlu remidi"]
+  ]);
+  assert.equal(res.errors.length, 0);
+  assert.equal(res.items.length, 3);
+  assert.deepEqual(res.ringkasan, { total: 3, avg: 80, min: 60, max: 95 });
+  assert.equal(res.items[0].identifier, "1001");
+  assert.equal(res.items[0].nilai, 85);
+  assert.equal(res.items[0].catatan, "Sangat baik");
+});
+
+t("nilai: nilai di luar 0-100, duplikat, atau tanpa header ditolak", () => {
+  const H = ["NIS", "Nilai"];
+  const res = parseNilaiImport([
+    H,
+    ["1001", "105"], // > 100
+    ["1002", "-5"],  // < 0
+    ["1003", "abc"], // NaN
+    ["1004", ""],    // Kosong
+    ["1005", "75"],   // Valid
+    ["1005", "80"]    // Duplikat
+  ]);
+  assert.equal(res.errors.length, 5);
+  assert.equal(res.items.length, 1);
+  assert.equal(res.items[0].identifier, "1005");
+  assert.equal(res.items[0].nilai, 75);
+
+  const noHdr = parseNilaiImport([["Nama", "Kelas"]]);
+  assert.equal(noHdr.errors.length, 1);
+  assert.equal(noHdr.items.length, 0);
 });
 
 console.log(`\n=== ${pass} PASS / 0 FAIL ===`);

@@ -97,3 +97,26 @@ export async function exportSoalXLSX({ db, collection, getDocs, showToast }) {
     showToast("Gagal export Bank Soal: " + err.message, "error");
   }
 }
+
+export async function exportSingleQuizXLSX(code, { db, doc, getDoc, showToast }) {
+  try {
+    const [qSnap, kSnap] = await Promise.all([
+      getDoc(doc(db, "quizzes", code)),
+      getDoc(doc(db, "quizKeys", code)).catch(() => null)
+    ]);
+    if (!qSnap.exists()) {
+      showToast(`Asesmen ${code} tidak ditemukan.`, "warn");
+      return;
+    }
+    const keysByQuiz = {};
+    if (kSnap && kSnap.exists()) {
+      keysByQuiz[code] = kSnap.data().keys || {};
+    }
+    const aoa = buildSoalRows([{ id: code, data: qSnap.data() }], keysByQuiz);
+    downloadSheet(`Soal_${code}.xlsx`, aoa, `Soal ${code}`);
+    showToast(`Export ${aoa.length - 1} butir soal (${code}) berhasil diunduh.`, "ok");
+  } catch (err) {
+    showToast("Gagal export Soal: " + err.message, "error");
+  }
+}
+

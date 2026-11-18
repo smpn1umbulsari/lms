@@ -5,6 +5,7 @@
 # Admin HTML shell containing 5 tab sections (Ringkasan, Materi, Penugasan, Asesmen, Koreksi)
 docs/admin.html # Shell HTML untuk 5 panel portal guru (JS & CSS sudah modular)
 docs/index.html # Shell HTML untuk portal siswa (JS & CSS sudah modular)
+docs/vendor/ # Third-party vendor libraries (SheetJS dll)
 
 # Design mockups
 design/stitch/screens/ # Raw exported UI mockups from Stitch

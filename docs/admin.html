@@ -793,17 +793,43 @@
       </div>
 
       <div class="panel">
-        <div class="row" style="align-items:flex-end">
-          <div style="flex:2">
-            <label for="gr-code">Pilih / Masukkan Kode Kuis untuk Dikoreksi</label>
+        <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
+          <div style="flex:2; min-width:220px">
+            <label for="gr-code">Pilih / Masukkan Kode Kuis</label>
             <input id="gr-code" placeholder="Contoh: q_ipa_01" style="margin-bottom:0">
           </div>
-          <div style="flex:1">
-            <button id="btn-gr-fetch" type="button" class="btn btn-primary" style="width:100%">
-              <span class="material-symbols-outlined" style="font-size:18px">Download_for_offline</span>
-              <span>Muat Lembar Jawaban</span>
+          <button id="btn-gr-fetch" type="button" class="btn btn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px">download_for_offline</span>
+            <span>Muat Lembar Ujian</span>
+          </button>
+          <button id="btn-toggle-import-nilai" type="button" class="btn btn-secondary">
+            <span class="material-symbols-outlined" style="font-size:18px">upload_file</span>
+            <span>Import Nilai Massal</span>
+          </button>
+        </div>
+
+        <!-- Sub-panel: Import Nilai Massal dari Excel / CSV -->
+        <div id="panel-import-nilai" class="hidden" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line)">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px">
+            <div>
+              <strong style="font-size:13.5px; color:var(--ink)">Import Nilai Ujian dari Excel / CSV</strong>
+              <div style="font-size:12px; color:var(--ink-3)">Unduh template terisi roster siswa kuis ini, lalu unggah kembali untuk menerbitkan nilai massal.</div>
+            </div>
+            <button id="btn-tpl-nilai" type="button" class="btn btn-secondary btn-sm">
+              <span class="material-symbols-outlined" style="font-size:16px">download</span>
+              <span>Unduh Template Nilai</span>
             </button>
           </div>
+          <div class="row" style="align-items:flex-end; gap:8px; margin-top:8px; flex-wrap:wrap">
+            <div style="flex:2; min-width:220px">
+              <label for="file-import-nilai">Pilih Berkas Nilai (.xlsx, .xls, .csv)</label>
+              <input id="file-import-nilai" type="file" accept=".xlsx,.xls,.csv" style="margin-bottom:0">
+            </div>
+            <button id="btn-save-import-nilai" type="button" class="btn btn-primary" disabled>Simpan Nilai ke Sistem</button>
+          </div>
+          <div id="ribbon-import-nilai" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
+          <div id="err-import-nilai" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
+          <div id="preview-import-nilai"></div>
         </div>
       </div>
 
@@ -1093,7 +1119,7 @@
   <span id="toast-text">Tersimpan</span>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+<script src="vendor/xlsx.full.min.js"></script>
 <script src="firebase-config.js"></script>
 <script type="module" src="js/admin/main.js"></script>
 </body>
