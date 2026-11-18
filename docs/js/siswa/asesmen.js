@@ -18,6 +18,7 @@ export async function loadAsesmen(currentUser, userProfile, onStartQuiz, classMe
   const stAs = document.getElementById("st-count-asesmen");
   if (stAs) stAs.textContent = keys.length;
 
+  const heroBtn = document.getElementById("hero-cta-btn");
   if (keys.length) {
     const firstQid = keys[0];
     const firstQ = quizzesMeta[firstQid];
@@ -25,6 +26,16 @@ export async function loadAsesmen(currentUser, userProfile, onStartQuiz, classMe
     const ctaMeta = document.getElementById("hero-cta-meta");
     if (ctaTitle) ctaTitle.textContent = firstQ.judul || `Asesmen Terjadwal (${firstQid})`;
     if (ctaMeta) ctaMeta.textContent = `Durasi ${firstQ.duration} Menit · Siap Dikerjakan`;
+    if (heroBtn && typeof onStartQuiz === "function") {
+      heroBtn.innerHTML = `<span>Mulai Asesmen</span><span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>`;
+      heroBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onStartQuiz(firstQid, quizzesMeta);
+      };
+    }
+  } else if (heroBtn) {
+    heroBtn.innerHTML = `<span>Pelajari Modul</span><span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>`;
   }
 
   if (!el) return;

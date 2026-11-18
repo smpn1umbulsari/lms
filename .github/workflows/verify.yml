@@ -27,4 +27,5 @@ jobs:
           node spike/import.test.mjs
           node spike/quiz-utils.test.mjs
           node spike/export.test.mjs
+          node spike/submission-queue.test.mjs
           node tests/smoke.test.mjs

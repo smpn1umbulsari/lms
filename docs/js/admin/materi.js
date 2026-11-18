@@ -130,7 +130,7 @@ export async function editMateri(id) {
   if (prev) prev.innerHTML = embedsHTML({ links });
   document.getElementById("btn-mat-save").textContent = "Update Materi";
   document.getElementById("mat-form-panel").classList.remove("hidden");
-  document.getElementById("mat-form-panel").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("m-judul")?.focus();
 }
 
 export async function loadMateriTable(onDataChanged) {
@@ -228,6 +228,13 @@ export function initMateriHandlers(onDataChanged) {
 
   document.getElementById("btn-mat-cancel")?.addEventListener("click", () => {
     document.getElementById("mat-form-panel")?.classList.add("hidden");
+  });
+
+  const matPanel = document.getElementById("mat-form-panel");
+  matPanel?.addEventListener("click", (e) => {
+    if (e.target === matPanel || e.target.closest("[data-action='close-mat-form']")) {
+      matPanel.classList.add("hidden");
+    }
   });
 
   document.getElementById("btn-mat-save")?.addEventListener("click", async () => {

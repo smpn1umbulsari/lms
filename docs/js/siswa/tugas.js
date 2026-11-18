@@ -2,7 +2,6 @@
 import {
   db,
   doc,
-  getDoc,
   getDocs,
   setDoc,
   collection,
@@ -15,6 +14,59 @@ import { embedsHTML } from "../core/media.js";
 import { showToast } from "../core/toast.js";
 
 let activeAssignment = null;
+const QUEUE_KEY = "situri_pending_submissions";
+
+export function getPendingSubmissions() {
+  try {
+    return JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+export function savePendingSubmission(item) {
+  const list = getPendingSubmissions().filter((x) => x.subId !== item.subId);
+  list.push({ ...item, queuedAt: Date.now() });
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(list));
+}
+
+export function removePendingSubmission(subId) {
+  const list = getPendingSubmissions().filter((x) => x.subId !== subId);
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(list));
+}
+
+export async function flushPendingSubmissions() {
+  if (typeof navigator !== "undefined" && !navigator.onLine) return 0;
+  const list = getPendingSubmissions();
+  if (!list.length) return 0;
+
+  let synced = 0;
+  for (const item of list) {
+    try {
+      const now = serverTimestamp();
+      await setDoc(
+        doc(db, "submissions", item.subId),
+        {
+          uid: item.uid,
+          assignmentId: item.assignmentId,
+          teks: item.teks,
+          link: item.link,
+          submittedAt: now,
+          updatedAt: now
+        },
+        { merge: true }
+      );
+      removePendingSubmission(item.subId);
+      synced++;
+    } catch (err) {
+      console.warn("Gagal sinkronkan tugas tertunda:", item.subId, err);
+    }
+  }
+  if (synced > 0) {
+    showToast(`✓ ${synced} tugas tersimpan offline berhasil disinkronkan ke server!`, "ok");
+  }
+  return synced;
+}
 
 export async function loadTugas(currentUser, userProfile) {
   if (!userProfile?.kelas) return;
@@ -34,6 +86,14 @@ export async function loadTugas(currentUser, userProfile) {
     subMap.set(sd.id, s);
   });
 
+  // Gabungkan submission lokal yang masih mengantre offline
+  const pending = getPendingSubmissions().filter((x) => x.uid === currentUser.uid);
+  pending.forEach((p) => {
+    if (!subMap.has(p.assignmentId)) {
+      subMap.set(p.assignmentId, { ...p, isOfflinePending: true });
+    }
+  });
+
   const stTug = document.getElementById("st-count-tugas");
   if (stTug) stTug.textContent = list.length;
   const el = document.getElementById("tugas-list");
@@ -46,6 +106,7 @@ export async function loadTugas(currentUser, userProfile) {
   el.innerHTML = "";
   for (const t of list) {
     const subData = subMap.get(t.id) || subMap.get(`${currentUser.uid}__${t.id}`) || null;
+    const isPendingOffline = subData?.isOfflinePending;
     const isSubmitted = !!subData;
     const card = document.createElement("div");
     card.className = "card";
@@ -61,7 +122,9 @@ export async function loadTugas(currentUser, userProfile) {
     const meta = document.createElement("div");
     meta.className = "card-meta";
     meta.innerHTML = `
-      <span class="badge ${isSubmitted ? "badge-ok" : "badge-warn"}">${isSubmitted ? "✓ Sudah Dikumpul" : "Belum Dikumpul"}</span>
+      <span class="badge ${isPendingOffline ? "badge-warn" : isSubmitted ? "badge-ok" : "badge-warn"}">
+        ${isPendingOffline ? "⏳ Antrean Offline" : isSubmitted ? "✓ Sudah Dikumpul" : "Belum Dikumpul"}
+      </span>
       <span class="tabular-nums" style="font-size:12px; color:var(--ink-2)">Batas: ${
         t.dueAt ? new Date(t.dueAt.toDate()).toLocaleDateString("id-ID") : "-"
       }</span>
@@ -95,16 +158,48 @@ export function openTugasModal(tugas, subData) {
   tAttach.innerHTML = embedsHTML(tugas);
   document.getElementById("sub-teks").value = subData ? subData.teks || "" : "";
   document.getElementById("sub-link").value = subData ? subData.link || "" : "";
-  document.getElementById("sub-status").textContent = subData ? "Jawaban tersimpan sebelumnya." : "";
+  const stEl = document.getElementById("sub-status");
+  if (stEl) {
+    if (subData?.isOfflinePending) {
+      stEl.textContent = "⏳ Jawaban tersimpan di memori perangkat (Antrean Offline).";
+      stEl.classList.remove("hidden");
+    } else if (subData) {
+      stEl.textContent = "✓ Jawaban tersimpan sebelumnya di server.";
+      stEl.classList.remove("hidden");
+    } else {
+      stEl.textContent = "";
+      stEl.classList.add("hidden");
+    }
+  }
   document.getElementById("btn-sub-save").textContent = subData ? "Perbarui Jawaban" : "Kirim Tugas Sekarang";
   document.getElementById("sub-modal").classList.remove("hidden");
-  document.getElementById("sub-modal").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("sub-teks")?.focus();
 }
 
 export function initTugasHandlers(getCurrentUser, onSubmitted) {
+  const subModal = document.getElementById("sub-modal");
   document.getElementById("btn-sub-cancel")?.addEventListener("click", () => {
-    document.getElementById("sub-modal")?.classList.add("hidden");
+    subModal?.classList.add("hidden");
   });
+
+  subModal?.addEventListener("click", (e) => {
+    if (e.target === subModal || e.target.closest("[data-action='close-sub-modal']")) {
+      subModal.classList.add("hidden");
+    }
+  });
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("online", () => {
+      flushPendingSubmissions().then((synced) => {
+        if (synced > 0 && typeof onSubmitted === "function") {
+          onSubmitted();
+        }
+      });
+    });
+    if (navigator.onLine) {
+      flushPendingSubmissions();
+    }
+  }
 
   document.getElementById("btn-sub-save")?.addEventListener("click", async () => {
     const user = getCurrentUser();
@@ -116,23 +211,62 @@ export function initTugasHandlers(getCurrentUser, onSubmitted) {
       return;
     }
     const subId = `${user.uid}__${activeAssignment.id}`;
-    const now = serverTimestamp();
-    await setDoc(
-      doc(db, "submissions", subId),
-      {
-        uid: user.uid,
-        assignmentId: activeAssignment.id,
-        teks,
-        link,
-        submittedAt: now,
-        updatedAt: now
-      },
-      { merge: true }
-    );
-    document.getElementById("sub-status").textContent = "✓ Berhasil disimpan!";
-    setTimeout(() => {
-      document.getElementById("sub-modal")?.classList.add("hidden");
-      if (typeof onSubmitted === "function") onSubmitted();
-    }, 1000);
+    const payload = {
+      subId,
+      uid: user.uid,
+      assignmentId: activeAssignment.id,
+      teks,
+      link
+    };
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      savePendingSubmission(payload);
+      const stEl = document.getElementById("sub-status");
+      if (stEl) {
+        stEl.textContent = "⏳ Disimpan lokal (Offline). Otomatis dikirim saat online!";
+        stEl.classList.remove("hidden");
+      }
+      showToast("Koneksi offline: Tugas disimpan di perangkat & otomatis dikirim saat online.", "warn");
+      setTimeout(() => {
+        subModal?.classList.add("hidden");
+        if (typeof onSubmitted === "function") onSubmitted();
+      }, 1200);
+      return;
+    }
+
+    try {
+      const now = serverTimestamp();
+      await setDoc(
+        doc(db, "submissions", subId),
+        {
+          uid: user.uid,
+          assignmentId: activeAssignment.id,
+          teks,
+          link,
+          submittedAt: now,
+          updatedAt: now
+        },
+        { merge: true }
+      );
+      removePendingSubmission(subId);
+      const stEl = document.getElementById("sub-status");
+      if (stEl) {
+        stEl.textContent = "✓ Berhasil disimpan!";
+        stEl.classList.remove("hidden");
+      }
+      showToast("Tugas berhasil dikumpulkan!", "ok");
+      setTimeout(() => {
+        subModal?.classList.add("hidden");
+        if (typeof onSubmitted === "function") onSubmitted();
+      }, 1000);
+    } catch (err) {
+      console.warn("Gagal simpan ke Firestore, simpan ke antrean lokal:", err);
+      savePendingSubmission(payload);
+      showToast("Koneksi terganggu: Jawaban diamankan ke antrean offline.", "warn");
+      setTimeout(() => {
+        subModal?.classList.add("hidden");
+        if (typeof onSubmitted === "function") onSubmitted();
+      }, 1200);
+    }
   });
 }

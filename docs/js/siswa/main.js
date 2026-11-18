@@ -13,6 +13,7 @@ import {
 } from "../core/firebase.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
+import { initForgotPassword } from "../core/auth-reset.js";
 import { initDemoChips, isDev } from "../core/env.js";
 import { registerServiceWorker } from "../core/pwa.js";
 import { initGlobalErrorObserver } from "../core/error-handler.js";
@@ -30,6 +31,7 @@ const loadedStudentTabs = new Set();
 // Initialize theme, toast, error observer, and PWA
 initTheme();
 initToast();
+initForgotPassword();
 initGlobalErrorObserver();
 initDemoChips();
 registerServiceWorker();
@@ -63,8 +65,30 @@ export async function loadStudentTab(tabId) {
   if (!currentUser || !userProfile) return;
   const meta = await getClassMeta();
   if (meta && meta.quizzes) {
+    const keys = Object.keys(meta.quizzes);
     const stAs = document.getElementById("st-count-asesmen");
-    if (stAs) stAs.textContent = Object.keys(meta.quizzes).length;
+    if (stAs) stAs.textContent = keys.length;
+
+    const heroBtn = document.getElementById("hero-cta-btn");
+    const ctaTitle = document.getElementById("hero-cta-title");
+    const ctaMeta = document.getElementById("hero-cta-meta");
+    if (keys.length > 0) {
+      const firstQid = keys[0];
+      const firstQ = meta.quizzes[firstQid];
+      if (ctaTitle) ctaTitle.textContent = firstQ.judul || `Asesmen Terjadwal (${firstQid})`;
+      if (ctaMeta) ctaMeta.textContent = `Durasi ${firstQ.duration} Menit · Siap Dikerjakan`;
+      if (heroBtn) {
+        heroBtn.innerHTML = `<span>Mulai Asesmen</span><span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>`;
+        heroBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          startQuiz(firstQid, currentUser, userProfile, meta.quizzes, () => {
+            loadedStudentTabs.delete("sec-nilai");
+            loadAsesmen(currentUser, userProfile, null, meta);
+          });
+        };
+      }
+    }
   }
   if (tabId === "tab-materi" && !loadedStudentTabs.has("tab-materi")) {
     await loadMateri(userProfile, meta);

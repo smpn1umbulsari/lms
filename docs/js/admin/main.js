@@ -12,6 +12,7 @@ import {
 } from "../core/firebase.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
+import { initForgotPassword } from "../core/auth-reset.js";
 import { initDemoChips } from "../core/env.js";
 import { registerServiceWorker } from "../core/pwa.js";
 import { initGlobalErrorObserver } from "../core/error-handler.js";
@@ -28,6 +29,7 @@ import { initImportExport } from "./import-export.js";
 // Initialize core utilities
 initTheme();
 initToast();
+initForgotPassword();
 initGlobalErrorObserver();
 initDemoChips();
 registerServiceWorker();

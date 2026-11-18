@@ -82,6 +82,24 @@
   border-color: var(--line);
 }
 
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-2);
+  padding: 4px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--surface-low);
+  color: var(--ink);
+}
+
 @media (max-width: 768px) {
   .modal-backdrop {
     align-items: flex-end;

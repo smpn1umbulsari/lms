@@ -138,7 +138,7 @@ export async function editAsg(id) {
   });
   document.getElementById("btn-tug-save").textContent = "Update Tugas";
   document.getElementById("tug-form-panel").classList.remove("hidden");
-  document.getElementById("tug-form-panel").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("t-judul")?.focus();
 }
 
 export async function viewSub(assignmentId, title) {
@@ -278,6 +278,13 @@ export function initTugasHandlers(onDataChanged) {
 
   document.getElementById("btn-tug-cancel")?.addEventListener("click", () => {
     document.getElementById("tug-form-panel")?.classList.add("hidden");
+  });
+
+  const tugPanel = document.getElementById("tug-form-panel");
+  tugPanel?.addEventListener("click", (e) => {
+    if (e.target === tugPanel || e.target.closest("[data-action='close-tug-form']")) {
+      tugPanel.classList.add("hidden");
+    }
   });
 
   document.getElementById("btn-tug-save")?.addEventListener("click", async () => {

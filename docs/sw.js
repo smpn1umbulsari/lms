@@ -1,5 +1,5 @@
 // SITURI LMS Lightweight Service Worker
-const CACHE_NAME = "situri-shell-v2";
+const CACHE_NAME = "situri-shell-v3";
 const SHELL_ASSETS = [
   "./",
   "./index.html",

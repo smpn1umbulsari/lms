@@ -241,18 +241,29 @@
     <section id="tab-tugas" class="tab-content hidden">
       <div id="tugas-list" class="grid"></div>
 
-      <!-- SUBMISSION MODAL / IN-PLACE FORM -->
-      <div id="sub-modal" class="panel hidden" style="margin-top: 18px; border-left: 4px solid var(--accent)">
-        <h2 id="sub-title" style="margin-bottom:4px">Kirim Tugas</h2>
-        <p id="sub-instruksi" style="color:var(--ink-2); font-size:13px; margin-bottom:14px"></p>
-        <div id="sub-status" class="notice notice-ok" style="font-weight:600; display:inline-block"></div>
-        <label for="sub-teks">Catatan / Jawaban Teks (Opsional)</label>
-        <textarea id="sub-teks" placeholder="Tuliskan jawaban atau ringkasan pengerjaan..."></textarea>
-        <label for="sub-link">Tautan Tugas (Google Drive / Docs / Video)</label>
-        <input id="sub-link" type="text" placeholder="https://drive.google.com/..." style="margin-bottom:14px">
-        <div style="display:flex; gap:10px">
-          <button id="btn-sub-save" class="btn btn-primary">Kirim Jawaban</button>
-          <button id="btn-sub-cancel" class="btn btn-secondary">Batal</button>
+      <!-- SUBMISSION MODAL / BOTTOM SHEET -->
+      <div id="sub-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+              <h2 id="sub-title" style="margin:0; font-size:16px; font-weight:700">Kirim Tugas</h2>
+              <button type="button" class="modal-close-btn" data-action="close-sub-modal" aria-label="Tutup Formulir">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <p id="sub-instruksi" style="color:var(--ink-2); font-size:13px; margin-bottom:14px"></p>
+            <div id="sub-status" class="notice notice-ok hidden" style="font-weight:600; margin-bottom:12px"></div>
+            <label for="sub-teks">Catatan / Jawaban Teks (Opsional)</label>
+            <textarea id="sub-teks" rows="4" placeholder="Tuliskan jawaban atau ringkasan pengerjaan..."></textarea>
+            <label for="sub-link">Tautan Tugas (Google Drive / Docs / Video)</label>
+            <input id="sub-link" type="text" placeholder="https://drive.google.com/..." style="margin-bottom:14px">
+          </div>
+          <div class="modal-footer">
+            <button id="btn-sub-cancel" type="button" class="btn btn-secondary">Batal</button>
+            <button id="btn-sub-save" type="button" class="btn btn-primary">Kirim Jawaban</button>
+          </div>
         </div>
       </div>
     </section>

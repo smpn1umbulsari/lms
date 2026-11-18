@@ -399,40 +399,51 @@
         </div>
       </div>
 
-      <!-- Form Panel Materi (#mat-form-panel) -->
-      <div id="mat-form-panel" class="panel hidden" style="border-left:4px solid var(--accent)">
-        <div class="panel-head">
-          <h2 id="mat-form-title">Formulir Materi Baru</h2>
-          <span class="badge badge-neutral">Teks & Tautan Eksternal</span>
-        </div>
-        <label for="m-judul">Judul Materi Pembelajaran *</label>
-        <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur dan Fungsi Jaringan Tumbuhan">
-        <div class="row">
-          <div>
-            <label for="m-kelas">Target Rombel Kelas (pisahkan dengan koma) *</label>
-            <input id="m-kelas" placeholder="c1, 7A, 7B, 8A">
-            <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
-              <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
-              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="c1">c1</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="7A">7A</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8A">8A</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8B">8B</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="9A">9A</button>
+      <!-- Modal Form Panel Materi (#mat-form-panel) -->
+      <div id="mat-form-panel" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="mat-form-title">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+              <div>
+                <h2 id="mat-form-title" style="margin:0; font-size:16px; font-weight:700">Formulir Materi Baru</h2>
+                <span style="font-size:12px; color:var(--ink-2)">Modul pembelajaran, petunjuk belajar & materi tautan</span>
+              </div>
+              <button type="button" class="modal-close-btn" data-action="close-mat-form" aria-label="Tutup Formulir">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
           </div>
-          <div>
-            <label for="m-link">URL Media Pendukung (YouTube / Google Drive / PDF)</label>
-            <input id="m-link" placeholder="https://youtube.com/watch?v=...">
-            <div id="m-links-extra"></div>
-            <button type="button" id="btn-add-mat-link" class="btn btn-secondary btn-sm" style="margin-bottom:8px">+ Tambah tautan</button>
+          <div class="modal-body">
+            <label for="m-judul">Judul Materi Pembelajaran *</label>
+            <input id="m-judul" placeholder="Contoh: Bab 3 - Struktur dan Fungsi Jaringan Tumbuhan">
+            <div class="row">
+              <div>
+                <label for="m-kelas">Target Rombel Kelas (pisahkan dengan koma) *</label>
+                <input id="m-kelas" placeholder="c1, 7A, 7B, 8A">
+                <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
+                  <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="c1">c1</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="7A">7A</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8A">8A</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8B">8B</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="9A">9A</button>
+                </div>
+              </div>
+              <div>
+                <label for="m-link">URL Media Pendukung (YouTube / Google Drive / PDF)</label>
+                <input id="m-link" placeholder="https://youtube.com/watch?v=...">
+                <div id="m-links-extra"></div>
+                <button type="button" id="btn-add-mat-link" class="btn btn-secondary btn-sm" style="margin-bottom:8px">+ Tambah tautan</button>
+              </div>
+            </div>
+            <div id="m-link-preview" class="embed-wrap"></div>
+            <label for="m-deskripsi">Ringkasan & Petunjuk Belajar</label>
+            <textarea id="m-deskripsi" rows="5" placeholder="Ketik ringkasan modul / materi dan petunjuk literasi bagi siswa di sini..."></textarea>
           </div>
-        </div>
-        <div id="m-link-preview" class="embed-wrap"></div>
-        <label for="m-deskripsi">Ringkasan & Petunjuk Belajar</label>
-        <textarea id="m-deskripsi" rows="5" placeholder="Ketik ringkasan modul / materi dan petunjuk literasi bagi siswa di sini..."></textarea>
-        <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid var(--line-soft)">
-          <button id="btn-mat-cancel" type="button" class="btn btn-secondary">Batal</button>
-          <button id="btn-mat-save" type="button" class="btn btn-primary">Simpan Materi</button>
+          <div class="modal-footer">
+            <button id="btn-mat-cancel" type="button" class="btn btn-secondary">Batal</button>
+            <button id="btn-mat-save" type="button" class="btn btn-primary">Simpan Materi</button>
+          </div>
         </div>
       </div>
 
@@ -492,40 +503,51 @@
         </div>
       </div>
 
-      <!-- Form Panel Tugas (#tug-form-panel) -->
-      <div id="tug-form-panel" class="panel hidden" style="border-left:4px solid var(--accent)">
-        <div class="panel-head">
-          <h2>Formulir Penugasan</h2>
-          <span class="badge badge-pg">Tenggat Terjadwal</span>
-        </div>
-        <label for="t-judul">Judul Tugas *</label>
-        <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan & Fotosintesis">
-        <div class="row">
-          <div>
-            <label for="t-kelas">Target Kelas (pisahkan koma) *</label>
-            <input id="t-kelas" placeholder="c1, 7A, 8A">
-            <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
-              <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
-              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="c1">c1</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="7A">7A</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8A">8A</button>
-              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8B">8B</button>
+      <!-- Modal Form Panel Tugas (#tug-form-panel) -->
+      <div id="tug-form-panel" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="tug-form-title">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+              <div>
+                <h2 id="tug-form-title" style="margin:0; font-size:16px; font-weight:700">Formulir Penugasan Siswa</h2>
+                <span style="font-size:12px; color:var(--ink-2)">Tenggat pengumpulan & instruksi tugas kelas</span>
+              </div>
+              <button type="button" class="modal-close-btn" data-action="close-tug-form" aria-label="Tutup Formulir">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
           </div>
-          <div>
-            <label for="t-due">Batas Waktu Pengumpulan (Due Date) *</label>
-            <input id="t-due" type="datetime-local">
+          <div class="modal-body">
+            <label for="t-judul">Judul Tugas *</label>
+            <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan & Fotosintesis">
+            <div class="row">
+              <div>
+                <label for="t-kelas">Target Kelas (pisahkan koma) *</label>
+                <input id="t-kelas" placeholder="c1, 7A, 8A">
+                <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
+                  <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="c1">c1</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="7A">7A</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8A">8A</button>
+                  <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8B">8B</button>
+                </div>
+              </div>
+              <div>
+                <label for="t-due">Batas Waktu Pengumpulan (Due Date) *</label>
+                <input id="t-due" type="datetime-local">
+              </div>
+            </div>
+            <label for="t-instruksi">Instruksi Pengerjaan</label>
+            <textarea id="t-instruksi" rows="4" placeholder="Jelaskan langkah pengerjaan dan format tautan Google Drive yang harus dikumpulkan siswa..."></textarea>
+            <label for="t-link">Tautan Materi/Referensi Pendukung (Opsional)</label>
+            <input id="t-link" placeholder="https://...">
+            <div id="t-links-extra"></div>
+            <button type="button" id="btn-add-tlink" class="btn btn-secondary btn-sm" style="margin-bottom:10px">+ Tambah tautan</button>
           </div>
-        </div>
-        <label for="t-instruksi">Instruksi Pengerjaan</label>
-        <textarea id="t-instruksi" rows="4" placeholder="Jelaskan langkah pengerjaan dan format tautan Google Drive yang harus dikumpulkan siswa..."></textarea>
-        <label for="t-link">Tautan Materi/Referensi Pendukung (Opsional)</label>
-        <input id="t-link" placeholder="https://...">
-        <div id="t-links-extra"></div>
-        <button type="button" id="btn-add-tlink" class="btn btn-secondary btn-sm" style="margin-bottom:10px">+ Tambah tautan</button>
-        <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid var(--line-soft)">
-          <button id="btn-tug-cancel" type="button" class="btn btn-secondary">Batal</button>
-          <button id="btn-tug-save" type="button" class="btn btn-primary">Terbitkan Tugas</button>
+          <div class="modal-footer">
+            <button id="btn-tug-cancel" type="button" class="btn btn-secondary">Batal</button>
+            <button id="btn-tug-save" type="button" class="btn btn-primary">Terbitkan Tugas</button>
+          </div>
         </div>
       </div>
 
