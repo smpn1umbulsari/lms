@@ -4,6 +4,8 @@ import {
   db,
   doc,
   getDoc,
+  setDoc,
+  serverTimestamp,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut
@@ -113,11 +115,25 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
     if (!adminSnap || !adminSnap.exists()) {
-      showToast("Akun Siswa terdeteksi. Mengarahkan ke Portal Siswa...", "ok");
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 700);
-      return;
+      const emailKey = (user.email || "").trim().toLowerCase();
+      const inviteSnap = emailKey ? await getDoc(doc(db, "guruInvites", emailKey)).catch(() => null) : null;
+      if (inviteSnap && inviteSnap.exists() && inviteSnap.data().aktif === true) {
+        const inv = inviteSnap.data();
+        await setDoc(doc(db, "admins", user.uid), {
+          email: emailKey,
+          nama: inv.nama || emailKey.split("@")[0],
+          nip: inv.nip || "",
+          mapel: inv.mapel || "",
+          activatedAt: serverTimestamp()
+        });
+        showToast("Akun Guru berhasil diaktivasi!", "ok");
+      } else {
+        showToast("Akun Siswa terdeteksi. Mengarahkan ke Portal Siswa...", "ok");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 700);
+        return;
+      }
     }
     document.body.classList.remove("auth-mode");
     document.getElementById("sec-auth")?.classList.add("hidden");

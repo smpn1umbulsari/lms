@@ -223,8 +223,8 @@ function scheduleAutoSave() {
   autoSaveTimer = setTimeout(saveAttemptToServer, 800);
 }
 
-async function saveAttemptToServer() {
-  if (!examState || examState.locked) return;
+async function saveAttemptToServer(force = false) {
+  if (!examState || (examState.locked && !force)) return;
   saveLocalBackup();
   if (!navigator.onLine) { updateConnectionIndicator(); return; }
   examState.submitSeq++;
@@ -266,9 +266,8 @@ export async function finishExam() {
   examState.locked = true;
   clearInterval(examState.timerId);
   clearTimeout(autoSaveTimer);
+  await saveAttemptToServer(true);
   try { sessionStorage.removeItem("lms_attempt_" + examState.startId); } catch (e) {}
-
-  await saveAttemptToServer();
   document.getElementById("sec-exam")?.classList.add("hidden");
   document.getElementById("sec-result")?.classList.remove("hidden");
 
