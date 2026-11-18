@@ -16,7 +16,9 @@ export function toggleTheme() {
 }
 
 export function initTheme() {
-  window._toggleTheme = toggleTheme;
+  document.querySelectorAll("#btn-theme-toggle, .mobile-only-theme, [data-action='toggle-theme']").forEach((btn) => {
+    btn.addEventListener("click", toggleTheme);
+  });
   try {
     const savedTheme = localStorage.getItem("lms_theme");
     if (savedTheme) applyTheme(savedTheme);

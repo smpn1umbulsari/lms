@@ -166,7 +166,9 @@ export function setLoginRole(role) {
     }
   }
 }
-window._setLoginRole = setLoginRole;
+document.querySelectorAll("[data-action='set-role']").forEach((btn) => {
+  btn.addEventListener("click", () => setLoginRole(btn.dataset.role));
+});
 
 // Auth State Changed
 onAuthStateChanged(auth, async (user) => {

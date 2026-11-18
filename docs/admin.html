@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="sidebar-top-actions">
-      <button type="button" class="icon-action-btn mobile-only-theme" onclick="window._toggleTheme()" aria-label="Ubah Tema" style="display:none">
+      <button type="button" class="icon-action-btn mobile-only-theme" aria-label="Ubah Tema" style="display:none">
         <span class="material-symbols-outlined">contrast</span>
       </button>
       <label for="sidebar-toggle" class="sidebar-hamburger" aria-label="Buka Menu Navigasi">
@@ -112,7 +112,7 @@
       <span class="dot-live"></span>
       <span>Semester Ganjil 2026/2027</span>
     </div>
-    <button type="button" id="btn-theme-toggle" class="icon-action-btn" onclick="window._toggleTheme()" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
+    <button type="button" id="btn-theme-toggle" class="icon-action-btn" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
       <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
     </button>
     <div style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--line)">
@@ -145,11 +145,11 @@
           <p id="auth-sub">SMPN 1 Umbulsari · Sistem Manajemen Pembelajaran</p>
         </div>
         <div class="auth-role-pills" role="tablist" aria-label="Pilih Peran">
-          <button type="button" class="auth-role-btn" id="btn-role-siswa" onclick="window._setLoginRole('siswa')">
+          <button type="button" class="auth-role-btn" id="btn-role-siswa" data-action="set-role" data-role="siswa">
             <span class="material-symbols-outlined" style="font-size:16px">school</span>
             <span>Akun Siswa</span>
           </button>
-          <button type="button" class="auth-role-btn active" id="btn-role-guru" onclick="window._setLoginRole('guru')">
+          <button type="button" class="auth-role-btn active" id="btn-role-guru" data-action="set-role" data-role="guru">
             <span class="material-symbols-outlined" style="font-size:16px">psychology</span>
             <span>Akun Guru</span>
           </button>
@@ -162,7 +162,7 @@
         <div class="field" style="margin-bottom:12px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
             <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi proktor/admin sekolah untuk reset kata sandi.', 'warn') : null" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+            <a href="javascript:void(0)" data-action="forgot-password" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
           </div>
           <input id="l-pass" type="password" placeholder="••••••••" value="" autocomplete="current-password">
         </div>
@@ -406,11 +406,11 @@
             <input id="m-kelas" placeholder="c1, 7A, 7B, 8A">
             <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
               <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','c1')">c1</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','7A')">7A</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','8A')">8A</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','8B')">8B</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('m-kelas','9A')">9A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="c1">c1</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="7A">7A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8A">8A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="8B">8B</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="m-kelas" data-class="9A">9A</button>
             </div>
           </div>
           <div>
@@ -499,10 +499,10 @@
             <input id="t-kelas" placeholder="c1, 7A, 8A">
             <div class="chip-group" style="margin-top:-6px; margin-bottom:10px">
               <span style="font-size:11.5px; color:var(--ink-3)">Pilih cepat:</span>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','c1')">c1</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','7A')">7A</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','8A')">8A</button>
-              <button type="button" class="chip" onclick="window._toggleQuickClass('t-kelas','8B')">8B</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="c1">c1</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="7A">7A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8A">8A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8B">8B</button>
             </div>
           </div>
           <div>

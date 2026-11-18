@@ -109,6 +109,9 @@ export function showConfirmDialog({
 }
 
 export function initToast() {
-  window._showToast = showToast;
-  window._showConfirmDialog = showConfirmDialog;
+  document.querySelectorAll("[data-action='forgot-password']").forEach((el) => {
+    el.addEventListener("click", () => {
+      showToast("Hubungi proktor atau admin sekolah untuk reset kata sandi.", "warn");
+    });
+  });
 }

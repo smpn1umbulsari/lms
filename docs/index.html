@@ -43,7 +43,7 @@
       <span class="dot-live"></span>
       <span>Semester Ganjil 2026/2027</span>
     </div>
-    <button type="button" id="btn-theme-toggle" class="icon-action-btn" onclick="window._toggleTheme()" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
+    <button type="button" id="btn-theme-toggle" class="icon-action-btn" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
       <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
     </button>
     <div id="user-info" class="hidden" style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--line)">
@@ -80,11 +80,11 @@
           <p id="auth-sub">Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari</p>
         </div>
         <div class="auth-role-pills" role="tablist" aria-label="Pilih Peran">
-          <button type="button" class="auth-role-btn active" id="btn-role-siswa" onclick="window._setLoginRole('siswa')">
+          <button type="button" class="auth-role-btn active" id="btn-role-siswa" data-action="set-role" data-role="siswa">
             <span class="material-symbols-outlined" style="font-size:16px">school</span>
             <span>Akun Siswa</span>
           </button>
-          <button type="button" class="auth-role-btn" id="btn-role-guru" onclick="window._setLoginRole('guru')">
+          <button type="button" class="auth-role-btn" id="btn-role-guru" data-action="set-role" data-role="guru">
             <span class="material-symbols-outlined" style="font-size:16px">psychology</span>
             <span>Akun Guru</span>
           </button>
@@ -97,7 +97,7 @@
         <div class="field" style="margin-bottom:12px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
             <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" onclick="window._showToast ? window._showToast('Hubungi wali kelas atau proktor sekolah untuk reset sandi.', 'warn') : null" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+            <a href="javascript:void(0)" data-action="forgot-password" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
           </div>
           <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
         </div>

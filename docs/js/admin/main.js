@@ -29,7 +29,7 @@ initToast();
 initDemoChips();
 
 // Quick Class Chip Helper
-window._toggleQuickClass = (inputId, clsName) => {
+export function toggleQuickClass(inputId, clsName) {
   const el = document.getElementById(inputId);
   if (!el) return;
   const parts = el.value.split(",").map((s) => s.trim()).filter(Boolean);
@@ -37,7 +37,13 @@ window._toggleQuickClass = (inputId, clsName) => {
   if (idx >= 0) parts.splice(idx, 1);
   else parts.push(clsName);
   el.value = parts.join(", ");
-};
+}
+
+document.querySelectorAll("[data-action='toggle-class']").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    toggleQuickClass(btn.dataset.target, btn.dataset.class);
+  });
+});
 
 export function log(m) {
   const el = document.getElementById("log");
@@ -110,7 +116,9 @@ export function setAdminLoginRole(role) {
     }, 400);
   }
 }
-window._setLoginRole = setAdminLoginRole;
+document.querySelectorAll("[data-action='set-role']").forEach((btn) => {
+  btn.addEventListener("click", () => setAdminLoginRole(btn.dataset.role));
+});
 
 // Auth State Changed
 onAuthStateChanged(auth, async (user) => {
