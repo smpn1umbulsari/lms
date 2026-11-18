@@ -8,7 +8,9 @@
     "check:size": "node tools/check-size.mjs",
     "test:scoring": "node spike/scoring.test.mjs",
     "test:import": "node spike/import.test.mjs",
-    "test": "npm run check:size && npm run test:scoring && npm run test:import"
+    "test:prng": "node spike/quiz-utils.test.mjs",
+    "test:smoke": "node tests/smoke.test.mjs",
+    "test": "npm run check:size && npm run test:scoring && npm run test:import && npm run test:prng && npm run test:smoke"
   },
   "keywords": [
     "lms",

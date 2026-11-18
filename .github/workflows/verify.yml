@@ -21,7 +21,9 @@ jobs:
       - name: Verify Code Size Standards
         run: node tools/check-size.mjs
 
-      - name: Run Scoring & Import Unit Tests
+      - name: Run Unit & Smoke Tests
         run: |
           node spike/scoring.test.mjs
           node spike/import.test.mjs
+          node spike/quiz-utils.test.mjs
+          node tests/smoke.test.mjs
