@@ -1,338 +1,19 @@
-// Import & Export Excel (Soal, Siswa, Guru)
-// Fungsi parseSoal, parseSiswa, parseGuru murni (tanpa DOM/Firestore di top-level) agar bisa dites di Node.js.
+// Import & Export Excel Orchestrator (Soal, Siswa, Guru)
+// Modul ini mengoordinasikan UI input file, pratinjau tabel, dan operasi batch Firestore.
 
-function normHeader(row) {
-  return (Array.isArray(row) ? row : []).map((c) => String(c ?? "").trim().toLowerCase());
-}
+import { readExcelFile, downloadSheet, esc, renderErrorsBox } from "./import/excel-core.js";
+import { parseSoal } from "./import/soal-importer.js";
+import { parseSiswa, parseGuru } from "./import/user-importer.js";
+import {
+  downloadTemplateSoal,
+  downloadTemplateSiswa,
+  exportSiswaXLSX,
+  exportGuruXLSX,
+  exportSoalXLSX
+} from "./import/export-templates.js";
 
-function findCol(headers, aliases) {
-  for (const a of aliases) {
-    const idx = headers.indexOf(a);
-    if (idx !== -1) return idx;
-  }
-  return -1;
-}
-
-function getCell(row, idx) {
-  if (!Array.isArray(row) || idx < 0 || idx >= row.length) return "";
-  return String(row[idx] ?? "").trim();
-}
-
-function isRowEmpty(row) {
-  if (!Array.isArray(row) || row.length === 0) return true;
-  return row.every((c) => String(c ?? "").trim() === "");
-}
-
-function esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-/**
- * Parse sheet Soal: Kode | Tipe | Teks | Opsi A | Opsi B | Opsi C | Opsi D | Kunci | Kiri | Kanan
- */
-export function parseSoal(rows) {
-  const items = [];
-  const errors = [];
-  const ringkasan = { pg: 0, bs: 0, match: 0, essay: 0 };
-
-  if (!Array.isArray(rows) || rows.length === 0) {
-    return { items, errors, ringkasan };
-  }
-
-  const hdr = normHeader(rows[0]);
-  const cKode = findCol(hdr, ["kode"]);
-  const cTipe = findCol(hdr, ["tipe"]);
-  const cTeks = findCol(hdr, ["teks", "pertanyaan", "soal"]);
-  const cOpsiA = findCol(hdr, ["opsi a", "opsia", "pilihan a", "a"]);
-  const cOpsiB = findCol(hdr, ["opsi b", "opsib", "pilihan b", "b"]);
-  const cOpsiC = findCol(hdr, ["opsi c", "opsic", "pilihan c", "c"]);
-  const cOpsiD = findCol(hdr, ["opsi d", "opsid", "pilihan d", "d"]);
-  const cKunci = findCol(hdr, ["kunci", "jawaban"]);
-  const cKiri = findCol(hdr, ["kiri", "kolom a"]);
-  const cKanan = findCol(hdr, ["kanan", "kolom b"]);
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i];
-    if (isRowEmpty(row)) continue;
-    const baris = i + 1;
-
-    const kode = cKode !== -1 ? getCell(row, cKode) : `q${items.length + 1}`;
-    const rawTipe = getCell(row, cTipe);
-    const tipe = (rawTipe || "pg").toLowerCase();
-    const teks = getCell(row, cTeks);
-    const opsiA = getCell(row, cOpsiA);
-    const opsiB = getCell(row, cOpsiB);
-    const opsiC = getCell(row, cOpsiC);
-    const opsiD = getCell(row, cOpsiD);
-    const rawKunci = getCell(row, cKunci);
-    const rawKiri = getCell(row, cKiri);
-    const rawKanan = getCell(row, cKanan);
-
-    if (cKode !== -1 && !kode) {
-      errors.push({ baris, pesan: "Kode tidak boleh kosong" });
-      continue;
-    }
-    if (!teks) {
-      errors.push({ baris, pesan: "Teks soal tidak boleh kosong" });
-      continue;
-    }
-    if (!["pg", "bs", "match", "essay"].includes(tipe)) {
-      errors.push({ baris, pesan: `Tipe soal tidak dikenal: "${rawTipe}"` });
-      continue;
-    }
-
-    let kunci = "";
-    let kiri = ["", ""];
-    let kanan = ["", ""];
-
-    if (tipe === "pg") {
-      const k = rawKunci.toUpperCase();
-      if (!["A", "B", "C", "D"].includes(k)) {
-        errors.push({ baris, pesan: `Kunci PG tidak sah: "${rawKunci}" (harus A..D)` });
-        continue;
-      }
-      kunci = k;
-    } else if (tipe === "bs") {
-      const k = rawKunci.toUpperCase();
-      if (!["A", "B", "C", "D", "TRUE", "FALSE", "BENAR", "SALAH"].includes(k)) {
-        errors.push({ baris, pesan: `Kunci BS tidak sah: "${rawKunci}"` });
-        continue;
-      }
-      if (k === "TRUE" || k === "BENAR") kunci = "true";
-      else if (k === "FALSE" || k === "SALAH") kunci = "false";
-      else kunci = k;
-    } else if (tipe === "match") {
-      let validMatch = false;
-      const parsedKiri = [];
-      const parsedKanan = [];
-
-      if (rawKunci) {
-        const pairs = rawKunci.split(";").map((s) => s.trim()).filter(Boolean);
-        if (pairs.length > 0) {
-          validMatch = true;
-          for (const p of pairs) {
-            const gtIdx = p.indexOf(">");
-            if (gtIdx === -1) {
-              validMatch = false;
-              break;
-            }
-            const l = p.slice(0, gtIdx).trim();
-            const r = p.slice(gtIdx + 1).trim();
-            if (!l || !r) {
-              validMatch = false;
-              break;
-            }
-            parsedKiri.push(l);
-            parsedKanan.push(r);
-          }
-        }
-      } else if (rawKiri && rawKanan) {
-        const sepL = rawKiri.includes(";") ? ";" : ",";
-        const sepR = rawKanan.includes(";") ? ";" : ",";
-        const lArr = rawKiri.split(sepL).map((s) => s.trim()).filter(Boolean);
-        const rArr = rawKanan.split(sepR).map((s) => s.trim()).filter(Boolean);
-        if (lArr.length > 0 && lArr.length === rArr.length) {
-          parsedKiri.push(...lArr);
-          parsedKanan.push(...rArr);
-          validMatch = true;
-        }
-      }
-
-      if (!validMatch) {
-        errors.push({
-          baris,
-          pesan: "Kunci Match tidak sah (gunakan format kiri1>kanan1;kiri2>kanan2)"
-        });
-        continue;
-      }
-      kiri = parsedKiri;
-      kanan = parsedKanan;
-      kunci = parsedKiri.map((l, idx) => `${l}>${parsedKanan[idx]}`).join(";");
-    } else if (tipe === "essay") {
-      kunci = rawKunci;
-    }
-
-    items.push({
-      id: `q${items.length + 1}`,
-      kode,
-      tipe,
-      teks,
-      bobot: 25,
-      pilihan: { A: opsiA, B: opsiB, C: opsiC, D: opsiD },
-      kunci,
-      kiri,
-      kanan
-    });
-    ringkasan[tipe]++;
-  }
-
-  return { items, errors, ringkasan };
-}
-
-/**
- * Parse sheet Siswa: NIS | Nama | Kelas
- */
-export function parseSiswa(rows) {
-  const items = [];
-  const errors = [];
-
-  if (!Array.isArray(rows) || rows.length === 0) {
-    return { items, errors, ringkasan: { total: 0 } };
-  }
-
-  const hdr = normHeader(rows[0]);
-  const cNis = findCol(hdr, ["nis", "nisn"]);
-  const cNama = findCol(hdr, ["nama", "nama siswa"]);
-  const cKelas = findCol(hdr, ["kelas", "rombel"]);
-
-  const seenNis = new Set();
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i];
-    if (isRowEmpty(row)) continue;
-    const baris = i + 1;
-
-    const nis = getCell(row, cNis);
-    const nama = getCell(row, cNama);
-    const kelas = getCell(row, cKelas);
-
-    if (!nis) {
-      errors.push({ baris, pesan: "NIS tidak boleh kosong" });
-      continue;
-    }
-    if (!nama) {
-      errors.push({ baris, pesan: "Nama siswa tidak boleh kosong" });
-      continue;
-    }
-    if (!kelas) {
-      errors.push({ baris, pesan: "Kelas tidak boleh kosong" });
-      continue;
-    }
-    if (seenNis.has(nis)) {
-      errors.push({ baris, pesan: `NIS duplikat: "${nis}"` });
-      continue;
-    }
-
-    seenNis.add(nis);
-    items.push({ nis, nama, kelas, claimedBy: null });
-  }
-
-  return { items, errors, ringkasan: { total: items.length } };
-}
-
-/**
- * Parse sheet Guru: Email | Nama | NIP | Mapel | Aktif
- */
-export function parseGuru(rows) {
-  const items = [];
-  const errors = [];
-
-  if (!Array.isArray(rows) || rows.length === 0) {
-    return { items, errors, ringkasan: { total: 0 } };
-  }
-
-  const hdr = normHeader(rows[0]);
-  const cEmail = findCol(hdr, ["email"]);
-  const cNama = findCol(hdr, ["nama", "nama guru"]);
-  const cNip = findCol(hdr, ["nip"]);
-  const cMapel = findCol(hdr, ["mapel", "mata pelajaran"]);
-  const cAktif = findCol(hdr, ["aktif", "status"]);
-
-  const seenEmail = new Set();
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i];
-    if (isRowEmpty(row)) continue;
-    const baris = i + 1;
-
-    const rawEmail = getCell(row, cEmail);
-    const email = rawEmail.toLowerCase();
-    const nama = getCell(row, cNama);
-    const nip = cNip !== -1 ? getCell(row, cNip) : "";
-    const mapel = cMapel !== -1 ? getCell(row, cMapel) : "";
-    const rawAktif = cAktif !== -1 ? getCell(row, cAktif).toLowerCase() : "";
-
-    if (!email || !email.includes("@")) {
-      errors.push({ baris, pesan: `Email tidak sah: "${rawEmail}"` });
-      continue;
-    }
-    if (!nama) {
-      errors.push({ baris, pesan: "Nama guru tidak boleh kosong" });
-      continue;
-    }
-    if (seenEmail.has(email)) {
-      errors.push({ baris, pesan: `Email duplikat: "${email}"` });
-      continue;
-    }
-
-    let aktif = true;
-    if (rawAktif === "" || rawAktif === "ya" || rawAktif === "true" || rawAktif === "1") {
-      aktif = true;
-    } else if (rawAktif === "tidak" || rawAktif === "false" || rawAktif === "0") {
-      aktif = false;
-    } else {
-      errors.push({ baris, pesan: `Nilai Aktif tidak sah: "${rawAktif}" (isi Ya/Tidak)` });
-      continue;
-    }
-
-    seenEmail.add(email);
-    items.push({ email, nama, nip, mapel, aktif });
-  }
-
-  return { items, errors, ringkasan: { total: items.length } };
-}
-
-function downloadSheet(filename, aoa) {
-  if (!window.XLSX) return;
-  const wb = window.XLSX.utils.book_new();
-  window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.aoa_to_sheet(aoa), "Data");
-  window.XLSX.writeFile(wb, filename);
-}
-
-function readExcelFile(file) {
-  return new Promise((resolve, reject) => {
-    if (!window.XLSX) {
-      reject(new Error("Library SheetJS (XLSX) belum dimuat."));
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const wb = window.XLSX.read(data, { type: "array", raw: false });
-        const firstSheet = wb.SheetNames[0];
-        const ws = wb.Sheets[firstSheet];
-        const rows = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
-        resolve(rows);
-      } catch (err) {
-        reject(err);
-      }
-    };
-    reader.onerror = () => reject(new Error("Gagal membaca berkas Excel."));
-    reader.readAsArrayBuffer(file);
-  });
-}
-
-function renderErrorsBox(el, errors) {
-  if (!el) return;
-  if (!errors || !errors.length) {
-    el.innerHTML = "";
-    el.classList.add("hidden");
-    return;
-  }
-  el.classList.remove("hidden");
-  el.innerHTML = `
-    <div style="font-weight:600; margin-bottom:4px">Daftar Baris Bermasalah (${errors.length}):</div>
-    <ul style="margin:0; padding-left:18px; font-size:12px">
-      ${errors.map((e) => `<li>Baris ${e.baris}: ${esc(e.pesan)}</li>`).join("")}
-    </ul>
-  `;
-}
+// Re-export untuk backward compatibility & automated unit testing di Node.js
+export { parseSoal, parseSiswa, parseGuru, readExcelFile, downloadSheet };
 
 export async function initImportExport() {
   if (typeof document === "undefined") return;
@@ -378,11 +59,7 @@ export async function initImportExport() {
               <table>
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>Kode</th>
-                    <th>Tipe</th>
-                    <th>Teks Soal</th>
-                    <th>Kunci</th>
+                    <th>No</th><th>Kode</th><th>Tipe</th><th>Teks Soal</th><th>Kunci</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -400,8 +77,7 @@ export async function initImportExport() {
                     .join("")}
                 </tbody>
               </table>
-            </div>
-          `;
+            </div>`;
         }
       }
       if (btnSaveSoal) btnSaveSoal.disabled = items.length === 0;
@@ -438,9 +114,8 @@ export async function initImportExport() {
     setQuestionsList(builderItems);
     renderQBuilder();
     showToast(`${builderItems.length} butir soal dimasukkan ke Builder Asesmen.`, "ok");
-    if (typeof window.switchAdminTab === "function") {
-      window.switchAdminTab("sec-asesmen");
-    }
+    const asTabBtn = document.querySelector(".nav-btn[data-tab='sec-asesmen']");
+    if (asTabBtn) asTabBtn.click();
   });
 
   // --- 2. SISWA ---
@@ -472,12 +147,7 @@ export async function initImportExport() {
             <div class="table-container" style="margin-top:10px; max-height:260px; overflow:auto">
               <table>
                 <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>NIS</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                  </tr>
+                  <tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th></tr>
                 </thead>
                 <tbody>
                   ${items
@@ -493,8 +163,7 @@ export async function initImportExport() {
                     .join("")}
                 </tbody>
               </table>
-            </div>
-          `;
+            </div>`;
         }
       }
       if (btnSaveSiswa) btnSaveSiswa.disabled = items.length === 0;
@@ -568,14 +237,7 @@ export async function initImportExport() {
             <div class="table-container" style="margin-top:10px; max-height:260px; overflow:auto">
               <table>
                 <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Email (ID)</th>
-                    <th>Nama</th>
-                    <th>NIP</th>
-                    <th>Mapel</th>
-                    <th>Aktif</th>
-                  </tr>
+                  <tr><th>No</th><th>Email (ID)</th><th>Nama</th><th>NIP</th><th>Mapel</th><th>Aktif</th></tr>
                 </thead>
                 <tbody>
                   ${items
@@ -595,8 +257,7 @@ export async function initImportExport() {
                     .join("")}
                 </tbody>
               </table>
-            </div>
-          `;
+            </div>`;
         }
       }
       if (btnSaveGuru) btnSaveGuru.disabled = items.length === 0;
@@ -642,108 +303,19 @@ export async function initImportExport() {
     btnSaveGuru.disabled = false;
   });
 
-  // --- 4. TEMPLATE & EXPORT (.xlsx) ---
-  const HEADER_SOAL = ["Kode", "Tipe", "Teks", "Opsi A", "Opsi B", "Opsi C", "Opsi D", "Kunci", "Kiri", "Kanan"];
-  const HEADER_SISWA = ["NIS", "Nama", "Kelas"];
-  const HEADER_GURU = ["Email", "Nama", "NIP", "Mapel", "Aktif"];
+  // --- 4. TEMPLATES & EXPORT ---
+  document.getElementById("btn-tpl-soal")?.addEventListener("click", downloadTemplateSoal);
+  document.getElementById("btn-tpl-siswa")?.addEventListener("click", downloadTemplateSiswa);
 
-  document.getElementById("btn-tpl-soal")?.addEventListener("click", () => {
-    downloadSheet("Template_Soal.xlsx", [HEADER_SOAL]);
+  document.getElementById("btn-export-siswa-xlsx")?.addEventListener("click", () => {
+    exportSiswaXLSX({ db, collection, getDocs, showToast });
   });
 
-  document.getElementById("btn-tpl-siswa")?.addEventListener("click", () => {
-    downloadSheet("Template_Siswa.xlsx", [HEADER_SISWA]);
+  document.getElementById("btn-export-guru-xlsx")?.addEventListener("click", () => {
+    exportGuruXLSX({ db, collection, getDocs, showToast });
   });
 
-  document.getElementById("btn-export-siswa-xlsx")?.addEventListener("click", async () => {
-    try {
-      const snap = await getDocs(collection(db, "siswa"));
-      const aoa = [HEADER_SISWA];
-      snap.docs.forEach((d) => {
-        const s = d.data();
-        aoa.push([String(d.id), String(s.nama || ""), String(s.kelas || "")]);
-      });
-      downloadSheet("Data_Siswa.xlsx", aoa);
-      showToast("Export Siswa (.xlsx) berhasil diunduh.", "ok");
-    } catch (err) {
-      showToast("Gagal export Siswa: " + err.message, "error");
-    }
-  });
-
-  document.getElementById("btn-export-guru-xlsx")?.addEventListener("click", async () => {
-    try {
-      const snap = await getDocs(collection(db, "guruInvites"));
-      const aoa = [HEADER_GURU];
-      snap.docs.forEach((d) => {
-        const g = d.data();
-        aoa.push([
-          String(d.id),
-          String(g.nama || ""),
-          String(g.nip || ""),
-          String(g.mapel || ""),
-          g.aktif === false ? "Tidak" : "Ya"
-        ]);
-      });
-      downloadSheet("Data_Guru.xlsx", aoa);
-      showToast("Export Guru (.xlsx) berhasil diunduh.", "ok");
-    } catch (err) {
-      showToast("Gagal export Guru: " + err.message, "error");
-    }
-  });
-
-  document.getElementById("btn-export-soal-xlsx")?.addEventListener("click", async () => {
-    try {
-      const [qSnap, kSnap] = await Promise.all([
-        getDocs(collection(db, "quizzes")),
-        getDocs(collection(db, "quizKeys")).catch(() => ({ docs: [] }))
-      ]);
-      const keysByQuiz = {};
-      kSnap.docs.forEach((d) => {
-        keysByQuiz[d.id] = d.data().keys || {};
-      });
-
-      const aoa = [HEADER_SOAL];
-      qSnap.docs.forEach((d) => {
-        const qz = d.data();
-        const kode = d.id;
-        const qKeys = keysByQuiz[kode] || {};
-        (qz.questions || []).forEach((q) => {
-          const tipe = q.tipe || "pg";
-          const opsiA = q.pilihan?.A || "";
-          const opsiB = q.pilihan?.B || "";
-          const opsiC = q.pilihan?.C || "";
-          const opsiD = q.pilihan?.D || "";
-          let kunci = q.kunci !== undefined ? q.kunci : qKeys[q.id] ?? "";
-          let kiriArr = Array.isArray(q.kiri) ? q.kiri.filter(Boolean) : [];
-          let kananArr = Array.isArray(q.kanan) ? q.kanan.filter(Boolean) : [];
-
-          if (tipe === "match") {
-            if (kunci && typeof kunci === "object" && !Array.isArray(kunci)) {
-              kiriArr = Object.keys(kunci);
-              kananArr = Object.values(kunci);
-            }
-            kunci = kiriArr.map((l, idx) => `${l}>${kananArr[idx] || ""}`).join(";");
-          }
-
-          aoa.push([
-            String(kode),
-            String(tipe),
-            String(q.teks || ""),
-            String(opsiA),
-            String(opsiB),
-            String(opsiC),
-            String(opsiD),
-            String(kunci ?? ""),
-            kiriArr.join("; "),
-            kananArr.join("; ")
-          ]);
-        });
-      });
-
-      downloadSheet("Bank_Soal.xlsx", aoa);
-      showToast("Export Bank Soal (.xlsx) berhasil diunduh.", "ok");
-    } catch (err) {
-      showToast("Gagal export Bank Soal: " + err.message, "error");
-    }
+  document.getElementById("btn-export-soal-xlsx")?.addEventListener("click", () => {
+    exportSoalXLSX({ db, collection, getDocs, showToast });
   });
 }

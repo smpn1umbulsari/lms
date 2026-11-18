@@ -6,8 +6,5 @@
 docs/admin.html # Shell HTML untuk 5 panel portal guru (JS & CSS sudah modular)
 docs/index.html # Shell HTML untuk portal siswa (JS & CSS sudah modular)
 
-# Temporary exception for import-export until decomposed in Fase 4
-docs/js/admin/import-export.js # Monolit impor Excel akan dipecah menjadi 4 modul di Fase 4
-
 # Design mockups
 design/stitch/screens/ # Raw exported UI mockups from Stitch

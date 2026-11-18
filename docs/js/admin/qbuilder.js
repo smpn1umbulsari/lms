@@ -8,6 +8,15 @@ import {
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
 import { openPreviewModal } from "./qpreview.js";
+import {
+  openQModal,
+  closeQModal,
+  switchQModalType,
+  addModalMatchRow,
+  commitQModal
+} from "./qbuilder-dialog.js";
+
+export { openQModal, closeQModal, switchQModalType, addModalMatchRow, commitQModal };
 
 let questionsList = [
   {
@@ -32,7 +41,6 @@ let questionsList = [
   }
 ];
 
-let activeModalType = "pg";
 let editingQuizCode = null;
 
 export function getQuestionsList() {
@@ -60,79 +68,6 @@ export function syncBuilderStats() {
     const mode = document.getElementById("as-mode")?.value || "latihan";
     mEl.textContent = mode === "ujian" ? "Ujian Resmi" : "Latihan";
   }
-}
-
-export function openQModal(type = "pg") {
-  switchQModalType(type);
-  document.getElementById("mq-teks").value = "";
-  document.getElementById("mq-bobot").value = "25";
-  ["a", "b", "c", "d"].forEach((k) => {
-    const el = document.getElementById("mq-pg-" + k);
-    if (el) el.value = "";
-  });
-  document.getElementById("modal-add-q")?.classList.remove("hidden");
-}
-
-export function closeQModal() {
-  document.getElementById("modal-add-q")?.classList.add("hidden");
-}
-
-export function switchQModalType(type) {
-  activeModalType = type;
-  document.querySelectorAll("#modal-add-q .seg-tab").forEach((b) => {
-    b.classList.toggle("active", b.dataset.mtype === type);
-  });
-  ["pg", "bs", "match", "essay"].forEach((t) => {
-    document.getElementById("mq-panel-" + t)?.classList.toggle("hidden", t !== type);
-  });
-}
-
-export function addModalMatchRow() {
-  const wrap = document.getElementById("mq-match-rows");
-  if (!wrap) return;
-  const idx = wrap.querySelectorAll(".mq-match-pair").length + 1;
-  const div = document.createElement("div");
-  div.className = "row mq-match-pair";
-  div.innerHTML = `
-    <div><label>Kolom A (Premis ${idx})</label><input class="mq-kiri" placeholder="Premis ${idx}"></div>
-    <div><label>Kolom B (Pasangan Benar ${idx})</label><input class="mq-kanan" placeholder="Pasangan ${idx}"></div>
-  `;
-  wrap.appendChild(div);
-}
-
-export function commitQModal() {
-  const teks = document.getElementById("mq-teks").value.trim();
-  const bobot = parseInt(document.getElementById("mq-bobot").value, 10) || 25;
-  const qid = "q" + (questionsList.length + 1);
-  const pilihan = {};
-  ["A", "B", "C", "D"].forEach((k) => {
-    pilihan[k] = (document.getElementById("mq-pg-" + k.toLowerCase())?.value || "").trim();
-  });
-  const newQ = {
-    id: qid,
-    tipe: activeModalType,
-    teks,
-    bobot,
-    pilihan,
-    kunci:
-      activeModalType === "pg"
-        ? document.getElementById("mq-pg-key").value
-        : activeModalType === "bs"
-        ? document.getElementById("mq-bs-key").value
-        : "",
-    kiri: [...document.querySelectorAll("#mq-match-rows .mq-kiri")]
-      .map((i) => i.value.trim())
-      .filter(Boolean),
-    kanan: [...document.querySelectorAll("#mq-match-rows .mq-kanan")]
-      .map((i) => i.value.trim())
-      .filter(Boolean)
-  };
-  if (newQ.kiri.length === 0) newQ.kiri = ["", ""];
-  if (newQ.kanan.length === 0) newQ.kanan = ["", ""];
-  questionsList.push(newQ);
-  renderQBuilder();
-  closeQModal();
-  showToast(`Butir soal #${questionsList.length} (${activeModalType.toUpperCase()}) ditambahkan`);
 }
 
 export function addQ(type) {
@@ -334,7 +269,7 @@ export function initQBuilder(onSaved) {
     "close-q-modal": () => closeQModal(),
     "switch-qmodal-type": (b) => switchQModalType(b.dataset.mtype || "pg"),
     "add-modal-match-row": () => addModalMatchRow(),
-    "commit-q-modal": () => commitQModal(),
+    "commit-q-modal": () => commitQModal(questionsList, renderQBuilder),
     "add-q": (b) => addQ(b.dataset.qtype || "pg")
   };
   document.addEventListener("click", (e) => {
