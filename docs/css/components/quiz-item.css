@@ -31,8 +31,8 @@
   align-items: center;
   justify-content: center;
 }
-.bs-btn.active-benar { background: var(--ok); color: #fff; border-color: var(--ok); }
-.bs-btn.active-salah { background: var(--danger); color: #fff; border-color: var(--danger); }
+.bs-btn.active-benar { background: var(--ok); color: var(--on-primary); border-color: var(--ok); }
+.bs-btn.active-salah { background: var(--danger); color: var(--on-primary); border-color: var(--danger); }
 
 .match-board {
   display: grid;

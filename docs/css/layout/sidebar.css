@@ -204,7 +204,7 @@ aside#sidebar {
 }
 
 .btn-logout-icon:hover {
-  background: #fef2f2;
+  background: var(--danger-soft);
   color: var(--danger);
 }
 
@@ -213,7 +213,7 @@ aside#sidebar {
   height: 32px;
   border-radius: 999px;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-primary);
   font-weight: 600;
   font-size: 13px;
   display: flex;

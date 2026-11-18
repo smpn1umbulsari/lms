@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/base/tokens.css">
 <link rel="stylesheet" href="css/base/reset.css">
+<link rel="stylesheet" href="css/base/utilities.css">
 <link rel="stylesheet" href="css/components/button.css">
 <link rel="stylesheet" href="css/components/card.css">
 <link rel="stylesheet" href="css/components/form.css">
@@ -98,13 +99,13 @@
 <!-- TOP INSTITUTIONAL HEADER BAR -->
 <header class="top-appbar hidden" id="admin-topbar">
   <div class="appbar-crumbs">
-    <div class="brand-mark" style="width:28px; height:28px; font-size:13px; border-radius:8px; flex-shrink:0">U</div>
-    <div style="display:flex; flex-direction:column; min-width:0">
-      <div style="display:flex; align-items:center; gap:6px">
-        <strong style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis">SMPN 1 Umbulsari</strong>
-        <span class="badge badge-neutral" style="font-size:10px; padding:2px 6px">Guru</span>
+    <div class="brand-mark brand-mark-sm">U</div>
+    <div class="flex flex-col min-w-0">
+      <div class="flex items-center gap-6">
+        <strong class="truncate text-ink">SMPN 1 Umbulsari</strong>
+        <span class="badge badge-neutral text-xs" style="font-size:10px; padding:2px 6px">Guru</span>
       </div>
-      <span id="crumb-section" class="hide-mobile" style="font-size:11px; color:var(--ink-3)">Ringkasan Dashboard</span>
+      <span id="crumb-section" class="hide-mobile text-xs text-subtle">Ringkasan Dashboard</span>
     </div>
   </div>
   <div class="appbar-right">
@@ -115,15 +116,15 @@
     <button type="button" id="btn-theme-toggle" class="icon-action-btn" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
       <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
     </button>
-    <div style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--line)">
-      <div class="avatar-circle" id="header-avatar" style="width:28px; height:28px; font-size:12px; flex-shrink:0">G</div>
-      <div class="hide-mobile" style="display:flex; flex-direction:column">
-        <span id="header-user-email" style="font-size:12px; font-weight:600; color:var(--ink); line-height:1.1; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">Portal Guru</span>
-        <span style="font-size:10.5px; color:var(--ink-3)">Kurikulum Merdeka</span>
+    <div class="flex items-center gap-8 border-l-line" style="padding-left:6px">
+      <div class="avatar-circle avatar-circle-sm" id="header-avatar">G</div>
+      <div class="hide-mobile flex flex-col">
+        <span id="header-user-email" class="font-semibold text-ink leading-tight truncate" style="font-size:12px; max-width:130px">Portal Guru</span>
+        <span class="text-xs text-subtle" style="font-size:10.5px">Kurikulum Merdeka</span>
       </div>
     </div>
     <button type="button" id="btn-header-logout" class="icon-action-btn btn-logout-icon" title="Keluar Portal Guru" aria-label="Keluar">
-      <span class="material-symbols-outlined" style="font-size:19px; color:var(--danger)">logout</span>
+      <span class="material-symbols-outlined text-danger" style="font-size:19px">logout</span>
     </button>
   </div>
 </header>
