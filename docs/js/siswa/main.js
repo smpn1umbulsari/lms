@@ -14,6 +14,7 @@ import {
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
 import { initDemoChips, isDev } from "../core/env.js";
+import { registerServiceWorker } from "../core/pwa.js";
 import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
 import { loadAsesmen } from "./asesmen.js";
@@ -25,10 +26,11 @@ let userProfile = null;
 let cachedClassMeta = null;
 const loadedStudentTabs = new Set();
 
-// Initialize theme and toast
+// Initialize theme, toast, and PWA
 initTheme();
 initToast();
 initDemoChips();
+registerServiceWorker();
 initMateriSearch();
 initExamRunnerControls();
 initNilaiHandlers();

@@ -13,6 +13,7 @@ import {
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
 import { initDemoChips } from "../core/env.js";
+import { registerServiceWorker } from "../core/pwa.js";
 import { loadRingkasan, updateActivityFeed } from "./ringkasan.js";
 import { loadMateriTable, initMateriHandlers, getMateriData } from "./materi.js";
 import { loadTugasTable, initTugasHandlers, getTugasData } from "./tugas.js";
@@ -27,6 +28,7 @@ import { initImportExport } from "./import-export.js";
 initTheme();
 initToast();
 initDemoChips();
+registerServiceWorker();
 
 // Quick Class Chip Helper
 export function toggleQuickClass(inputId, clsName) {
