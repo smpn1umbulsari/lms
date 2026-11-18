@@ -32,11 +32,41 @@ export function esc(s) {
     .replace(/>/g, "&gt;");
 }
 
-export function downloadSheet(filename, aoa, sheetName = "Data") {
+export const MAX_FILE_BYTES = 5 * 1024 * 1024;
+
+export function validateFile(file) {
+  if (!/\.xlsx?$/i.test(file.name)) return "Format berkas harus .xlsx atau .xls";
+  if (file.size > MAX_FILE_BYTES) return "Ukuran berkas melebihi 5 MB";
+  return "";
+}
+
+/**
+ * @param opts.extra    sheet tambahan [{ name, aoa }] (mis. Petunjuk)
+ * @param opts.textCols indeks kolom yang diformat teks (nol depan aman)
+ * @param opts.padRows  jumlah baris kosong berformat teks di bawah header
+ */
+export function downloadSheet(filename, aoa, sheetName = "Data", opts = {}) {
   if (typeof window === "undefined" || !window.XLSX) return;
-  const wb = window.XLSX.utils.book_new();
-  window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.aoa_to_sheet(aoa), sheetName);
-  window.XLSX.writeFile(wb, filename);
+  const X = window.XLSX;
+  const wb = X.utils.book_new();
+  const ws = X.utils.aoa_to_sheet(aoa);
+  const ncols = Math.max(...aoa.map((r) => r.length));
+  if (opts.textCols?.length && opts.padRows) {
+    for (let r = aoa.length; r <= opts.padRows; r++) {
+      for (const c of opts.textCols) ws[X.utils.encode_cell({ r, c })] = { t: "s", v: "", z: "@" };
+    }
+    ws["!ref"] = X.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: Math.max(opts.padRows, aoa.length - 1), c: ncols - 1 } });
+  }
+  ws["!cols"] = Array.from({ length: ncols }, (_, c) => ({
+    wch: Math.min(60, Math.max(10, ...aoa.map((r) => String(r[c] ?? "").length)) + 2)
+  }));
+  X.utils.book_append_sheet(wb, ws, sheetName);
+  for (const ex of opts.extra || []) {
+    const s2 = X.utils.aoa_to_sheet(ex.aoa);
+    s2["!cols"] = [{ wch: 28 }, { wch: 90 }];
+    X.utils.book_append_sheet(wb, s2, ex.name);
+  }
+  X.writeFile(wb, filename);
 }
 
 export function readExcelFile(file) {

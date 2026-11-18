@@ -41,6 +41,14 @@ export function parseSiswa(rows) {
       errors.push({ baris, pesan: "Kelas tidak boleh kosong" });
       continue;
     }
+    if (!/^[A-Za-z0-9._-]{1,40}$/.test(nis)) {
+      errors.push({ baris, pesan: `NIS tidak sah: "${nis}" (hanya huruf, angka, titik, strip)` });
+      continue;
+    }
+    if (kelas.includes("/") || kelas.length > 30 || nama.length > 100) {
+      errors.push({ baris, pesan: "Nama/Kelas terlalu panjang atau mengandung karakter '/'" });
+      continue;
+    }
     if (seenNis.has(nis)) {
       errors.push({ baris, pesan: `NIS duplikat: "${nis}"` });
       continue;
@@ -85,7 +93,7 @@ export function parseGuru(rows) {
     const mapel = cMapel !== -1 ? getCell(row, cMapel) : "";
     const rawAktif = cAktif !== -1 ? getCell(row, cAktif).toLowerCase() : "";
 
-    if (!email || !email.includes("@")) {
+    if (!/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(email)) {
       errors.push({ baris, pesan: `Email tidak sah: "${rawEmail}"` });
       continue;
     }

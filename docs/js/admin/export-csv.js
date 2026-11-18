@@ -1,267 +1,124 @@
-// Admin CSV Export Utility
-import {
-  db,
-  collection,
-  query,
-  where,
-  getDocs
-} from "../core/firebase.js";
+// Admin Export Nilai (CSV Excel-friendly: BOM UTF-8, NIS & Nama, anti formula-injection)
+import { db, collection, doc, query, where, getDocs, getDoc } from "../core/firebase.js";
 import { getCurrentAttempts } from "./koreksi.js";
 import { showToast } from "../core/toast.js";
+import { downloadCSV } from "../core/csv.js";
+import { buildRekapRows, scoreOf } from "./export/rekap.js";
+
+const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, i * n + n));
+const classesOf = (d) => (Array.isArray(d.classes) ? d.classes : d.classes ? [d.classes] : []);
+const inClass = (d, k) => !k || classesOf(d).some((c) => String(c).toLowerCase() === k);
+
+/** users per kelas (query `in`, maks 10 nilai per kueri) -> Map<uid, {uid,nis,nama,kelas}> */
+async function loadStudents(kelasList) {
+  const map = new Map();
+  for (const part of chunk([...new Set(kelasList)].filter(Boolean), 10)) {
+    const snap = await getDocs(query(collection(db, "users"), where("kelas", "in", part)));
+    snap.docs.forEach((d) => {
+      const u = d.data();
+      map.set(d.id, { uid: d.id, nis: u.nis || "", nama: u.nama || d.id.slice(0, 8), kelas: u.kelas || "-" });
+    });
+  }
+  return map;
+}
+
+const who = (map, uid) => map.get(uid) || { nis: "", nama: String(uid).slice(0, 8), kelas: "-" };
 
 export async function exportTugasCSV() {
   try {
-    const [asgSnap, subSnap] = await Promise.all([
-      getDocs(collection(db, "assignments")),
-      getDocs(collection(db, "submissions"))
-    ]);
-
-    const subsByAsg = new Map();
-    subSnap.docs.forEach((sd) => {
-      const sub = sd.data();
-      const aid = sub.assignmentId;
-      if (!subsByAsg.has(aid)) subsByAsg.set(aid, []);
-      subsByAsg.get(aid).push(sub);
-    });
-
-    let csv = "Judul Tugas,Kelas,UID,Nilai\n";
-    asgSnap.docs.forEach((ad) => {
-      const asg = ad.data();
-      const aid = ad.id;
-      const subs = subsByAsg.get(aid) || [];
-      const judul = (asg.judul || "").replace(/"/g, '""');
-      const kelas = (Array.isArray(asg.classes) ? asg.classes.join("|") : asg.classes || "").replace(
-        /"/g,
-        '""'
-      );
-      subs.forEach((s) => {
-        const uid = (s.uid || "").replace(/"/g, '""');
-        const nilai = s.nilai !== undefined && s.nilai !== null ? s.nilai : "";
-        csv += `"${judul}","${kelas}","${uid}","${nilai}"\n`;
+    const asgSnap = await getDocs(collection(db, "assignments"));
+    const asgs = asgSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const students = await loadStudents(asgs.flatMap(classesOf));
+    const subs = await Promise.all(
+      asgs.map((a) => getDocs(query(collection(db, "submissions"), where("assignmentId", "==", a.id))))
+    );
+    const rows = [["Judul Tugas", "NIS", "Nama Siswa", "Kelas", "Nilai"]];
+    asgs.forEach((a, i) => {
+      subs[i].docs.forEach((sd) => {
+        const s = sd.data();
+        const w = who(students, s.uid);
+        rows.push([a.judul || a.id, w.nis, w.nama, w.kelas, s.nilai ?? ""]);
       });
     });
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "Rekap_Nilai_Tugas.csv";
-    link.click();
-    showToast("Rekap nilai tugas berhasil diunduh.", "ok");
+    downloadCSV("Rekap_Nilai_Tugas.csv", rows);
+    showToast(`Rekap nilai tugas (${rows.length - 1} baris) berhasil diunduh.`, "ok");
   } catch (e) {
     showToast("Gagal mengunduh rekap nilai tugas: " + e.message, "error");
   }
 }
 
 export async function exportUjianCSV() {
-  const currentAttempts = getCurrentAttempts();
-  if (!currentAttempts.length) {
-    showToast("Muat lembar jawaban terlebih dahulu!", "warn");
-    return;
-  }
+  const attempts = getCurrentAttempts();
+  if (!attempts.length) return showToast("Muat lembar jawaban terlebih dahulu!", "warn");
   const code = document.getElementById("gr-code").value.trim();
-
-  let resMap = {},
-    resByUid = {};
   try {
-    const resSnap = await getDocs(
-      query(collection(db, "results"), where("quizId", "==", code))
-    );
+    const [qSnap, resSnap] = await Promise.all([
+      getDoc(doc(db, "quizzes", code)),
+      getDocs(query(collection(db, "results"), where("quizId", "==", code)))
+    ]);
+    const students = await loadStudents(qSnap.exists() ? classesOf(qSnap.data()) : []);
+    const resByUid = {};
     resSnap.docs.forEach((d) => {
-      const data = d.data();
-      resMap[d.id] = data;
-      if (data.uid) resByUid[data.uid] = data;
+      if (d.data().uid) resByUid[d.data().uid] = d.data();
     });
+    const rows = [["NIS", "Nama Siswa", "Kelas", "Kode Kuis", "Nilai"]];
+    attempts
+      .map((a) => ({ a, w: who(students, a.uid) }))
+      .sort((x, y) => x.w.kelas.localeCompare(y.w.kelas) || x.w.nama.localeCompare(y.w.nama))
+      .forEach(({ a, w }) => {
+        const v = scoreOf(resByUid[a.uid]) ?? scoreOf(a);
+        rows.push([w.nis, w.nama, w.kelas, code, v ?? "(belum dinilai)"]);
+      });
+    downloadCSV(`Rekap_Ujian_${code || "kuis"}.csv`, rows);
+    showToast(`Rekap ujian (${rows.length - 1} siswa) berhasil diunduh.`, "ok");
   } catch (e) {
-    console.error("Gagal memuat results:", e);
+    showToast("Gagal mengunduh rekap ujian: " + e.message, "error");
   }
-
-  let csv = "UID,QuizId,AttemptId,Status,Nilai\n";
-  currentAttempts.forEach((a) => {
-    const res = resMap[a.id] || resByUid[a.uid];
-    let val = "";
-    if (res && res.totalScore !== undefined && res.totalScore !== null) val = res.totalScore;
-    else if (res && res.score !== undefined && res.score !== null) val = res.score;
-    else if (res && res.nilai !== undefined && res.nilai !== null) val = res.nilai;
-    else if (res && res.total !== undefined && res.total !== null) val = res.total;
-    else if (a.totalScore !== undefined && a.totalScore !== null) val = a.totalScore;
-    else if (a.score !== undefined && a.score !== null) val = a.score;
-    else if (a.nilai !== undefined && a.nilai !== null) val = a.nilai;
-    else if (a.benar !== undefined && a.benar !== null) val = a.benar;
-    else if (a.total !== undefined && a.total !== null) val = a.total;
-
-    csv += `"${a.uid}","${a.quizId}","${a.id}","Submitted","${val}"\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `Rekap_Ujian_${code || "kuis"}.csv`;
-  link.click();
 }
 
 export async function exportRekapTerpaduCSV() {
-  const targetKelasInput = prompt(
-    "Masukkan kode kelas target untuk rekap terpadu (kosongkan untuk semua kelas):",
-    "c1"
-  );
-  if (targetKelasInput === null) return;
-  const targetKelas = targetKelasInput.trim().toLowerCase();
-
+  const kelas = (document.getElementById("rekap-kelas")?.value || "").trim().toLowerCase();
   try {
-    const [uSnap, asgSnap, subSnap, qSnap, resSnap] = await Promise.all([
-      getDocs(collection(db, "users")),
+    const [asgSnap, qSnap] = await Promise.all([
       getDocs(collection(db, "assignments")),
-      getDocs(collection(db, "submissions")),
-      getDocs(collection(db, "quizzes")),
-      getDocs(collection(db, "results"))
+      getDocs(collection(db, "quizzes"))
     ]);
+    const assignments = asgSnap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((a) => inClass(a, kelas));
+    const quizzes = qSnap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((q) => inClass(q, kelas));
 
-    const assignments = asgSnap.docs
-      .map((d) => ({ id: d.id, ...d.data() }))
-      .filter((a) => {
-        if (!targetKelas) return true;
-        const cls = Array.isArray(a.classes) ? a.classes : [a.classes];
-        return cls.map((c) => String(c).toLowerCase()).includes(targetKelas);
-      });
-
-    const quizzes = qSnap.docs
-      .map((d) => ({ id: d.id, ...d.data() }))
-      .filter((q) => {
-        if (!targetKelas) return true;
-        const cls = Array.isArray(q.classes) ? q.classes : [q.classes];
-        return cls.map((c) => String(c).toLowerCase()).includes(targetKelas);
-      });
-
-    const subMap = {};
-    subSnap.docs.forEach((d) => {
-      const s = d.data();
-      if (!s.uid) return;
-      if (!subMap[s.uid]) subMap[s.uid] = {};
-      if (s.nilai !== undefined && s.nilai !== null && s.nilai !== "") {
-        subMap[s.uid][s.assignmentId] = Number(s.nilai);
-      }
-    });
-
-    const resMap = {};
-    resSnap.docs.forEach((d) => {
-      const r = d.data();
-      if (!r.uid) return;
-      if (!resMap[r.uid]) resMap[r.uid] = {};
-      const score =
-        r.totalScore !== undefined
-          ? r.totalScore
-          : r.score !== undefined
-          ? r.score
-          : r.nilai;
-      if (score !== undefined && score !== null && score !== "") {
-        resMap[r.uid][r.quizId || d.id] = Number(score);
-      }
-    });
-
-    const studentMap = {};
-    uSnap.docs.forEach((d) => {
-      const u = d.data();
-      const k = String(u.kelas || "").toLowerCase();
-      if (!targetKelas || k === targetKelas) {
-        studentMap[d.id] = {
-          uid: d.id,
-          nama: u.nama || d.id.slice(0, 8),
-          kelas: u.kelas || targetKelas || "-"
-        };
-      }
-    });
-
-    Object.keys(subMap)
-      .concat(Object.keys(resMap))
-      .forEach((uid) => {
-        if (!studentMap[uid] && (!targetKelas || targetKelas === "c1")) {
-          studentMap[uid] = {
-            uid,
-            nama: uid.slice(0, 8),
-            kelas: targetKelas || "c1"
-          };
-        }
-      });
-
-    const students = Object.values(studentMap);
-    if (!students.length) {
-      showToast("Tidak ditemukan data siswa untuk kriteria kelas ini.", "warn");
-      return;
+    let students;
+    if (kelas) {
+      // kelas disimpan dengan huruf asli; cocokkan tanpa memandang kapitalisasi
+      const kl = [...new Set([...assignments, ...quizzes].flatMap(classesOf))].filter((c) => String(c).toLowerCase() === kelas);
+      students = await loadStudents(kl.length ? kl : [kelas]);
+    } else {
+      students = await loadStudents([...assignments, ...quizzes].flatMap(classesOf));
     }
+    if (!students.size) return showToast("Tidak ditemukan data siswa untuk kriteria kelas ini.", "warn");
 
-    students.sort((a, b) => a.nama.localeCompare(b.nama));
+    const [subSnaps, resSnaps] = await Promise.all([
+      Promise.all(assignments.map((a) => getDocs(query(collection(db, "submissions"), where("assignmentId", "==", a.id))))),
+      Promise.all(quizzes.map((q) => getDocs(query(collection(db, "results"), where("quizId", "==", q.id)))))
+    ]);
+    const subMap = {};
+    const resMap = {};
+    subSnaps.forEach((snap, i) =>
+      snap.docs.forEach((d) => {
+        const s = d.data();
+        if (s.nilai !== undefined && s.nilai !== null && s.nilai !== "") (subMap[s.uid] ||= {})[assignments[i].id] = Number(s.nilai);
+      })
+    );
+    resSnaps.forEach((snap, i) =>
+      snap.docs.forEach((d) => {
+        const r = d.data();
+        const sc = scoreOf(r);
+        if (r.uid && sc !== undefined) (resMap[r.uid] ||= {})[quizzes[i].id] = sc;
+      })
+    );
 
-    const asgHeaders = assignments.map((a) => `"${(a.judul || a.id).replace(/"/g, '""')}"`);
-    const qHeaders = quizzes.map((q) => `"${(q.judul || q.id).replace(/"/g, '""')}"`);
-    const headerRow = [
-      '"UID"',
-      '"Nama Siswa"',
-      '"Kelas"',
-      ...asgHeaders,
-      '"Rata-rata Tugas"',
-      ...qHeaders,
-      '"Rata-rata Ujian"',
-      '"Nilai Akhir (40% Tugas + 60% Ujian)"'
-    ].join(",");
-
-    const rows = students.map((s) => {
-      const sSubs = subMap[s.uid] || {};
-      const sRes = resMap[s.uid] || {};
-
-      let sumTugas = 0,
-        countTugas = 0;
-      const tugasCols = assignments.map((a) => {
-        const val = sSubs[a.id];
-        if (val !== undefined) {
-          sumTugas += val;
-          countTugas++;
-          return `"${val}"`;
-        }
-        return '""';
-      });
-      const avgTugas = countTugas ? Math.round(sumTugas / countTugas) : null;
-
-      let sumUjian = 0,
-        countUjian = 0;
-      const qCols = quizzes.map((q) => {
-        const val = sRes[q.id];
-        if (val !== undefined) {
-          sumUjian += val;
-          countUjian++;
-          return `"${val}"`;
-        }
-        return '""';
-      });
-      const avgUjian = countUjian ? Math.round(sumUjian / countUjian) : null;
-
-      let finalScore = "";
-      if (avgTugas !== null && avgUjian !== null) {
-        finalScore = Math.round(avgTugas * 0.4 + avgUjian * 0.6);
-      } else if (avgTugas !== null) {
-        finalScore = avgTugas;
-      } else if (avgUjian !== null) {
-        finalScore = avgUjian;
-      }
-
-      return [
-        `"${s.uid}"`,
-        `"${s.nama.replace(/"/g, '""')}"`,
-        `"${s.kelas.replace(/"/g, '""')}"`,
-        ...tugasCols,
-        `"${avgTugas !== null ? avgTugas : ""}"`,
-        ...qCols,
-        `"${avgUjian !== null ? avgUjian : ""}"`,
-        `"${finalScore}"`
-      ].join(",");
-    });
-
-    const csvContent = [headerRow, ...rows].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `Rekap_Terpadu_SITURI_${targetKelas || "Semua"}.csv`;
-    link.click();
-    showToast("Rekap nilai terpadu (tugas + ujian) berhasil diunduh.", "ok");
+    const rows = buildRekapRows({ students: [...students.values()], assignments, quizzes, subMap, resMap });
+    downloadCSV(`Rekap_Terpadu_SITURI_${kelas || "Semua"}.csv`, rows);
+    showToast(`Rekap terpadu (${rows.length - 1} siswa) berhasil diunduh.`, "ok");
   } catch (err) {
     console.error("Gagal mengekspor rekap terpadu:", err);
     showToast("Gagal mengekspor rekap terpadu: " + err.message, "error");
@@ -272,4 +129,20 @@ export function initCSVExport() {
   document.getElementById("btn-export-csv")?.addEventListener("click", exportUjianCSV);
   document.getElementById("btn-export-tugas-csv")?.addEventListener("click", exportTugasCSV);
   document.getElementById("btn-export-rekap-terpadu")?.addEventListener("click", exportRekapTerpaduCSV);
+
+  // Daftar kelas untuk filter rekap dimuat sekali saat pertama difokuskan (hemat baca)
+  const sel = document.getElementById("rekap-kelas");
+  sel?.addEventListener(
+    "focus",
+    async () => {
+      try {
+        const snap = await getDocs(collection(db, "classes"));
+        const ids = snap.docs.map((d) => d.id).sort();
+        sel.innerHTML = `<option value="">Semua kelas</option>` + ids.map((c) => `<option value="${c}">${c}</option>`).join("");
+      } catch (e) {
+        /* tetap gunakan "Semua kelas" */
+      }
+    },
+    { once: true }
+  );
 }

@@ -25,6 +25,7 @@ export function parseSoal(rows) {
   const cKunci = findCol(hdr, ["kunci", "jawaban"]);
   const cKiri = findCol(hdr, ["kiri", "kolom a"]);
   const cKanan = findCol(hdr, ["kanan", "kolom b"]);
+  const cBobot = findCol(hdr, ["bobot", "skor", "poin"]);
 
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
@@ -56,6 +57,17 @@ export function parseSoal(rows) {
       continue;
     }
 
+    let bobot = 25;
+    const rawBobot = cBobot !== -1 ? getCell(row, cBobot) : "";
+    if (rawBobot !== "") {
+      const b = Number(rawBobot.replace(",", "."));
+      if (!Number.isFinite(b) || b <= 0 || b > 100) {
+        errors.push({ baris, pesan: `Bobot tidak sah: "${rawBobot}" (angka 1-100)` });
+        continue;
+      }
+      bobot = b;
+    }
+
     let kunci = "";
     let kiri = ["", ""];
     let kanan = ["", ""];
@@ -64,6 +76,15 @@ export function parseSoal(rows) {
       const k = rawKunci.toUpperCase();
       if (!["A", "B", "C", "D"].includes(k)) {
         errors.push({ baris, pesan: `Kunci PG tidak sah: "${rawKunci}" (harus A..D)` });
+        continue;
+      }
+      const filled = [opsiA, opsiB, opsiC, opsiD].filter(Boolean).length;
+      if (filled < 2) {
+        errors.push({ baris, pesan: "Soal PG minimal memiliki 2 opsi jawaban" });
+        continue;
+      }
+      if (!{ A: opsiA, B: opsiB, C: opsiC, D: opsiD }[k]) {
+        errors.push({ baris, pesan: `Kunci ${k} menunjuk opsi yang kosong` });
         continue;
       }
       kunci = k;
@@ -132,7 +153,7 @@ export function parseSoal(rows) {
       kode,
       tipe,
       teks,
-      bobot: 25,
+      bobot,
       pilihan: { A: opsiA, B: opsiB, C: opsiC, D: opsiD },
       kunci,
       kiri,

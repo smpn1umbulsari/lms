@@ -1,0 +1,128 @@
+// Tes unit: CSV aman, diff roster, rekap nilai, round-trip export->import soal, validasi parser
+// Jalankan: node spike/export.test.mjs
+import assert from "node:assert/strict";
+import { csvCell, toCSV } from "../docs/js/core/csv.js";
+import { diffSiswa, diffGuru, unknownClasses, isSuperAdminDoc } from "../docs/js/admin/import/roster-diff.js";
+import { buildRekapRows, scoreOf } from "../docs/js/admin/export/rekap.js";
+import { buildSoalRows } from "../docs/js/admin/import/soal-exporter.js";
+import { parseSoal } from "../docs/js/admin/import/soal-importer.js";
+import { parseSiswa, parseGuru } from "../docs/js/admin/import/user-importer.js";
+
+let pass = 0;
+const t = (name, fn) => {
+  try { fn(); pass++; console.log("PASS  ", name); }
+  catch (e) { console.error("FAIL  ", name, "->", e.message); process.exit(1); }
+};
+
+// ---- CSV ----
+t("csv: kutip ganda di-escape & BOM ada", () => {
+  assert.equal(csvCell('a"b'), '"a""b"');
+  assert(toCSV([["x"]]).startsWith("\ufeff"));
+});
+t("csv: formula injection dinetralkan, angka negatif tetap", () => {
+  assert.equal(csvCell("=HYPERLINK(1)"), `"'=HYPERLINK(1)"`);
+  assert.equal(csvCell("@SUM(A1)"), `"'@SUM(A1)"`);
+  assert.equal(csvCell("-5"), '"-5"');
+  assert.equal(csvCell(0), '"0"');
+  assert.equal(csvCell(null), '""');
+});
+
+// ---- Roster diff ----
+t("siswa diff: baru/ubah/sama + claimedBy dipertahankan", () => {
+  const items = [
+    { nis: "1", nama: "Ani", kelas: "7A" },
+    { nis: "2", nama: "Budi", kelas: "7B" },
+    { nis: "3", nama: "Cici", kelas: "7A" }
+  ];
+  const ex = new Map([
+    ["1", { nama: "Ani", kelas: "7A", claimedBy: "u1" }],
+    ["2", { nama: "Budi", kelas: "7A", claimedBy: "u2" }],
+    ["9", { nama: "Lama", kelas: "7A", claimedBy: null }]
+  ]);
+  const d = diffSiswa(items, ex);
+  assert.equal(d.baru.length, 1);
+  assert.equal(d.sama.length, 1);
+  assert.equal(d.ubah.length, 1);
+  assert.equal(d.ubah[0].claimedBy, "u2");
+  assert.equal(d.tidakDiFile, 1);
+});
+t("guru diff: aktif undefined dianggap true (tanpa perubahan)", () => {
+  const d = diffGuru(
+    [{ email: "a@s.id", nama: "A", nip: "", mapel: "", aktif: true }],
+    new Map([["a@s.id", { nama: "A" }]])
+  );
+  assert.equal(d.sama.length, 1);
+});
+t("unknownClasses & isSuperAdminDoc", () => {
+  assert.deepEqual(unknownClasses([{ kelas: "7A" }, { kelas: "9Z" }, { kelas: "9Z" }], new Set(["7A"])), { "9Z": 2 });
+  assert(isSuperAdminDoc({ ok: true }));
+  assert(isSuperAdminDoc({ role: "admin" }));
+  assert(!isSuperAdminDoc({ role: "guru" }));
+  assert(!isSuperAdminDoc(undefined));
+});
+
+// ---- Rekap ----
+t("rekap: rata-rata & nilai akhir 40/60, sel kosong tetap kosong", () => {
+  const rows = buildRekapRows({
+    students: [{ uid: "u1", nis: "007", nama: "Ani", kelas: "7A" }, { uid: "u2", nis: "8", nama: "Budi", kelas: "7A" }],
+    assignments: [{ id: "a1", judul: "T1" }],
+    quizzes: [{ id: "q1", judul: "U1" }],
+    subMap: { u1: { a1: 80 } },
+    resMap: { u1: { q1: 90 } }
+  });
+  assert.deepEqual(rows[0].slice(0, 3), ["NIS", "Nama Siswa", "Kelas"]);
+  assert.deepEqual(rows[1], ["007", "Ani", "7A", 80, 80, 90, 90, 86]);
+  assert.deepEqual(rows[2], ["8", "Budi", "7A", "", "", "", "", ""]);
+});
+t("scoreOf: prioritas field & nilai 0 dihitung", () => {
+  assert.equal(scoreOf({ totalScore: 0, score: 5 }), 0);
+  assert.equal(scoreOf({ nilai: "70" }), 70);
+  assert.equal(scoreOf({}), undefined);
+});
+
+// ---- Round-trip soal ----
+t("soal: export -> import mempertahankan tipe, kunci, bobot, match", () => {
+  const quizzes = [{
+    id: "q_ipa",
+    data: { questions: [
+      { id: "q1", tipe: "pg", teks: "Ibukota?", pilihan: { A: "Jakarta", B: "Bandung", C: "", D: "" }, kunci: "A", bobot: 40 },
+      { id: "q2", tipe: "bs", teks: "Air 100C", pilihan: {}, kunci: "true", bobot: 20 },
+      { id: "q3", tipe: "match", teks: "Jodohkan", kiri: ["Al", "Tr"], kanan: ["Difusi", "Saring"], kunci: undefined },
+      { id: "q4", tipe: "essay", teks: "Jelaskan", pilihan: {} }
+    ] }
+  }];
+  const keys = { q_ipa: { q3: { Al: "Difusi", Tr: "Saring" } } };
+  const res = parseSoal(buildSoalRows(quizzes, keys));
+  assert.equal(res.errors.length, 0, JSON.stringify(res.errors));
+  assert.deepEqual(res.ringkasan, { pg: 1, bs: 1, match: 1, essay: 1 });
+  assert.equal(res.items[0].bobot, 40);
+  assert.equal(res.items[0].kunci, "A");
+  assert.equal(res.items[1].kunci, "true");
+  assert.deepEqual(res.items[2].kiri, ["Al", "Tr"]);
+  assert.equal(res.items[3].bobot, 25);
+});
+
+// ---- Validasi parser baru ----
+t("soal: PG kunci ke opsi kosong / kurang 2 opsi / bobot salah ditolak", () => {
+  const H = ["Kode", "Tipe", "Teks", "Opsi A", "Opsi B", "Opsi C", "Opsi D", "Kunci", "Bobot"];
+  const r = parseSoal([
+    H,
+    ["q", "pg", "S1", "a", "b", "", "", "C", ""],
+    ["q", "pg", "S2", "a", "", "", "", "A", ""],
+    ["q", "pg", "S3", "a", "b", "", "", "A", "abc"],
+    ["q", "pg", "S4", "a", "b", "", "", "A", "30"]
+  ]);
+  assert.equal(r.errors.length, 3);
+  assert.equal(r.items.length, 1);
+  assert.equal(r.items[0].bobot, 30);
+});
+t("siswa: NIS dengan '/' ditolak; guru: email tanpa domain ditolak", () => {
+  const s = parseSiswa([["NIS", "Nama", "Kelas"], ["12/3", "X", "7A"], ["123", "Y", "7A"]]);
+  assert.equal(s.items.length, 1);
+  assert.equal(s.errors.length, 1);
+  const g = parseGuru([["Email", "Nama"], ["abc@x", "A"], ["ok@x.id", "B"]]);
+  assert.equal(g.items.length, 1);
+  assert.equal(g.errors.length, 1);
+});
+
+console.log(`\n=== ${pass} PASS / 0 FAIL ===`);

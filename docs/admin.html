@@ -780,6 +780,7 @@
           <p class="page-subtitle">Evaluasi lembar jawaban siswa dan terbitkan nilai secara kolektif (Batch Write)</p>
         </div>
         <div class="header-actions">
+          <select id="rekap-kelas" aria-label="Filter kelas rekap" style="width:auto; margin:0"><option value="">Semua kelas</option></select>
           <button id="btn-export-rekap-terpadu" type="button" class="btn btn-secondary">
             <span class="material-symbols-outlined" style="font-size:18px">table_view</span>
             <span>Rekap Terpadu (Ujian + Tugas)</span>
@@ -862,7 +863,7 @@
 
       <div class="panel">
         <h3 style="margin-top:0">1. Bank Soal</h3>
-        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Kode | Tipe | Teks | Opsi A | Opsi B | Opsi C | Opsi D | Kunci | Kiri | Kanan</code>. Setelah diparse, soal masuk ke Builder Asesmen — terbitkan lewat tombol simpan yang sudah ada.</p>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Kode | Tipe | Teks | Opsi A-D | Kunci | Kiri | Kanan | Bobot</code> (Bobot opsional; template memuat sheet Petunjuk). Setelah diparse, soal masuk ke Builder Asesmen — terbitkan lewat tombol simpan yang sudah ada.</p>
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:220px">
             <label for="imp-file-soal">Berkas Excel (.xlsx)</label>
@@ -872,7 +873,7 @@
           <button id="btn-export-soal-xlsx" type="button" class="btn btn-secondary">Export Bank Soal</button>
         </div>
         <div id="imp-ribbon-soal" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
-        <div id="imp-errors-soal" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-errors-soal" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-soal"></div>
         <div style="margin-top:12px">
           <button id="btn-imp-save-soal" type="button" class="btn btn-primary" disabled>Isi Builder Asesmen</button>
@@ -881,7 +882,7 @@
 
       <div class="panel">
         <h3 style="margin-top:0">2. Roster Siswa</h3>
-        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>NIS | Nama | Kelas</code>. NIS disimpan sebagai teks (nol depan aman). Siswa mengikat akunnya sendiri saat login pertama.</p>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>NIS | Nama | Kelas</code>. NIS disimpan sebagai teks (nol depan aman). Impor ulang aman: siswa yang sudah login tidak direset, hanya data berubah yang ditulis. Penyimpanan khusus Admin Utama.</p>
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:220px">
             <label for="imp-file-siswa">Berkas Excel (.xlsx)</label>
@@ -891,7 +892,7 @@
           <button id="btn-export-siswa-xlsx" type="button" class="btn btn-secondary">Export Roster</button>
         </div>
         <div id="imp-ribbon-siswa" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
-        <div id="imp-errors-siswa" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-errors-siswa" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-siswa"></div>
         <div style="margin-top:12px">
           <button id="btn-imp-save-siswa" type="button" class="btn btn-primary" disabled>Simpan Roster</button>
@@ -906,10 +907,11 @@
             <label for="imp-file-guru">Berkas Excel (.xlsx)</label>
             <input id="imp-file-guru" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
           </div>
-          <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Export / Template Guru</button>
+          <button id="btn-tpl-guru" type="button" class="btn btn-secondary">Unduh Template</button>
+          <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Export Guru</button>
         </div>
         <div id="imp-ribbon-guru" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
-        <div id="imp-errors-guru" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:#fdecea; color:#8a1c13"></div>
+        <div id="imp-errors-guru" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-guru"></div>
         <div style="margin-top:12px">
           <button id="btn-imp-save-guru" type="button" class="btn btn-primary" disabled>Simpan Undangan</button>
