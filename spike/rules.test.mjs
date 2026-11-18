@@ -99,6 +99,16 @@ await env.withSecurityRulesDisabled(async (c) => {
 });
 await no("admins: invite aktif=false ditolak", assertFails(setDoc(doc(guru2, "admins", "gB"), { nama: "Siti" })));
 
+// ---- RBAC: Admin vs Guru ----
+await env.withSecurityRulesDisabled(async (c) => {
+  await setDoc(doc(c.firestore(), "admins", "gA"), { nama: "Budi", role: "guru" });
+});
+await no("RBAC: guru tulis roster siswa ditolak", assertFails(setDoc(doc(guru, "siswa", "1099"), { nama: "Siswa Baru", kelas: "c1" })));
+await no("RBAC: guru tulis guruInvites ditolak", assertFails(setDoc(doc(guru, "guruInvites", "baru@sekolah.sch.id"), { nama: "Baru", aktif: true })));
+await ok("RBAC: guru tulis materi dibolehkan", assertSucceeds(setDoc(doc(guru, "materials", "mat1"), { judul: "Materi Baru", deskripsi: "Isi", link: "" })));
+await ok("RBAC: guru tulis penugasan dibolehkan", assertSucceeds(setDoc(doc(guru, "assignments", "asg1"), { judul: "Tugas 1", kelas: "c1" })));
+await ok("RBAC: admin tulis roster siswa dibolehkan", assertSucceeds(setDoc(doc(adm, "siswa", "1099"), { nama: "Siswa Baru", kelas: "c1", claimedBy: null })));
+
 await env.cleanup();
 console.log(`\n=== ${pass} PASS / ${fail} FAIL ===`);
 process.exit(fail ? 1 : 0);

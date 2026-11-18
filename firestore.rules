@@ -1,9 +1,18 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() {
+    function adminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
+    // isStaff: siapa saja yang terdaftar di admins/{uid} (admin atau guru)
+    function isStaff() {
       return request.auth != null
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    // isSuperAdmin: khusus role 'admin' (atau dokumen legacy tanpa field role)
+    function isSuperAdmin() {
+      return isStaff()
+        && (!('role' in adminDoc()) || adminDoc().role == 'admin');
     }
     // get() ke path sama di-cache per evaluasi = 1 access-call walau dipanggil berulang
     function q(qid) { return get(/databases/$(database)/documents/quizzes/$(qid)).data; }
@@ -11,7 +20,7 @@ service cloud.firestore {
 
     // ---- starts: create divalidasi penuh, immutable setelah dibuat ----
     match /starts/{startId} {
-      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isStaff());
       allow create: if request.auth != null
         && startId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
         && request.resource.data.uid == request.auth.uid
@@ -29,26 +38,26 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // ---- quizzes: admin bebas; siswa baca setelah mulai & dalam jendela; kunci setelah openAt ----
+    // ---- quizzes: staff (guru/admin) bebas; siswa baca setelah mulai & dalam jendela; kunci setelah openAt ----
     match /quizzes/{quizId} {
       allow read: if request.auth != null && (
         (request.time >= resource.data.openAt && request.time <= resource.data.closeAt
             && exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_1')))
-        || isAdmin());
-      allow create: if isAdmin();
-      allow update, delete: if isAdmin() && request.time < resource.data.openAt;
+        || isStaff());
+      allow create: if isStaff();
+      allow update, delete: if isStaff() && request.time < resource.data.openAt;
     }
 
-    // ---- quizKeys: admin-only; terkunci setelah openAt ----
+    // ---- quizKeys: staff-only; terkunci setelah openAt ----
     match /quizKeys/{quizId} {
-      allow read: if isAdmin();
-      allow create: if isAdmin();
-      allow update, delete: if isAdmin() && request.time < q(quizId).openAt;
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if isStaff() && request.time < q(quizId).openAt;
     }
 
     // ---- attempts: create+update terbatas, idempoten, jendela dari starts ----
     match /attempts/{attemptId} {
-      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isStaff());
       allow create: if request.auth != null
         && attemptId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
         && request.resource.data.uid == request.auth.uid
@@ -67,23 +76,23 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // ---- results: admin create+update (revisi in-place), siswa baca sendiri ----
+    // ---- results: staff create+update (revisi in-place), siswa baca sendiri ----
     match /results/{resultId} {
-      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isAdmin());
-      allow create, update: if isAdmin();
+      allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isStaff());
+      allow create, update: if isStaff();
       allow delete: if false;
     }
 
     // ---- quizExplanations: terbuka setelah closeAt (0 access-call) ----
     match /quizExplanations/{quizId} {
       allow read: if request.auth != null && request.time > resource.data.closeAt;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
-    // ---- siswa: roster hasil impor Excel (admin write); login baca untuk binding ----
+    // ---- siswa: roster hasil impor Excel (hanya SuperAdmin write); login baca untuk binding ----
     match /siswa/{nis} {
       allow read: if request.auth != null;
-      allow write: if isAdmin();
+      allow write: if isSuperAdmin();
       // siswa hanya boleh mengklaim dirinya sekali: claimedBy null -> uid sendiri
       allow update: if request.auth != null
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedBy'])
@@ -91,12 +100,9 @@ service cloud.firestore {
         && request.resource.data.claimedBy == request.auth.uid;
     }
 
-    // ---- users: pemilik (kelas immutable oleh siswa) atau admin ----
-    // ponytail: tanpa field `nis` jalur lama (exists classes) tetap berlaku —
-    // rules tak bisa query "apakah kelas ini punya roster". Sekolah yang memakai
-    // roster selalu mengirim `nis`, jadi jalur roster yang mengikat.
+    // ---- users: pemilik (kelas immutable oleh siswa) atau superadmin ----
     match /users/{uid} {
-      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow read: if request.auth != null && (request.auth.uid == uid || isStaff());
       allow create: if request.auth != null && request.auth.uid == uid && (
         (!('nis' in request.resource.data)
           && exists(/databases/$(database)/documents/classes/$(request.resource.data.kelas)))
@@ -107,60 +113,59 @@ service cloud.firestore {
           && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.claimedBy == null));
       allow update: if request.auth != null && (
         (request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nama','updatedAt']))
-        || isAdmin());
+        || isSuperAdmin());
     }
 
-    // ---- progress: pemilik tulis/baca, admin baca ----
+    // ---- progress: pemilik tulis/baca, staff baca ----
     match /progress/{uid} {
-      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow read: if request.auth != null && (request.auth.uid == uid || isStaff());
       allow write: if request.auth != null && request.auth.uid == uid;
     }
 
-    // ---- admins: admin bebas; guru aktivasi diri sekali lewat guruInvites ----
-    // Revoke = set guruInvites/<email>.aktif=false. Email unik di Auth → invite sekali pakai.
+    // ---- admins: superadmin bebas; guru aktivasi diri sekali lewat guruInvites ----
     match /admins/{uid} {
-      allow read: if isAdmin() || (request.auth != null && request.auth.uid == uid);
-      allow write: if isAdmin();
+      allow read: if isStaff() || (request.auth != null && request.auth.uid == uid);
+      allow write: if isSuperAdmin();
       allow create: if request.auth != null && request.auth.uid == uid
         && request.auth.token.email != null
         && exists(/databases/$(database)/documents/guruInvites/$(request.auth.token.email.lower()))
         && get(/databases/$(database)/documents/guruInvites/$(request.auth.token.email.lower())).data.aktif == true;
     }
 
-    // ---- guruInvites: hasil impor Excel (doc ID = email lowercase) ----
+    // ---- guruInvites: hasil impor Excel (hanya SuperAdmin write, doc ID = email lowercase) ----
     match /guruInvites/{email} {
-      allow read: if isAdmin()
+      allow read: if isStaff()
         || (request.auth != null && request.auth.token.email != null
             && request.auth.token.email.lower() == email);
-      allow write: if isAdmin();
+      allow write: if isSuperAdmin();
     }
 
-    // ---- classes: admin-only write; dibaca semua login (berisi metadata jadwal) ----
+    // ---- classes: superadmin-only write; dibaca semua login (berisi metadata jadwal) ----
     match /classes/{code} {
       allow read: if request.auth != null;
-      allow write: if isAdmin();
+      allow write: if isSuperAdmin();
     }
 
-    // ---- materials: admin write; semua login baca ----
+    // ---- materials: staff write; semua login baca ----
     match /materials/{id} {
       allow read: if request.auth != null;
-      allow create, update: if isAdmin()
+      allow create, update: if isStaff()
         && request.resource.data.judul.size() <= 150
         && request.resource.data.deskripsi.size() <= 20000
         && request.resource.data.link.size() <= 500;
-      allow delete: if isAdmin();
+      allow delete: if isStaff();
     }
 
-    // ---- assignments: admin write; semua login baca ----
+    // ---- assignments: staff write; semua login baca ----
     match /assignments/{id} {
       allow read: if request.auth != null;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
-    // ---- submissions: siswa tulis miliknya sendiri, admin baca semua ----
+    // ---- submissions: siswa tulis miliknya sendiri, staff baca/nilai semua ----
     match /submissions/{subId} {
       allow read: if request.auth != null && resource != null
-        && (resource.data.uid == request.auth.uid || isAdmin());
+        && (resource.data.uid == request.auth.uid || isStaff());
       allow create: if request.auth != null
         && request.resource.data.uid == request.auth.uid
         && subId == request.auth.uid + '__' + request.resource.data.assignmentId
@@ -172,21 +177,21 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teks','link','updatedAt'])
           && request.resource.data.teks.size() <= 20000
           && request.resource.data.link.size() <= 500)
-        || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nilai','catatanGuru','updatedAt']))
+        || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nilai','catatanGuru','updatedAt']))
       );
       allow delete: if false;
     }
 
-    // ---- certificates: admin write, publik read (verifikasi) ----
+    // ---- certificates: staff write, publik read (verifikasi) ----
     match /certificates/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
-    // ---- leaderboard: admin write, login read ----
+    // ---- leaderboard: staff write, login read ----
     match /leaderboard/{doc} {
       allow read: if request.auth != null;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
   }
 }

@@ -12,6 +12,7 @@ import {
 } from "../core/firebase.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
+import { initDemoChips } from "../core/env.js";
 import { loadRingkasan, updateActivityFeed } from "./ringkasan.js";
 import { loadMateriTable, initMateriHandlers, getMateriData } from "./materi.js";
 import { loadTugasTable, initTugasHandlers, getTugasData } from "./tugas.js";
@@ -25,6 +26,7 @@ import { initImportExport } from "./import-export.js";
 // Initialize core utilities
 initTheme();
 initToast();
+initDemoChips();
 
 // Quick Class Chip Helper
 window._toggleQuickClass = (inputId, clsName) => {

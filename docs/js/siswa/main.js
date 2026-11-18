@@ -13,6 +13,7 @@ import {
 } from "../core/firebase.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
+import { initDemoChips, isDev } from "../core/env.js";
 import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
 import { loadAsesmen } from "./asesmen.js";
@@ -26,6 +27,7 @@ let nilaiLoaded = false;
 // Initialize theme and toast
 initTheme();
 initToast();
+initDemoChips();
 initMateriSearch();
 initExamRunnerControls();
 initTugasHandlers(
@@ -122,17 +124,23 @@ export function setLoginRole(role) {
     if (sub) sub.textContent = "Sistem Manajemen Pembelajaran SMPN 1 Umbulsari";
     if (lblEmail) lblEmail.textContent = "Email Guru / Admin";
     if (inEmail) inEmail.placeholder = "guru@smpn1umbulsari.sch.id";
-    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Guru â†’";
+    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Guru →";
     if (chipContainer) {
-      chipContainer.innerHTML = `
-        <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
-          &#127891; Guru Pengampu
-        </button>
-        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='admin@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
-          &#128737; Admin Utama
-        </button>
-      `;
+      if (isDev) {
+        chipContainer.classList.remove("hidden");
+        chipContainer.innerHTML = `
+          <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+            🎓 Guru Pengampu
+          </button>
+          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='admin@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+            🛡️ Admin Utama
+          </button>
+        `;
+      } else {
+        chipContainer.classList.add("hidden");
+        chipContainer.innerHTML = "";
+      }
     }
   } else {
     btnGuru?.classList.remove("active");
@@ -141,14 +149,20 @@ export function setLoginRole(role) {
     if (sub) sub.textContent = "Portal Pembelajaran Digital & CBT SMPN 1 Umbulsari";
     if (lblEmail) lblEmail.textContent = "Email Siswa (NISN)";
     if (inEmail) inEmail.placeholder = "nisn@smpn1umbulsari.sch.id";
-    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Siswa â†’";
+    if (btnSubmit) btnSubmit.textContent = "Masuk sebagai Siswa →";
     if (chipContainer) {
-      chipContainer.innerHTML = `
-        <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-        <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
-          &#128100; Siswa Kelas 7 (c1)
-        </button>
-      `;
+      if (isDev) {
+        chipContainer.classList.remove("hidden");
+        chipContainer.innerHTML = `
+          <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
+          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
+            👤 Siswa Kelas 7 (c1)
+          </button>
+        `;
+      } else {
+        chipContainer.classList.add("hidden");
+        chipContainer.innerHTML = "";
+      }
     }
   }
 }
