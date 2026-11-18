@@ -131,20 +131,31 @@ Guru tetap menekan tombol **"Simpan & Terbitkan"** yang sudah ada (`btn-as-save`
 
 | File | Aksi |
 |---|---|
-| `docs/js/import-parser.js` | **baru** — ES module, fungsi murni, tanpa DOM/Firestore |
+| `docs/js/admin/import-export.js` | **baru** — parser murni + UI import + export (satu modul, jangan pecah) |
 | `spike/import.test.mjs` | **baru** — tes Node, tanpa framework |
-| `docs/admin.html` | tab "📥 Import Excel" + 3 sub-panel + muat SheetJS |
-| `docs/index.html` | layar "Masukkan NIS" + hapus default `{nama: email.split("@")[0], kelas:"c1"}` (~L473) |
+| `docs/admin.html` | tab "📥 Import / Export" + `<section id="sec-import">` + muat SheetJS |
+| `docs/js/admin/main.js` | daftarkan `sec-import` di `labels` + `switchAdminTab` + panggil `initImportExport()` |
+| `docs/index.html` + `docs/js/siswa/main.js` | layar "Masukkan NIS" + hapus default `{nama: ..., kelas:"c1"}` |
 
-### 6.1 `docs/js/import-parser.js`
+**Penting — struktur repo sudah modular.** `docs/admin.html` hanya shell: tab ada di `docs/js/admin/main.js` (`switchAdminTab`, objek `labels`, `document.querySelectorAll(".nav-btn")`). Jangan bikin mekanisme tab baru. Panel `sec-asesmen` ada di HTML statis, jadi `<section id="sec-import" class="tab-pane hidden">` juga ditulis di `docs/admin.html` (setelah `sec-grading`, ~L760–840), tombol nav di sidebar (~L56–76) **dan** `mobile-nav-btn` (~L842–860).
+
+Modul yang sudah ada dan **wajib dipakai, bukan diduplikasi**:
+- `docs/js/core/firebase.js` — `db`, `collection`, `doc`, `getDoc`, `getDocs`, `writeBatch`
+- `docs/js/core/toast.js` — `showToast(msg, "ok"|"error")`
+- `docs/js/admin/qbuilder.js` — `setQuestionsList(list)` + `renderQBuilder()` untuk isi builder soal
+- `docs/js/admin/export-csv.js` — pola export yang sudah jalan (jangan diubah)
+
+### 6.1 `docs/js/admin/import-export.js`
 
 ```js
 export function parseSoal(rows)  // -> { items:[...], errors:[{baris,pesan}], ringkasan:{pg,bs,match,essay} }
 export function parseSiswa(rows) // -> { items:[...], errors:[...], ringkasan:{total} }
 export function parseGuru(rows)  // -> { items:[...], errors:[...], ringkasan:{total} }
+export function initImportExport()
 ```
 
-Fungsi murni — tidak menyentuh DOM atau Firestore, supaya bisa dites di Node.
+Tiga fungsi parse harus **murni** — tidak menyentuh DOM atau Firestore, supaya bisa dites di Node (`import` modul ini dari `spike/import.test.mjs`; kalau ada import Firebase di top-level, tes Node gagal — jadi taruh logika Firestore di fungsi terpisah yang hanya dipanggil dari `initImportExport`).
+
 Validasi wajib: `Kode`/`Teks` kosong → error; tipe tidak dikenal → error; kunci tidak sah → error; NIS duplikat → error; email tanpa `@` → error; email duplikat → error.
 
 ### 6.2 `spike/import.test.mjs`
@@ -181,14 +192,41 @@ Saat login dan `users/{uid}` belum punya `nis`:
 
 Jangan ubah alur login/auth yang sudah jalan.
 
+### 6.5 Export (Excel)
+
+Export CSV sudah ada di `docs/js/admin/export-csv.js` (`exportUjianCSV`, `exportTugasCSV`, `exportRekapTerpaduCSV`) — **jangan diubah, jangan diduplikasi**. Yang ditambahkan hanya export `.xlsx` untuk tiga dataset di atas, dan **kolomnya identik dengan template import** supaya hasil export bisa diedit lalu diimpor ulang (round-trip).
+
+Empat tombol di tab `sec-import`, semuanya lewat satu helper:
+
+```js
+function downloadSheet(filename, aoa) {
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), "Data");
+  XLSX.writeFile(wb, filename);
+}
+```
+
+| Tombol | Sumber | Kolom |
+|---|---|---|
+| Unduh Template Soal | statis | header saja |
+| Unduh Template Siswa | statis | header saja |
+| Unduh Template Guru | statis | header saja |
+| Export Siswa (.xlsx) | `getDocs(collection(db,"siswa"))` | `NIS, Nama, Kelas` |
+| Export Guru (.xlsx) | `getDocs(collection(db,"guruInvites"))` | `Email, Nama, NIP, Mapel, Aktif` |
+| Export Bank Soal (.xlsx) | `getDocs(collection(db,"quizzes"))` | `Kode, Tipe, Teks, Opsi A..D, Kunci, Kiri, Kanan` (satu baris per soal) |
+
+Catatan: template guru cukup 4 tombol total bila Export Guru dianggap sekaligus jadi template — **jangan** bikin tombol Template terpisah untuk guru kalau Export Guru sudah mengeluarkan header yang sama saat koleksi kosong. Pilih yang paling sedikit tombolnya.
+
+`Aktif` ditulis `Ya`/`Tidak` (bukan `true`/`false`) supaya round-trip bersih dengan parser.
+
 ---
 
 ## 7. Kriteria terima (bukti wajib)
 
 ```bash
-node spike/import.test.mjs          # cetak N PASS / M FAIL
-node --check docs/js/import-parser.js
-git status --short                  # hanya 4 file di atas yang berubah
+node spike/import.test.mjs              # cetak N PASS / M FAIL
+node --check docs/js/admin/import-export.js
+git status --short                      # hanya file di §6 yang berubah
 git diff --stat
 ```
 
