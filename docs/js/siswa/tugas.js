@@ -18,10 +18,22 @@ let activeAssignment = null;
 
 export async function loadTugas(currentUser, userProfile) {
   if (!userProfile?.kelas) return;
-  const qSnap = await getDocs(
-    query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas))
-  );
+  const [qSnap, subSnap] = await Promise.all([
+    getDocs(
+      query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas))
+    ),
+    getDocs(
+      query(collection(db, "submissions"), where("uid", "==", currentUser.uid))
+    )
+  ]);
   const list = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const subMap = new Map();
+  subSnap.docs.forEach((sd) => {
+    const s = sd.data();
+    if (s.assignmentId) subMap.set(s.assignmentId, s);
+    subMap.set(sd.id, s);
+  });
+
   const stTug = document.getElementById("st-count-tugas");
   if (stTug) stTug.textContent = list.length;
   const el = document.getElementById("tugas-list");
@@ -33,9 +45,8 @@ export async function loadTugas(currentUser, userProfile) {
 
   el.innerHTML = "";
   for (const t of list) {
-    const subDoc = await getDoc(doc(db, "submissions", `${currentUser.uid}__${t.id}`));
-    const isSubmitted = subDoc.exists();
-    const subData = isSubmitted ? subDoc.data() : null;
+    const subData = subMap.get(t.id) || subMap.get(`${currentUser.uid}__${t.id}`) || null;
+    const isSubmitted = !!subData;
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `

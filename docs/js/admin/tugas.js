@@ -10,6 +10,7 @@ import {
   collection,
   query,
   where,
+  limit,
   Timestamp
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
@@ -143,7 +144,7 @@ export async function editAsg(id) {
 export async function viewSub(assignmentId, title) {
   document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
   const sSnap = await getDocs(
-    query(collection(db, "submissions"), where("assignmentId", "==", assignmentId))
+    query(collection(db, "submissions"), where("assignmentId", "==", assignmentId), limit(50))
   );
   const stbody = document.querySelector("#tug-sub-table tbody");
   if (!sSnap.docs.length) {

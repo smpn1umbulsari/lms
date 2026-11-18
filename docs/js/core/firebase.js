@@ -19,6 +19,8 @@ import {
   collection,
   query,
   where,
+  limit,
+  orderBy,
   Timestamp,
   getCountFromServer,
   serverTimestamp
@@ -48,6 +50,8 @@ export {
   collection,
   query,
   where,
+  limit,
+  orderBy,
   Timestamp,
   getCountFromServer,
   serverTimestamp

@@ -52,12 +52,19 @@ export function log(m) {
 }
 window.log = log;
 
+const loadedAdminTabs = new Set();
+
+export function invalidateAdminTab(tabId) {
+  if (tabId) loadedAdminTabs.delete(tabId);
+  else loadedAdminTabs.clear();
+}
+
 function refreshActivity() {
   updateActivityFeed(getMateriData(), getTugasData(), getAsesmenData());
 }
 
 // Router & Tab Switching
-export function switchAdminTab(tabId) {
+export function switchAdminTab(tabId, forceReload = false) {
   document
     .querySelectorAll(".nav-btn, .mobile-nav-btn, .mobile-nav-item")
     .forEach((b) => b.classList.toggle("active", b.dataset.tab === tabId));
@@ -81,10 +88,24 @@ export function switchAdminTab(tabId) {
   const crumbEl = document.getElementById("crumb-section");
   if (crumbEl) crumbEl.textContent = labels[tabId] || "Portal Guru";
 
-  if (tabId === "sec-ringkasan") loadRingkasan();
-  else if (tabId === "sec-materi") loadMateriTable(refreshActivity);
-  else if (tabId === "sec-tugas") loadTugasTable(refreshActivity);
-  else if (tabId === "sec-asesmen") loadAsesmenTable(refreshActivity);
+  if (tabId === "sec-ringkasan") {
+    loadRingkasan();
+  } else if (tabId === "sec-materi" && (forceReload || !loadedAdminTabs.has("sec-materi"))) {
+    loadMateriTable(() => {
+      loadedAdminTabs.add("sec-materi");
+      refreshActivity();
+    });
+  } else if (tabId === "sec-tugas" && (forceReload || !loadedAdminTabs.has("sec-tugas"))) {
+    loadTugasTable(() => {
+      loadedAdminTabs.add("sec-tugas");
+      refreshActivity();
+    });
+  } else if (tabId === "sec-asesmen" && (forceReload || !loadedAdminTabs.has("sec-asesmen"))) {
+    loadAsesmenTable(() => {
+      loadedAdminTabs.add("sec-asesmen");
+      refreshActivity();
+    });
+  }
 }
 window.switchAdminTab = switchAdminTab;
 
@@ -109,7 +130,11 @@ initTugasHandlers(refreshActivity);
 initAsesmenHandlers(refreshActivity);
 initQBuilder((code) => {
   log(`Asesmen ${code} tersimpan.`);
-  loadAsesmenTable(refreshActivity);
+  loadedAdminTabs.delete("sec-asesmen");
+  loadAsesmenTable(() => {
+    loadedAdminTabs.add("sec-asesmen");
+    refreshActivity();
+  });
   loadRingkasan();
 });
 initQPreview();
@@ -172,11 +197,10 @@ onAuthStateChanged(auth, async (user) => {
     const sAvatar = document.getElementById("sidebar-avatar");
     if (sAvatar && user.email) sAvatar.textContent = user.email.charAt(0).toUpperCase();
 
+    loadedAdminTabs.clear();
     loadRingkasan();
-    loadMateriTable(refreshActivity);
-    loadTugasTable(refreshActivity);
-    loadAsesmenTable(refreshActivity);
   } else {
+    loadedAdminTabs.clear();
     document.body.classList.add("auth-mode");
     document.getElementById("sec-auth")?.classList.remove("hidden");
     document.getElementById("app-content")?.classList.add("hidden");

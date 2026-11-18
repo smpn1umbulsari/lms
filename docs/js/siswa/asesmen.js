@@ -2,10 +2,17 @@
 import { db, doc, getDoc } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 
-export async function loadAsesmen(currentUser, userProfile, onStartQuiz) {
+export async function loadAsesmen(currentUser, userProfile, onStartQuiz, classMeta = null) {
   if (!userProfile?.kelas) return;
-  const metaSnap = await getDoc(doc(db, "classes", userProfile.kelas));
-  const quizzesMeta = metaSnap.exists() && metaSnap.data().quizzes ? metaSnap.data().quizzes : {};
+  let quizzesMeta = classMeta?.quizzes;
+  if (!quizzesMeta) {
+    try {
+      const metaSnap = await getDoc(doc(db, "classes", userProfile.kelas));
+      quizzesMeta = metaSnap.exists() && metaSnap.data().quizzes ? metaSnap.data().quizzes : {};
+    } catch (e) {
+      quizzesMeta = {};
+    }
+  }
   const el = document.getElementById("asesmen-list");
   const keys = Object.keys(quizzesMeta);
   const stAs = document.getElementById("st-count-asesmen");

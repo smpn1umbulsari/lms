@@ -22,7 +22,8 @@ import { loadNilai, initNilaiHandlers } from "./nilai.js";
 
 let currentUser = null;
 let userProfile = null;
-let nilaiLoaded = false;
+let cachedClassMeta = null;
+const loadedStudentTabs = new Set();
 
 // Initialize theme and toast
 initTheme();
@@ -34,10 +35,57 @@ initNilaiHandlers();
 initTugasHandlers(
   () => currentUser,
   () => {
-    nilaiLoaded = false;
+    loadedStudentTabs.delete("sec-nilai");
     loadTugas(currentUser, userProfile);
   }
 );
+
+async function getClassMeta() {
+  if (cachedClassMeta && cachedClassMeta.id === userProfile?.kelas) return cachedClassMeta;
+  if (!userProfile?.kelas) return null;
+  try {
+    const snap = await getDoc(doc(db, "classes", userProfile.kelas));
+    if (snap.exists()) {
+      cachedClassMeta = { id: userProfile.kelas, ...snap.data() };
+      return cachedClassMeta;
+    }
+  } catch (e) {
+    console.warn("Gagal memuat metadata kelas:", e);
+  }
+  return null;
+}
+
+export async function loadStudentTab(tabId) {
+  if (!currentUser || !userProfile) return;
+  const meta = await getClassMeta();
+  if (meta && meta.quizzes) {
+    const stAs = document.getElementById("st-count-asesmen");
+    if (stAs) stAs.textContent = Object.keys(meta.quizzes).length;
+  }
+  if (tabId === "tab-materi" && !loadedStudentTabs.has("tab-materi")) {
+    await loadMateri(userProfile, meta);
+    loadedStudentTabs.add("tab-materi");
+  } else if (tabId === "tab-tugas" && !loadedStudentTabs.has("tab-tugas")) {
+    await loadTugas(currentUser, userProfile);
+    loadedStudentTabs.add("tab-tugas");
+  } else if (tabId === "tab-asesmen" && !loadedStudentTabs.has("tab-asesmen")) {
+    await loadAsesmen(
+      currentUser,
+      userProfile,
+      (qid, quizzesMeta) => {
+        startQuiz(qid, currentUser, userProfile, quizzesMeta, () => {
+          loadedStudentTabs.delete("sec-nilai");
+          loadAsesmen(currentUser, userProfile, null, meta);
+        });
+      },
+      meta
+    );
+    loadedStudentTabs.add("tab-asesmen");
+  } else if (tabId === "sec-nilai" && !loadedStudentTabs.has("sec-nilai")) {
+    const ok = await loadNilai(currentUser, userProfile);
+    if (ok) loadedStudentTabs.add("sec-nilai");
+  }
+}
 
 // Tab Navigation
 export function activateStudentTab(tabId) {
@@ -60,11 +108,7 @@ export function activateStudentTab(tabId) {
   const crumbEl = document.getElementById("crumb-section");
   if (crumbEl) crumbEl.textContent = tabLabels[tabId] || "Portal Belajar";
 
-  if (tabId === "sec-nilai" && !nilaiLoaded && currentUser && userProfile) {
-    loadNilai(currentUser, userProfile).then((ok) => {
-      if (ok) nilaiLoaded = true;
-    });
-  }
+  loadStudentTab(tabId);
 }
 
 document.querySelectorAll(".tab-btn, .mobile-nav-btn").forEach((b) => {
@@ -78,18 +122,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function refreshAllData() {
-  if (!currentUser || !userProfile) return;
-  loadMateri(userProfile);
-  loadTugas(currentUser, userProfile);
-  loadAsesmen(currentUser, userProfile, (qid, quizzesMeta) => {
-    startQuiz(qid, currentUser, userProfile, quizzesMeta, () => {
-      nilaiLoaded = false;
-      loadAsesmen(currentUser, userProfile);
-    });
-  });
-}
-
 function enterStudentDashboard() {
   const uName = document.getElementById("u-name");
   const uClass = document.getElementById("u-class");
@@ -99,7 +131,7 @@ function enterStudentDashboard() {
   if (uName) uName.textContent = userProfile.nama;
   if (uClass) uClass.textContent = `(${userProfile.kelas})`;
   if (uAvatar) uAvatar.textContent = (userProfile.nama || "S").charAt(0).toUpperCase();
-  if (heroName) heroName.textContent = `${userProfile.nama} Â· Kelas ${userProfile.kelas}`;
+  if (heroName) heroName.textContent = `${userProfile.nama} · Kelas ${userProfile.kelas}`;
 
   document.body.classList.remove("auth-mode");
   document.getElementById("student-topbar")?.classList.remove("hidden");
@@ -109,7 +141,7 @@ function enterStudentDashboard() {
   document.getElementById("sec-dashboard")?.classList.remove("hidden");
   document.getElementById("mobile-student-nav")?.classList.remove("hidden");
 
-  refreshAllData();
+  loadStudentTab("tab-materi");
 }
 
 export function setLoginRole(role) {
@@ -204,7 +236,8 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     currentUser = null;
     userProfile = null;
-    nilaiLoaded = false;
+    cachedClassMeta = null;
+    loadedStudentTabs.clear();
     document.body.classList.add("auth-mode");
     document.getElementById("student-topbar")?.classList.add("hidden");
     document.getElementById("user-info")?.classList.add("hidden");

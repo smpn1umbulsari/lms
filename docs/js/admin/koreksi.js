@@ -7,6 +7,7 @@ import {
   collection,
   query,
   where,
+  limit,
   writeBatch,
   Timestamp
 } from "../core/firebase.js";
@@ -44,7 +45,7 @@ export async function fetchAttemptsForGrading() {
   const [keySnap, qSnap, attSnap] = await Promise.all([
     getDoc(doc(db, "quizKeys", code)),
     getDoc(doc(db, "quizzes", code)),
-    getDocs(query(collection(db, "attempts"), where("quizId", "==", code)))
+    getDocs(query(collection(db, "attempts"), where("quizId", "==", code), limit(100)))
   ]);
 
   if (!keySnap.exists()) return showToast("quizKeys tidak ditemukan untuk kuis ini!", "warn");
