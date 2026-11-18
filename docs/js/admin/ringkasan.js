@@ -44,7 +44,7 @@ export function updateActivityFeed(materiData = [], tugasData = [], asesmenData 
             <div style="font-size:12px; color:var(--ink-2)">Kelas ${(d.classes || []).join(", ") || "-"}</div>
           </div>
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-materi\\']')?.click()">Lihat</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-materi">Lihat</button>
       </div>
     `);
   });
@@ -62,7 +62,7 @@ export function updateActivityFeed(materiData = [], tugasData = [], asesmenData 
             <div style="font-size:12px; color:var(--ink-2)">Kelas ${(d.classes || []).join(", ") || "-"}</div>
           </div>
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-tugas\\']')?.click()">Lihat</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-tugas">Lihat</button>
       </div>
     `);
   });
@@ -80,7 +80,7 @@ export function updateActivityFeed(materiData = [], tugasData = [], asesmenData 
             <div style="font-size:12px; color:var(--ink-2)">Kode: <code>${escAttr(q.id)}</code> · Kelas ${(d.classes || []).join(", ") || "-"}</div>
           </div>
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\\'sec-asesmen\\']')?.click()">Lihat</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-asesmen">Lihat</button>
       </div>
     `);
   });

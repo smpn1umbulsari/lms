@@ -1,25 +1,20 @@
 // Tap-to-Pair MATCH board — satu implementasi untuk ujian siswa & pratinjau admin.
 import { escAttr } from "./dom.js";
 
-// escAttr + JSON.stringify: aman di atribut HTML DAN di dalam string literal JS
-// (apostrof seperti Jum'at tidak lagi memutus onclick).
-const jsStr = (v) => escAttr(JSON.stringify(String(v)));
-
-export function matchBoardHTML(q, { answers, selected, rightOptions, select, option, unpair }) {
+export function matchBoardHTML(q, { answers, selected, rightOptions }) {
   const curMap = answers[q.id] || {};
   const activeLeft = selected[q.id];
-  const call = (fn, ...args) => `${fn}(${jsStr(q.id)}, ${args.map(jsStr).join(", ")})`;
 
   const leftCards = (q.kiri || [])
     .map((leftItem, lIdx) => {
       const paired = curMap[leftItem];
       const isSel = activeLeft === leftItem;
       return `
-      <div class="match-card ${isSel ? "is-selected" : ""} ${paired ? "is-paired" : ""}" onclick="${call(select, leftItem)}">
+      <div class="match-card ${isSel ? "is-selected" : ""} ${paired ? "is-paired" : ""}" data-action="match-select-premise" data-qid="${escAttr(q.id)}" data-premise="${escAttr(leftItem)}">
         <div style="font-weight:600; color:var(--ink)"><span class="badge badge-match" style="margin-right:6px">A${lIdx + 1}</span>${escAttr(leftItem)}</div>
         ${
           paired
-            ? `<div class="match-card-meta"><span style="color:var(--ok); font-weight:600">↳ ${escAttr(paired)}</span><button type="button" class="match-unpair-btn" title="Hapus" onclick="${unpair}(${jsStr(q.id)}, ${jsStr(leftItem)}, event)">✕</button></div>`
+            ? `<div class="match-card-meta"><span style="color:var(--ok); font-weight:600">↳ ${escAttr(paired)}</span><button type="button" class="match-unpair-btn" title="Hapus" data-action="match-unpair" data-qid="${escAttr(q.id)}" data-premise="${escAttr(leftItem)}">✕</button></div>`
             : isSel
             ? `<div class="match-card-meta" style="color:var(--accent)">Pilih respon di Kolom B...</div>`
             : ""
@@ -32,7 +27,7 @@ export function matchBoardHTML(q, { answers, selected, rightOptions, select, opt
     .map((opt, rIdx) => {
       const pairedPremise = Object.keys(curMap).find((k) => curMap[k] === opt);
       return `
-      <div class="match-card ${pairedPremise ? "is-paired" : ""}" onclick="${call(option, opt)}">
+      <div class="match-card ${pairedPremise ? "is-paired" : ""}" data-action="match-select-option" data-qid="${escAttr(q.id)}" data-opt="${escAttr(opt)}">
         <div style="font-weight:500; color:var(--ink)"><span class="badge badge-neutral" style="margin-right:6px">B${rIdx + 1}</span>${escAttr(opt)}</div>
         ${pairedPremise ? `<div class="match-card-meta"><span style="color:var(--ok); font-weight:600">✓ Pasangan (${escAttr(pairedPremise)})</span></div>` : ""}
       </div>`;

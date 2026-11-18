@@ -79,52 +79,17 @@ export async function startQuiz(quizId, currentUser, userProfile, quizzesMeta, o
   const exTitle = document.getElementById("ex-title");
   if (exTitle) exTitle.textContent = qDoc.judul || quizId;
 
-  setupAnswerHandlers();
   renderExam();
   startExamTimer();
   updateConnectionIndicator();
 }
 
-function setupAnswerHandlers() {
-  window._onAns = (qid, val) => {
-    if (!examState || examState.locked) return;
-    examState.answers[qid] = val;
-    saveLocalBackup();
-    updateExamPalette();
-    scheduleAutoSave();
-  };
-
-  window._onSelectPremise = (qid, premise) => {
-    if (!examState || examState.locked) return;
-    selectedPremise[qid] = selectedPremise[qid] === premise ? null : premise;
-    renderMatchQuestion(qid);
-  };
-
-  window._onSelectOption = (qid, option) => {
-    if (!examState || examState.locked) return;
-    const curPremise = selectedPremise[qid];
-    if (curPremise) {
-      if (!examState.answers[qid]) examState.answers[qid] = {};
-      examState.answers[qid][curPremise] = option;
-      selectedPremise[qid] = null;
-      saveLocalBackup();
-      updateExamPalette();
-      scheduleAutoSave();
-      renderMatchQuestion(qid);
-    }
-  };
-
-  window._onUnpair = (qid, premise, e) => {
-    if (e) e.stopPropagation();
-    if (!examState || examState.locked) return;
-    if (examState.answers[qid]) {
-      delete examState.answers[qid][premise];
-      saveLocalBackup();
-      updateExamPalette();
-      scheduleAutoSave();
-      renderMatchQuestion(qid);
-    }
-  };
+function setAnswer(qid, val) {
+  if (!examState || examState.locked) return;
+  examState.answers[qid] = val;
+  saveLocalBackup();
+  updateExamPalette();
+  scheduleAutoSave();
 }
 
 export function updateExamPalette() {
@@ -136,7 +101,7 @@ export function updateExamPalette() {
     const isAns = ans !== undefined && ans !== "" && (typeof ans !== "object" || Object.keys(ans).length > 0);
     if (isAns) answeredCount++;
     return `
-      <button type="button" class="q-pal-btn ${isAns ? "answered" : ""}" onclick="document.getElementById('qcard_${q.id}')?.scrollIntoView({behavior:'smooth', block:'center'})">
+      <button type="button" class="q-pal-btn ${isAns ? "answered" : ""}" data-action="jump-q" data-qid="${q.id}">
         <strong class="tabular-nums" style="font-size:12.5px">0${idx + 1} ${isAns ? "✓" : ""}</strong>
         <span class="badge badge-${q.tipe}" style="font-size:10px; padding:1px 6px">${q.tipe.toUpperCase()}</span>
       </button>
@@ -155,10 +120,7 @@ function generateMatchHTML(q) {
   return matchBoardHTML(q, {
     answers: examState.answers,
     selected: selectedPremise,
-    rightOptions: shuffle(q.kanan || [], rnd),
-    select: "window._onSelectPremise",
-    option: "window._onSelectOption",
-    unpair: "window._onUnpair",
+    rightOptions: shuffle(q.kanan || [], rnd)
   });
 }
 
@@ -177,15 +139,15 @@ export function renderExam() {
     if (q.tipe === "pg") {
       qContent = Object.entries(q.pilihan || {}).map(([k, val]) => `
         <label class="opt-label">
-          <input type="radio" name="ans_${q.id}" value="${k}" ${examState.answers[q.id] === k ? "checked" : ""} onchange="window._onAns('${q.id}', '${k}')">
+          <input type="radio" name="ans_${q.id}" value="${k}" ${examState.answers[q.id] === k ? "checked" : ""} data-action="ans-pg" data-qid="${q.id}">
           <span><strong>${k}.</strong> ${escAttr(val)}</span>
         </label>`).join("");
     } else if (q.tipe === "bs") {
       const cur = examState.answers[q.id];
       qContent = `
         <div class="bs-group">
-          <div class="bs-btn ${cur === "true" ? "active-benar" : ""}" onclick="window._onAns('${q.id}', 'true')">✓ BENAR</div>
-          <div class="bs-btn ${cur === "false" ? "active-salah" : ""}" onclick="window._onAns('${q.id}', 'false')">✕ SALAH</div>
+          <div class="bs-btn ${cur === "true" ? "active-benar" : ""}" data-action="ans-bs" data-qid="${q.id}" data-val="true">✓ BENAR</div>
+          <div class="bs-btn ${cur === "false" ? "active-salah" : ""}" data-action="ans-bs" data-qid="${q.id}" data-val="false">✕ SALAH</div>
         </div>`;
     } else if (q.tipe === "match") {
       qContent = `<div id="match_wrap_${q.id}">${generateMatchHTML(q)}</div>`;
@@ -196,7 +158,7 @@ export function renderExam() {
           <span class="badge badge-essay">Dinilai Manual Guru</span>
           <span class="tabular-nums" style="font-size:12px; color:var(--ink-2)" id="char_${q.id}">${curText.length} karakter terisi</span>
         </div>
-        <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." oninput="window._onAns('${q.id}', this.value); const c=document.getElementById('char_${q.id}'); if(c) c.textContent=this.value.length+' karakter terisi';">${escAttr(curText)}</textarea>`;
+        <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." data-action="ans-essay" data-qid="${q.id}">${escAttr(curText)}</textarea>`;
     }
 
     return `
@@ -289,6 +251,97 @@ export async function finishExam() {
 }
 
 export function initExamRunnerControls() {
+  const container = document.getElementById("ex-questions");
+  if (container) {
+    container.addEventListener("click", (e) => {
+      const bsBtn = e.target.closest("[data-action='ans-bs']");
+      if (bsBtn) {
+        const qid = bsBtn.dataset.qid;
+        const val = bsBtn.dataset.val;
+        setAnswer(qid, val);
+        const group = bsBtn.closest(".bs-group");
+        if (group) {
+          group.querySelectorAll(".bs-btn").forEach((b) => {
+            b.classList.toggle("active-benar", b.dataset.val === "true" && val === "true");
+            b.classList.toggle("active-salah", b.dataset.val === "false" && val === "false");
+          });
+        }
+        return;
+      }
+
+      const selPremise = e.target.closest("[data-action='match-select-premise']");
+      if (selPremise) {
+        if (!examState || examState.locked) return;
+        const qid = selPremise.dataset.qid;
+        const premise = selPremise.dataset.premise;
+        selectedPremise[qid] = selectedPremise[qid] === premise ? null : premise;
+        renderMatchQuestion(qid);
+        return;
+      }
+
+      const selOpt = e.target.closest("[data-action='match-select-option']");
+      if (selOpt) {
+        if (!examState || examState.locked) return;
+        const qid = selOpt.dataset.qid;
+        const option = selOpt.dataset.opt;
+        const curPremise = selectedPremise[qid];
+        if (curPremise) {
+          if (!examState.answers[qid]) examState.answers[qid] = {};
+          examState.answers[qid][curPremise] = option;
+          selectedPremise[qid] = null;
+          saveLocalBackup();
+          updateExamPalette();
+          scheduleAutoSave();
+          renderMatchQuestion(qid);
+        }
+        return;
+      }
+
+      const unpairBtn = e.target.closest("[data-action='match-unpair']");
+      if (unpairBtn) {
+        e.stopPropagation();
+        if (!examState || examState.locked) return;
+        const qid = unpairBtn.dataset.qid;
+        const premise = unpairBtn.dataset.premise;
+        if (examState.answers[qid]) {
+          delete examState.answers[qid][premise];
+          saveLocalBackup();
+          updateExamPalette();
+          scheduleAutoSave();
+          renderMatchQuestion(qid);
+        }
+        return;
+      }
+    });
+
+    container.addEventListener("change", (e) => {
+      const target = e.target;
+      if (target.dataset.action === "ans-pg") {
+        setAnswer(target.dataset.qid, target.value);
+      }
+    });
+
+    container.addEventListener("input", (e) => {
+      const target = e.target;
+      if (target.dataset.action === "ans-essay") {
+        const qid = target.dataset.qid;
+        setAnswer(qid, target.value);
+        const c = document.getElementById("char_" + qid);
+        if (c) c.textContent = target.value.length + " karakter terisi";
+      }
+    });
+  }
+
+  const pal = document.getElementById("ex-palette");
+  if (pal) {
+    pal.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action='jump-q']");
+      if (btn && btn.dataset.qid) {
+        document.getElementById("qcard_" + btn.dataset.qid)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+  }
+
   document.getElementById("btn-ex-finish")?.addEventListener("click", async () => {
     const ok = await showConfirmDialog({
       title: "Kirim Lembar Ujian?",

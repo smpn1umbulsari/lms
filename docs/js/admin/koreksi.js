@@ -322,7 +322,12 @@ export async function publishBatchGrades() {
 }
 
 export function initKoreksi() {
-  window._stepStudent = stepStudent;
+  document.querySelectorAll("[data-action='step-student']").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const step = parseInt(btn.dataset.step, 10);
+      if (!isNaN(step)) stepStudent(step);
+    });
+  });
   document.getElementById("btn-gr-fetch")?.addEventListener("click", fetchAttemptsForGrading);
   document.getElementById("btn-gr-publish")?.addEventListener("click", publishBatchGrades);
 }

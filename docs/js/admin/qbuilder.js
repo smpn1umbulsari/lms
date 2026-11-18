@@ -66,10 +66,10 @@ export function openQModal(type = "pg") {
   switchQModalType(type);
   document.getElementById("mq-teks").value = "";
   document.getElementById("mq-bobot").value = "25";
-  document.getElementById("mq-pg-a").value = "";
-  document.getElementById("mq-pg-b").value = "";
-  document.getElementById("mq-pg-c").value = "";
-  document.getElementById("mq-pg-d").value = "";
+  ["a", "b", "c", "d"].forEach((k) => {
+    const el = document.getElementById("mq-pg-" + k);
+    if (el) el.value = "";
+  });
   document.getElementById("modal-add-q")?.classList.remove("hidden");
 }
 
@@ -104,17 +104,16 @@ export function commitQModal() {
   const teks = document.getElementById("mq-teks").value.trim();
   const bobot = parseInt(document.getElementById("mq-bobot").value, 10) || 25;
   const qid = "q" + (questionsList.length + 1);
+  const pilihan = {};
+  ["A", "B", "C", "D"].forEach((k) => {
+    pilihan[k] = (document.getElementById("mq-pg-" + k.toLowerCase())?.value || "").trim();
+  });
   const newQ = {
     id: qid,
     tipe: activeModalType,
     teks,
     bobot,
-    pilihan: {
-      A: document.getElementById("mq-pg-a").value.trim(),
-      B: document.getElementById("mq-pg-b").value.trim(),
-      C: document.getElementById("mq-pg-c").value.trim(),
-      D: document.getElementById("mq-pg-d").value.trim()
-    },
+    pilihan,
     kunci:
       activeModalType === "pg"
         ? document.getElementById("mq-pg-key").value
@@ -165,34 +164,22 @@ export function renderQBuilder() {
       let specFields = "";
       const badgeCls = `badge-${q.tipe}`;
       if (q.tipe === "pg") {
-        specFields = `
-        <div class="row">
-          <div><label>Opsi A</label><input value="${escAttr(
-            q.pilihan.A || ""
-          )}" oninput="questionsList[${idx}].pilihan.A=this.value"></div>
-          <div><label>Opsi B</label><input value="${escAttr(
-            q.pilihan.B || ""
-          )}" oninput="questionsList[${idx}].pilihan.B=this.value"></div>
-          <div><label>Opsi C</label><input value="${escAttr(
-            q.pilihan.C || ""
-          )}" oninput="questionsList[${idx}].pilihan.C=this.value"></div>
-          <div><label>Opsi D</label><input value="${escAttr(
-            q.pilihan.D || ""
-          )}" oninput="questionsList[${idx}].pilihan.D=this.value"></div>
-          <div style="max-width:130px"><label>Kunci Benar</label><select onchange="questionsList[${idx}].kunci=this.value">
-            ${["A", "B", "C", "D"]
-              .map(
-                (o) =>
-                  `<option value="${o}" ${q.kunci === o ? "selected" : ""}>Opsi ${o}</option>`
-              )
-              .join("")}
-          </select></div>
-        </div>
-      `;
+        const opts = ["A", "B", "C", "D"]
+          .map(
+            (o) =>
+              `<div><label>Opsi ${o}</label><input value="${escAttr(
+                q.pilihan[o] || ""
+              )}" data-field="pilihan" data-opt="${o}" data-idx="${idx}"></div>`
+          )
+          .join("");
+        const keys = ["A", "B", "C", "D"]
+          .map((o) => `<option value="${o}" ${q.kunci === o ? "selected" : ""}>Opsi ${o}</option>`)
+          .join("");
+        specFields = `<div class="row">${opts}<div style="max-width:130px"><label>Kunci Benar</label><select data-field="kunci" data-idx="${idx}">${keys}</select></div></div>`;
       } else if (q.tipe === "bs") {
         specFields = `
         <label>Kunci Jawaban Benar / Salah</label>
-        <select onchange="questionsList[${idx}].kunci=this.value" style="max-width:240px">
+        <select data-field="kunci" data-idx="${idx}" style="max-width:240px">
           <option value="true" ${q.kunci === "true" ? "selected" : ""}>Benar (True)</option>
           <option value="false" ${q.kunci === "false" ? "selected" : ""}>Salah (False)</option>
         </select>
@@ -203,10 +190,10 @@ export function renderQBuilder() {
         <div class="row">
           <div><input placeholder="Item Kiri: Ibukota RI, Mata Uang" value="${escAttr(
             (q.kiri || []).join(", ")
-          )}" oninput="questionsList[${idx}].kiri=this.value.split(',').map(x=>x.trim())"></div>
+          )}" data-field="kiri" data-idx="${idx}"></div>
           <div><input placeholder="Pasangan Kanan: Nusantara, Rupiah" value="${escAttr(
             (q.kanan || []).join(", ")
-          )}" oninput="questionsList[${idx}].kanan=this.value.split(',').map(x=>x.trim())"></div>
+          )}" data-field="kanan" data-idx="${idx}"></div>
         </div>
       `;
       } else if (q.tipe === "essay") {
@@ -222,10 +209,10 @@ export function renderQBuilder() {
             <span class="badge ${badgeCls}">${q.tipe.toUpperCase()}</span>
             <span style="font-size:12px; color:var(--ink-3)">Bobot: ${q.bobot || 25} Poin</span>
           </div>
-          <button class="btn btn-danger btn-sm" onclick="questionsList.splice(${idx},1); renderQBuilder()">Hapus</button>
+          <button type="button" class="btn btn-danger btn-sm" data-action="delete-q" data-idx="${idx}">Hapus</button>
         </div>
         <label>Teks Soal</label>
-        <textarea rows="2" placeholder="Ketik pokok pertanyaan di sini..." oninput="questionsList[${idx}].teks=this.value">${escAttr(
+        <textarea rows="2" placeholder="Ketik pokok pertanyaan di sini..." data-field="teks" data-idx="${idx}">${escAttr(
         q.teks
       )}</textarea>
         ${specFields}
@@ -338,14 +325,63 @@ export async function saveAssessment(onSaved) {
 }
 
 export function initQBuilder(onSaved) {
-  window._syncBuilderStats = syncBuilderStats;
-  window._openQModal = openQModal;
-  window._closeQModal = closeQModal;
-  window._switchQModalType = switchQModalType;
-  window._addModalMatchRow = addModalMatchRow;
-  window._commitQModal = commitQModal;
-  window._addQ = addQ;
-  window.renderQBuilder = renderQBuilder;
+  document.getElementById("as-mode")?.addEventListener("change", syncBuilderStats);
+  document.getElementById("as-durasi")?.addEventListener("input", syncBuilderStats);
+
+  // Modal and Quick-Add action listeners
+  const actions = {
+    "open-q-modal": (b) => openQModal(b.dataset.qtype || "pg"),
+    "close-q-modal": () => closeQModal(),
+    "switch-qmodal-type": (b) => switchQModalType(b.dataset.mtype || "pg"),
+    "add-modal-match-row": () => addModalMatchRow(),
+    "commit-q-modal": () => commitQModal(),
+    "add-q": (b) => addQ(b.dataset.qtype || "pg")
+  };
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (btn && actions[btn.dataset.action]) actions[btn.dataset.action](btn);
+  });
+
+  // Event delegation for the questions list (cards)
+  const qListEl = document.getElementById("as-questions-list");
+  if (qListEl) {
+    qListEl.addEventListener("click", (e) => {
+      const delBtn = e.target.closest("[data-action='delete-q']");
+      if (delBtn) {
+        const idx = parseInt(delBtn.dataset.idx, 10);
+        if (!isNaN(idx)) {
+          questionsList.splice(idx, 1);
+          renderQBuilder();
+        }
+      }
+    });
+
+    qListEl.addEventListener("input", (e) => {
+      const target = e.target;
+      const idx = parseInt(target.dataset.idx, 10);
+      if (isNaN(idx) || !questionsList[idx]) return;
+      const field = target.dataset.field;
+      if (field === "teks") {
+        questionsList[idx].teks = target.value;
+      } else if (field === "pilihan") {
+        const opt = target.dataset.opt;
+        if (opt) questionsList[idx].pilihan[opt] = target.value;
+      } else if (field === "kiri") {
+        questionsList[idx].kiri = target.value.split(",").map((x) => x.trim());
+      } else if (field === "kanan") {
+        questionsList[idx].kanan = target.value.split(",").map((x) => x.trim());
+      }
+    });
+
+    qListEl.addEventListener("change", (e) => {
+      const target = e.target;
+      const idx = parseInt(target.dataset.idx, 10);
+      if (isNaN(idx) || !questionsList[idx]) return;
+      if (target.dataset.field === "kunci") {
+        questionsList[idx].kunci = target.value;
+      }
+    });
+  }
 
   document.getElementById("btn-as-save")?.addEventListener("click", () => {
     saveAssessment(onSaved);

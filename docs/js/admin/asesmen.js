@@ -19,6 +19,7 @@ import {
 } from "./qbuilder.js";
 
 let asesmenData = [];
+let savedOnDataChanged = null;
 
 export function getAsesmenData() {
   return asesmenData;
@@ -35,11 +36,11 @@ export function renderAsesmenTable(rows) {
     .map((d) => {
       const q = d.data || d;
       const open = q.openAt ? (q.openAt.toDate ? q.openAt.toDate() : new Date(q.openAt)) : null;
-      const aksi = `<button class="btn btn-secondary btn-sm" onclick="window._editAs('${
+      const aksi = `<button type="button" class="btn btn-secondary btn-sm" data-action="edit-asesmen" data-code="${escAttr(
         d.id
-      }')">Edit</button> <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="window._delAs('${
+      )}">Edit</button> <button type="button" class="btn btn-danger btn-sm" style="margin-left:6px" data-action="delete-asesmen" data-code="${escAttr(
         d.id
-      }', '${(q.classes || []).join(",")}')">Hapus</button>`;
+      )}" data-kelas="${escAttr((q.classes || []).join(","))}">Hapus</button>`;
       const modeBadge =
         q.mode === "ujian"
           ? '<span class="badge badge-pg">UJIAN RESMI</span>'
@@ -77,10 +78,100 @@ export function filterAsesmen() {
   renderAsesmenTable(filtered);
 }
 
+export async function deleteAsesmen(code, kelasList, onDataChanged) {
+  const ok = await showConfirmDialog({
+    title: "Hapus Asesmen?",
+    message: `Asesmen ${code} beserta kunci & jadwal akan ikut terhapus permanen dari sistem.`,
+    confirmText: "Ya, Hapus Asesmen",
+    isDanger: true
+  });
+  if (!ok) return;
+  try {
+    await deleteDoc(doc(db, "quizKeys", code));
+    await deleteDoc(doc(db, "quizzes", code));
+    for (const k of kelasList ? kelasList.split(",").filter(Boolean) : []) {
+      try {
+        await updateDoc(doc(db, "classes", k), { ["quizzes." + code]: deleteField() });
+      } catch (e) {}
+    }
+    showToast(`Asesmen ${code} berhasil dihapus.`, "ok");
+    const cb = typeof onDataChanged === "function" ? onDataChanged : savedOnDataChanged;
+    loadAsesmenTable(cb);
+  } catch (e) {
+    showToast("Gagal hapus: " + e.message, "error");
+  }
+}
+
+export async function editAsesmen(code) {
+  try {
+    const snapDoc = await getDoc(doc(db, "quizzes", code));
+    if (!snapDoc.exists()) return showToast("Asesmen tidak ditemukan!", "warn");
+    const qData = snapDoc.data();
+
+    document.getElementById("as-code").value = code;
+    const classes = qData.classes || [];
+    const asKelasInput =
+      document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
+    if (asKelasInput) asKelasInput.value = classes.join(", ");
+    document.getElementById("as-mode").value = qData.mode || "latihan";
+    document.getElementById("as-judul").value = qData.judul || "";
+    document.getElementById("as-durasi").value =
+      qData.duration !== undefined ? qData.duration : 60;
+    document.getElementById("as-tol").value =
+      qData.toleransiMulai !== undefined ? qData.toleransiMulai : 120;
+
+    const toDTLocal = (ts) => {
+      if (!ts) return "";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const p = (n) => String(n).padStart(2, "0");
+      return (
+        d.getFullYear() +
+        "-" +
+        p(d.getMonth() + 1) +
+        "-" +
+        p(d.getDate()) +
+        "T" +
+        p(d.getHours()) +
+        ":" +
+        p(d.getMinutes())
+      );
+    };
+
+    document.getElementById("as-open").value = toDTLocal(qData.openAt);
+    document.getElementById("as-close").value = toDTLocal(qData.closeAt);
+
+    const cloned = JSON.parse(JSON.stringify(qData.questions || []));
+
+    if (qData.mode === "ujian") {
+      const keySnap = await getDoc(doc(db, "quizKeys", code));
+      const keys = keySnap.exists() && keySnap.data().keys ? keySnap.data().keys : {};
+      cloned.forEach((q) => {
+        const kVal = keys[q.id];
+        if (kVal && typeof kVal === "object" && !Array.isArray(kVal)) {
+          q.kiri = Object.keys(kVal);
+          q.kanan = Object.values(kVal);
+        } else if (kVal !== undefined) {
+          q.kunci = kVal;
+        }
+      });
+    }
+
+    setQuestionsList(cloned);
+    setEditingQuizCode(code);
+    renderQBuilder();
+    document.getElementById("btn-as-save").textContent = "Update & Publikasikan Perubahan";
+    document.getElementById("sec-asesmen").scrollIntoView({ behavior: "smooth" });
+  } catch (e) {
+    showToast("Gagal memuat asesmen: " + e.message, "error");
+  }
+}
+
 export async function loadAsesmenTable(onDataChanged) {
+  if (typeof onDataChanged === "function") {
+    savedOnDataChanged = onDataChanged;
+  }
   const snap = await getDocs(collection(db, "quizzes"));
   asesmenData = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
-  window.asesmenData = asesmenData;
   const sel = document.querySelector("select#as-kelas");
   updateClassOptions(sel, asesmenData, filterAsesmen);
 
@@ -95,96 +186,23 @@ export async function loadAsesmenTable(onDataChanged) {
   if (typeof onDataChanged === "function") {
     onDataChanged(asesmenData);
   }
-
-  window._delAs = async (code, kelasList) => {
-    const ok = await showConfirmDialog({
-      title: "Hapus Asesmen?",
-      message: `Asesmen ${code} beserta kunci & jadwal akan ikut terhapus permanen dari sistem.`,
-      confirmText: "Ya, Hapus Asesmen",
-      isDanger: true
-    });
-    if (!ok) return;
-    try {
-      await deleteDoc(doc(db, "quizKeys", code));
-      await deleteDoc(doc(db, "quizzes", code));
-      for (const k of kelasList ? kelasList.split(",").filter(Boolean) : []) {
-        try {
-          await updateDoc(doc(db, "classes", k), { ["quizzes." + code]: deleteField() });
-        } catch (e) {}
-      }
-      showToast(`Asesmen ${code} berhasil dihapus.`, "ok");
-      loadAsesmenTable(onDataChanged);
-    } catch (e) {
-      showToast("Gagal hapus: " + e.message, "error");
-    }
-  };
-
-  window._editAs = async (code) => {
-    try {
-      const snapDoc = await getDoc(doc(db, "quizzes", code));
-      if (!snapDoc.exists()) return showToast("Asesmen tidak ditemukan!", "warn");
-      const qData = snapDoc.data();
-
-      document.getElementById("as-code").value = code;
-      const classes = qData.classes || [];
-      const asKelasInput =
-        document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
-      if (asKelasInput) asKelasInput.value = classes.join(", ");
-      document.getElementById("as-mode").value = qData.mode || "latihan";
-      document.getElementById("as-judul").value = qData.judul || "";
-      document.getElementById("as-durasi").value =
-        qData.duration !== undefined ? qData.duration : 60;
-      document.getElementById("as-tol").value =
-        qData.toleransiMulai !== undefined ? qData.toleransiMulai : 120;
-
-      const toDTLocal = (ts) => {
-        if (!ts) return "";
-        const d = ts.toDate ? ts.toDate() : new Date(ts);
-        const p = (n) => String(n).padStart(2, "0");
-        return (
-          d.getFullYear() +
-          "-" +
-          p(d.getMonth() + 1) +
-          "-" +
-          p(d.getDate()) +
-          "T" +
-          p(d.getHours()) +
-          ":" +
-          p(d.getMinutes())
-        );
-      };
-
-      document.getElementById("as-open").value = toDTLocal(qData.openAt);
-      document.getElementById("as-close").value = toDTLocal(qData.closeAt);
-
-      const cloned = JSON.parse(JSON.stringify(qData.questions || []));
-
-      if (qData.mode === "ujian") {
-        const keySnap = await getDoc(doc(db, "quizKeys", code));
-        const keys = keySnap.exists() && keySnap.data().keys ? keySnap.data().keys : {};
-        cloned.forEach((q) => {
-          const kVal = keys[q.id];
-          if (kVal && typeof kVal === "object" && !Array.isArray(kVal)) {
-            q.kiri = Object.keys(kVal);
-            q.kanan = Object.values(kVal);
-          } else if (kVal !== undefined) {
-            q.kunci = kVal;
-          }
-        });
-      }
-
-      setQuestionsList(cloned);
-      setEditingQuizCode(code);
-      renderQBuilder();
-      document.getElementById("btn-as-save").textContent = "Update & Publikasikan Perubahan";
-      document.getElementById("sec-asesmen").scrollIntoView({ behavior: "smooth" });
-    } catch (e) {
-      showToast("Gagal memuat asesmen: " + e.message, "error");
-    }
-  };
 }
 
-export function initAsesmenHandlers() {
+export function initAsesmenHandlers(onDataChanged) {
+  const tbody = document.querySelector("#as-table tbody");
+  if (tbody) {
+    tbody.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const code = btn.dataset.code;
+      if (btn.dataset.action === "edit-asesmen") {
+        await editAsesmen(code);
+      } else if (btn.dataset.action === "delete-asesmen") {
+        await deleteAsesmen(code, btn.dataset.kelas || "", onDataChanged);
+      }
+    });
+  }
+
   document.getElementById("as-search")?.addEventListener("input", filterAsesmen);
   document.getElementById("as-search")?.addEventListener("change", filterAsesmen);
 }

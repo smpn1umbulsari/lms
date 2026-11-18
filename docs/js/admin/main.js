@@ -89,13 +89,24 @@ export function switchAdminTab(tabId) {
 window.switchAdminTab = switchAdminTab;
 
 document.querySelectorAll(".nav-btn, .mobile-nav-btn, .mobile-nav-item").forEach((b) => {
-  b.onclick = () => switchAdminTab(b.dataset.tab);
+  b.addEventListener("click", () => switchAdminTab(b.dataset.tab));
+});
+
+document.addEventListener("click", (e) => {
+  const switchBtn = e.target.closest("[data-action='switch-tab']");
+  if (switchBtn && switchBtn.dataset.tab) {
+    switchAdminTab(switchBtn.dataset.tab);
+  }
+  const expBtn = e.target.closest("[data-action='export-tugas-csv']");
+  if (expBtn) {
+    document.getElementById("btn-export-tugas-csv")?.click();
+  }
 });
 
 // Initialize Handlers
 initMateriHandlers(refreshActivity);
 initTugasHandlers(refreshActivity);
-initAsesmenHandlers();
+initAsesmenHandlers(refreshActivity);
 initQBuilder((code) => {
   log(`Asesmen ${code} tersimpan.`);
   loadAsesmenTable(refreshActivity);

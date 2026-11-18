@@ -18,7 +18,7 @@ import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
 import { loadAsesmen } from "./asesmen.js";
 import { startQuiz, initExamRunnerControls } from "./exam-runner.js";
-import { loadNilai } from "./nilai.js";
+import { loadNilai, initNilaiHandlers } from "./nilai.js";
 
 let currentUser = null;
 let userProfile = null;
@@ -30,6 +30,7 @@ initToast();
 initDemoChips();
 initMateriSearch();
 initExamRunnerControls();
+initNilaiHandlers();
 initTugasHandlers(
   () => currentUser,
   () => {
@@ -66,11 +67,15 @@ export function activateStudentTab(tabId) {
   }
 }
 
-document.querySelectorAll(".tab-btn").forEach((b) => {
-  b.onclick = () => activateStudentTab(b.dataset.tab);
+document.querySelectorAll(".tab-btn, .mobile-nav-btn").forEach((b) => {
+  b.addEventListener("click", () => activateStudentTab(b.dataset.tab));
 });
-document.querySelectorAll(".mobile-nav-btn").forEach((b) => {
-  b.onclick = () => activateStudentTab(b.dataset.tab);
+
+document.addEventListener("click", (e) => {
+  const switchBtn = e.target.closest("[data-action='switch-tab']");
+  if (switchBtn && switchBtn.dataset.tab) {
+    activateStudentTab(switchBtn.dataset.tab);
+  }
 });
 
 function refreshAllData() {
@@ -130,10 +135,10 @@ export function setLoginRole(role) {
         chipContainer.classList.remove("hidden");
         chipContainer.innerHTML = `
           <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="guru@smpn1umbulsari.sch.id" data-pass="admin123">
             🎓 Guru Pengampu
           </button>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='admin@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="admin@smpn1umbulsari.sch.id" data-pass="admin123">
             🛡️ Admin Utama
           </button>
         `;
@@ -155,7 +160,7 @@ export function setLoginRole(role) {
         chipContainer.classList.remove("hidden");
         chipContainer.innerHTML = `
           <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="siswa@smpn1umbulsari.sch.id" data-pass="siswa123">
             👤 Siswa Kelas 7 (c1)
           </button>
         `;

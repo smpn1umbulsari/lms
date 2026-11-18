@@ -53,10 +53,10 @@ export function renderMateriTable(rows) {
       <td><span class="badge badge-neutral">${(m.classes || []).join(", ")}</span></td>
       <td style="min-width:240px">${embedsHTML(m) || '<span style="color:var(--ink-3)">-</span>'}</td>
       <td style="text-align:right; white-space:nowrap">
-        <button class="btn btn-secondary btn-sm" onclick="window._editMat('${d.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="window._delMat('${
+        <button type="button" class="btn btn-secondary btn-sm" data-action="edit-materi" data-id="${escAttr(d.id)}">Edit</button>
+        <button type="button" class="btn btn-danger btn-sm" style="margin-left:6px" data-action="delete-materi" data-id="${escAttr(
           d.id
-        }')">Hapus</button>
+        )}">Hapus</button>
       </td>
     </tr>`;
     })
@@ -85,10 +85,57 @@ export function filterMateri() {
   renderMateriTable(filtered);
 }
 
+export async function deleteMateri(id, onDataChanged) {
+  const ok = await showConfirmDialog({
+    title: "Hapus Materi Pembelajaran?",
+    message: "Materi ini akan dihapus permanen dari portal belajar siswa.",
+    confirmText: "Ya, Hapus Materi",
+    isDanger: true
+  });
+  if (!ok) return;
+  const mat = materiData.find((x) => x.id === id);
+  const cls = mat?.classes || [];
+  await deleteDoc(doc(db, "materials", id));
+  for (const k of cls) {
+    try {
+      await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
+    } catch (e) {}
+  }
+  showToast("Materi berhasil dihapus.", "ok");
+  loadMateriTable(onDataChanged);
+}
+
+export async function editMateri(id) {
+  const snapDoc = await getDoc(doc(db, "materials", id));
+  if (!snapDoc.exists()) return;
+  const m = snapDoc.data();
+  editingMat = id;
+  editingMatCreated = m.createdAt || Timestamp.now();
+  document.getElementById("m-judul").value = m.judul || "";
+  document.getElementById("m-kelas").value = (m.classes || []).join(", ");
+  document.getElementById("m-deskripsi").value = m.deskripsi || "";
+  const links = m.links && m.links.length ? m.links : m.link ? [m.link] : [];
+  document.getElementById("m-link").value = links[0] || "";
+  const extra = document.getElementById("m-links-extra");
+  extra.innerHTML = "";
+  links.slice(1).forEach((u) => {
+    const row = document.createElement("div");
+    row.className = "link-row";
+    row.innerHTML =
+      '<input class="m-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">×</button>';
+    row.querySelector("input").value = u;
+    extra.appendChild(row);
+  });
+  const prev = document.getElementById("m-link-preview");
+  if (prev) prev.innerHTML = embedsHTML({ links });
+  document.getElementById("btn-mat-save").textContent = "Update Materi";
+  document.getElementById("mat-form-panel").classList.remove("hidden");
+  document.getElementById("mat-form-panel").scrollIntoView({ behavior: "smooth" });
+}
+
 export async function loadMateriTable(onDataChanged) {
   const snap = await getDocs(collection(db, "materials"));
   materiData = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
-  window.materiData = materiData;
   updateClassOptions(document.getElementById("materi-kelas"), materiData, filterMateri);
 
   const searchVal = document.getElementById("materi-search")?.value.trim();
@@ -102,54 +149,6 @@ export async function loadMateriTable(onDataChanged) {
   if (typeof onDataChanged === "function") {
     onDataChanged(materiData);
   }
-
-  window._delMat = async (id) => {
-    const ok = await showConfirmDialog({
-      title: "Hapus Materi Pembelajaran?",
-      message: "Materi ini akan dihapus permanen dari portal belajar siswa.",
-      confirmText: "Ya, Hapus Materi",
-      isDanger: true
-    });
-    if (!ok) return;
-    const mat = materiData.find((x) => x.id === id);
-    const cls = mat?.classes || [];
-    await deleteDoc(doc(db, "materials", id));
-    for (const k of cls) {
-      try {
-        await setDoc(doc(db, "classes", k), { materialsVersion: Timestamp.now().seconds }, { merge: true });
-      } catch (e) {}
-    }
-    showToast("Materi berhasil dihapus.", "ok");
-    loadMateriTable(onDataChanged);
-  };
-
-  window._editMat = async (id) => {
-    const snapDoc = await getDoc(doc(db, "materials", id));
-    if (!snapDoc.exists()) return;
-    const m = snapDoc.data();
-    editingMat = id;
-    editingMatCreated = m.createdAt || Timestamp.now();
-    document.getElementById("m-judul").value = m.judul || "";
-    document.getElementById("m-kelas").value = (m.classes || []).join(", ");
-    document.getElementById("m-deskripsi").value = m.deskripsi || "";
-    const links = m.links && m.links.length ? m.links : m.link ? [m.link] : [];
-    document.getElementById("m-link").value = links[0] || "";
-    const extra = document.getElementById("m-links-extra");
-    extra.innerHTML = "";
-    links.slice(1).forEach((u) => {
-      const row = document.createElement("div");
-      row.className = "link-row";
-      row.innerHTML =
-        '<input class="m-link-extra" placeholder="https://..."><button type="button" class="link-rm" aria-label="Hapus">×</button>';
-      row.querySelector("input").value = u;
-      extra.appendChild(row);
-    });
-    const prev = document.getElementById("m-link-preview");
-    if (prev) prev.innerHTML = embedsHTML({ links });
-    document.getElementById("btn-mat-save").textContent = "Update Materi";
-    document.getElementById("mat-form-panel").classList.remove("hidden");
-    document.getElementById("mat-form-panel").scrollIntoView({ behavior: "smooth" });
-  };
 }
 
 export function currentLinkValues() {
@@ -167,6 +166,21 @@ export function updateMateriPreview() {
 }
 
 export function initMateriHandlers(onDataChanged) {
+  const tbody = document.querySelector("#mat-table tbody");
+  if (tbody) {
+    tbody.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (!id) return;
+      if (btn.dataset.action === "edit-materi") {
+        await editMateri(id);
+      } else if (btn.dataset.action === "delete-materi") {
+        await deleteMateri(id, onDataChanged);
+      }
+    });
+  }
+
   document.getElementById("materi-search")?.addEventListener("input", filterMateri);
   document.getElementById("m-link")?.addEventListener("input", updateMateriPreview);
 

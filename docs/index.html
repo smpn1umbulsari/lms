@@ -104,7 +104,7 @@
         <button id="btn-login" class="btn btn-primary auth-submit">Masuk ke Portal Siswa →</button>
         <div class="auth-demo-chips hidden" id="auth-chips-box">
           <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='siswa@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='siswa123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="siswa@smpn1umbulsari.sch.id" data-pass="siswa123">
             👤 Siswa Kelas 7 (c1)
           </button>
         </div>
@@ -172,7 +172,7 @@
           </div>
           <h2 style="font-size:16px; font-weight:600; color:var(--ink)" id="hero-cta-title">Pelajari Modul & Cek Jadwal Asesmen Kelas Anda</h2>
         </div>
-        <button type="button" class="btn btn-primary" id="hero-cta-btn" onclick="document.querySelector('.tab-btn[data-tab=\'tab-asesmen\']')?.click()">
+        <button type="button" class="btn btn-primary" id="hero-cta-btn" data-action="switch-tab" data-tab="tab-asesmen">
           <span>Buka Asesmen & Ujian</span>
           <span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>
         </button>
@@ -264,9 +264,9 @@
           <p style="font-size:12px; color:var(--ink-2)">Nilai Tugas Mandiri & Evaluasi CBT Terverifikasi</p>
         </div>
         <div style="display:flex; gap:6px" id="nilai-filter-tabs">
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" onclick="window._filterNilaiSection('all')">Semua</button>
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" onclick="window._filterNilaiSection('tugas')">Tugas</button>
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" onclick="window._filterNilaiSection('ujian')">CBT & Ujian</button>
+          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="all">Semua</button>
+          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="tugas">Tugas</button>
+          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="ujian">CBT & Ujian</button>
         </div>
       </div>
 

@@ -63,7 +63,7 @@ function renderPreviewContent(meta = {}) {
           <label class="opt-label">
             <input type="radio" name="prev_ans_${q.id}" value="${k}" ${
               previewAnswers[q.id] === k ? "checked" : ""
-            } onchange="window._onPrevAns('${q.id}', '${k}')">
+            } data-action="prev-ans-pg" data-qid="${escAttr(q.id)}" data-val="${k}">
             <span style="color:var(--ink)"><strong>${k}.</strong> ${escAttr(val)}</span>
           </label>`
           )
@@ -72,8 +72,8 @@ function renderPreviewContent(meta = {}) {
         const cur = previewAnswers[q.id];
         qContent = `
           <div class="bs-group">
-            <button type="button" class="bs-btn ${cur === "true" ? "active-benar" : ""}" onclick="window._onPrevAns('${q.id}', 'true')">✓ BENAR</button>
-            <button type="button" class="bs-btn ${cur === "false" ? "active-salah" : ""}" onclick="window._onPrevAns('${q.id}', 'false')">✕ SALAH</button>
+            <button type="button" class="bs-btn ${cur === "true" ? "active-benar" : ""}" data-action="prev-ans-bs" data-qid="${escAttr(q.id)}" data-val="true">✓ BENAR</button>
+            <button type="button" class="bs-btn ${cur === "false" ? "active-salah" : ""}" data-action="prev-ans-bs" data-qid="${escAttr(q.id)}" data-val="false">✕ SALAH</button>
           </div>`;
       } else if (q.tipe === "match") {
         qContent = `<div id="prev_match_${q.id}">${generatePreviewMatchHTML(q)}</div>`;
@@ -84,11 +84,9 @@ function renderPreviewContent(meta = {}) {
             <span class="badge badge-essay">Dinilai Manual Guru</span>
             <span class="tabular-nums" style="font-size:12px; color:var(--ink-2)" id="prevchar_${q.id}">${curText.length} karakter terisi</span>
           </div>
-          <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." oninput="window._onPrevAns('${
+          <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." data-action="prev-ans-essay" data-qid="${escAttr(
             q.id
-          }', this.value); const c=document.getElementById('prevchar_${
-            q.id
-          }'); if(c) c.textContent=this.value.length+' karakter terisi';">${escAttr(curText)}</textarea>`;
+          )}">${escAttr(curText)}</textarea>`;
       }
 
       return `
@@ -138,53 +136,75 @@ function generatePreviewMatchHTML(q) {
   return matchBoardHTML(q, {
     answers: previewAnswers,
     selected: previewSelectedPremise,
-    rightOptions: q._shuffledRight || (q._shuffledRight = shuffle(q.kanan || [], rnd)),
-    select: "window._onPrevSelectPremise",
-    option: "window._onPrevSelectOption",
-    unpair: "window._onPrevUnpair",
+    rightOptions: q._shuffledRight || (q._shuffledRight = shuffle(q.kanan || [], rnd))
   });
 }
 
-export function initQPreview() {
-  window._closePreviewModal = closePreviewModal;
-  window._togglePreviewViewport = togglePreviewViewport;
+function renderPreviewMatch(qid) {
+  const wrap = document.getElementById("prev_match_" + qid);
+  const q = activePreviewQuestions.find((x) => x.id === qid);
+  if (wrap && q) wrap.innerHTML = generatePreviewMatchHTML(q);
+}
 
-  window._onPrevAns = (qid, val) => {
-    previewAnswers[qid] = val;
-    const q = activePreviewQuestions.find((x) => x.id === qid);
-    if (q && q.tipe === "bs") {
+export function initQPreview() {
+  const modal = document.getElementById("modal-preview-q");
+  if (!modal) return;
+
+  modal.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    const action = btn.dataset.action;
+
+    if (action === "close-preview-modal") {
+      closePreviewModal();
+    } else if (action === "toggle-preview-viewport") {
+      togglePreviewViewport();
+    } else if (action === "prev-ans-bs") {
+      const qid = btn.dataset.qid;
+      previewAnswers[qid] = btn.dataset.val;
       renderPreviewContent();
       applyViewport();
+    } else if (action === "match-select-premise") {
+      const qid = btn.dataset.qid;
+      const premise = btn.dataset.premise;
+      previewSelectedPremise[qid] =
+        previewSelectedPremise[qid] === premise ? null : premise;
+      renderPreviewMatch(qid);
+    } else if (action === "match-select-option") {
+      const qid = btn.dataset.qid;
+      const opt = btn.dataset.opt;
+      const selP = previewSelectedPremise[qid];
+      if (!selP) return;
+      if (!previewAnswers[qid]) previewAnswers[qid] = {};
+      Object.keys(previewAnswers[qid]).forEach((p) => {
+        if (previewAnswers[qid][p] === opt) delete previewAnswers[qid][p];
+      });
+      previewAnswers[qid][selP] = opt;
+      previewSelectedPremise[qid] = null;
+      renderPreviewMatch(qid);
+    } else if (action === "match-unpair") {
+      e.stopPropagation();
+      const qid = btn.dataset.qid;
+      const premise = btn.dataset.premise;
+      if (previewAnswers[qid]) delete previewAnswers[qid][premise];
+      renderPreviewMatch(qid);
     }
-  };
+  });
 
-  window._onPrevSelectPremise = (qid, premise) => {
-    previewSelectedPremise[qid] =
-      previewSelectedPremise[qid] === premise ? null : premise;
-    const wrap = document.getElementById("prev_match_" + qid);
-    const q = activePreviewQuestions.find((x) => x.id === qid);
-    if (wrap && q) wrap.innerHTML = generatePreviewMatchHTML(q);
-  };
+  modal.addEventListener("change", (e) => {
+    const target = e.target;
+    if (target.dataset.action === "prev-ans-pg") {
+      previewAnswers[target.dataset.qid] = target.value;
+    }
+  });
 
-  window._onPrevSelectOption = (qid, opt) => {
-    const selP = previewSelectedPremise[qid];
-    if (!selP) return;
-    if (!previewAnswers[qid]) previewAnswers[qid] = {};
-    Object.keys(previewAnswers[qid]).forEach((p) => {
-      if (previewAnswers[qid][p] === opt) delete previewAnswers[qid][p];
-    });
-    previewAnswers[qid][selP] = opt;
-    previewSelectedPremise[qid] = null;
-    const wrap = document.getElementById("prev_match_" + qid);
-    const q = activePreviewQuestions.find((x) => x.id === qid);
-    if (wrap && q) wrap.innerHTML = generatePreviewMatchHTML(q);
-  };
-
-  window._onPrevUnpair = (qid, premise, ev) => {
-    ev.stopPropagation();
-    if (previewAnswers[qid]) delete previewAnswers[qid][premise];
-    const wrap = document.getElementById("prev_match_" + qid);
-    const q = activePreviewQuestions.find((x) => x.id === qid);
-    if (wrap && q) wrap.innerHTML = generatePreviewMatchHTML(q);
-  };
+  modal.addEventListener("input", (e) => {
+    const target = e.target;
+    if (target.dataset.action === "prev-ans-essay") {
+      const qid = target.dataset.qid;
+      previewAnswers[qid] = target.value;
+      const c = document.getElementById("prevchar_" + qid);
+      if (c) c.textContent = target.value.length + " karakter terisi";
+    }
+  });
 }

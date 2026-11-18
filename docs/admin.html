@@ -169,10 +169,10 @@
         <button id="btn-login" class="btn btn-ink auth-submit">Masuk ke Portal Guru →</button>
         <div class="auth-demo-chips hidden" id="auth-chips-box">
           <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='guru@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="guru@smpn1umbulsari.sch.id" data-pass="admin123">
             🎓 Guru Pengampu
           </button>
-          <button type="button" class="auth-demo-chip" onclick="document.getElementById('l-email').value='admin@smpn1umbulsari.sch.id'; document.getElementById('l-pass').value='admin123';">
+          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="admin@smpn1umbulsari.sch.id" data-pass="admin123">
             🛡️ Admin Utama
           </button>
         </div>
@@ -230,11 +230,11 @@
           <p class="page-subtitle">Semester Ganjil · 2026/2027 · Kelas Aktif Terintegrasi</p>
         </div>
         <div class="header-actions">
-          <button type="button" class="btn btn-secondary" onclick="document.getElementById('btn-export-tugas-csv')?.click()">
+          <button type="button" class="btn btn-secondary" data-action="export-tugas-csv">
             <span class="material-symbols-outlined" style="font-size:18px">download</span>
             <span>Ekspor Nilai</span>
           </button>
-          <button type="button" class="btn btn-primary" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
+          <button type="button" class="btn btn-primary" data-action="switch-tab" data-tab="sec-asesmen">
             <span class="material-symbols-outlined" style="font-size:18px">add</span>
             <span>+ Buat Ujian Baru</span>
           </button>
@@ -243,7 +243,7 @@
 
       <!-- 1-Row High-Density Stat Strip -->
       <div class="stat-strip" role="region" aria-label="Statistik Ringkasan">
-        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">
+        <div class="stat-cell" data-action="switch-tab" data-tab="sec-materi">
           <div class="stat-lbl">
             <span>Materi Aktif</span>
             <span class="material-symbols-outlined" style="font-size:17px; color:var(--ink-3)">menu_book</span>
@@ -251,7 +251,7 @@
           <div id="rk-materi" class="stat-val">–</div>
           <div class="stat-meta">Modul teks & video terbit</div>
         </div>
-        <div class="stat-cell highlight" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">
+        <div class="stat-cell highlight" data-action="switch-tab" data-tab="sec-tugas">
           <div class="stat-lbl">
             <span style="color:var(--badge-pg)">Penugasan Aktif</span>
             <span class="status-dot" style="background:var(--badge-pg); margin-top:0"></span>
@@ -259,7 +259,7 @@
           <div id="rk-tugas" class="stat-val">–</div>
           <div class="stat-meta">Lembar kerja & proyek kelas</div>
         </div>
-        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">
+        <div class="stat-cell" data-action="switch-tab" data-tab="sec-asesmen">
           <div class="stat-lbl">
             <span>Ulangan Terjadwal</span>
             <span class="material-symbols-outlined" style="font-size:17px; color:var(--warn)">event_upcoming</span>
@@ -267,7 +267,7 @@
           <div id="rk-asesmen" class="stat-val">–</div>
           <div class="stat-meta">Penilaian harian & CBT</div>
         </div>
-        <div class="stat-cell" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">
+        <div class="stat-cell" data-action="switch-tab" data-tab="sec-grading">
           <div class="stat-lbl">
             <span>Tugas Masuk</span>
             <span class="badge badge-bs">Sinkron</span>
@@ -320,7 +320,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px solid var(--line-soft); font-size:12px; color:var(--ink-3)">
               <span>Koreksi Hibrida (PG/BS/Match otomatis)</span>
-              <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-grading\']')?.click()">Buka Antrean →</button>
+              <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-grading">Buka Antrean →</button>
             </div>
           </div>
 
@@ -341,7 +341,7 @@
                     <div style="font-size:12px; color:var(--ink-2)">Teks ringkasan, YouTube & Google Drive</div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-materi\']')?.click()">Buka</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-materi">Buka</button>
               </div>
               <div class="list-row">
                 <div class="list-row-main" style="align-items:center">
@@ -351,7 +351,7 @@
                     <div style="font-size:12px; color:var(--ink-2)">1 kiriman deterministik per siswa</div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-tugas\']')?.click()">Buka</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-tugas">Buka</button>
               </div>
               <div class="list-row">
                 <div class="list-row-main" style="align-items:center">
@@ -361,7 +361,7 @@
                     <div style="font-size:12px; color:var(--ink-2)">PG, Benar/Salah, Menjodohkan, Essay</div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-ghost btn-sm" onclick="document.querySelector('.nav-btn[data-tab=\'sec-asesmen\']')?.click()">Buka</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-asesmen">Buka</button>
               </div>
             </div>
           </div>
@@ -558,7 +558,7 @@
       <div id="tug-sub-panel" class="panel hidden" style="border-left:4px solid var(--ok)">
         <div class="panel-head">
           <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
-          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('tug-sub-panel').classList.add('hidden')">Tutup Panel</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-action="close-sub-panel">Tutup Panel</button>
         </div>
         <div class="table-container">
           <table id="tug-sub-table">
@@ -593,7 +593,7 @@
             <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
             <span>Pratinjau Asesmen</span>
           </button>
-          <button type="button" class="btn btn-secondary" onclick="window._openQModal('pg')">
+          <button type="button" class="btn btn-secondary" data-action="open-q-modal" data-qtype="pg">
             <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
             <span>+ Modal Butir Soal</span>
           </button>
@@ -648,7 +648,7 @@
           </div>
           <div>
             <label for="as-mode">Mode Asesmen *</label>
-            <select id="as-mode" onchange="window._syncBuilderStats()">
+            <select id="as-mode">
               <option value="latihan">Latihan (Auto-Nilai Instan)</option>
               <option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option>
             </select>
@@ -659,7 +659,7 @@
         <div class="row">
           <div>
             <label for="as-durasi">Durasi (Menit)</label>
-            <input id="as-durasi" type="number" value="60" oninput="window._syncBuilderStats()">
+            <input id="as-durasi" type="number" value="60">
           </div>
           <div>
             <label for="as-tol">Toleransi Masuk (Menit)</label>
@@ -684,19 +684,19 @@
             <p style="font-size:12px; color:var(--ink-2)">Tambahkan langsung ke daftar atau gunakan editor modal terstruktur</p>
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:8px">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('pg')">
+            <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="pg">
               <span class="badge badge-pg">PG</span>
               <span>+ Pilihan Ganda</span>
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('bs')">
+            <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="bs">
               <span class="badge badge-bs">BS</span>
               <span>+ Benar/Salah</span>
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('match')">
+            <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="match">
               <span class="badge badge-match">MATCH</span>
               <span>+ Mencocokkan</span>
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window._addQ('essay')">
+            <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="essay">
               <span class="badge badge-essay">ESSAY</span>
               <span>+ Essay</span>
             </button>
@@ -711,7 +711,7 @@
             <span class="material-symbols-outlined" style="color:var(--accent)">format_list_numbered</span>
             <span>Daftar Butir Soal Paket Ini</span>
           </h2>
-          <button type="button" class="btn btn-ghost btn-sm" onclick="window._openQModal('match')">
+          <button type="button" class="btn btn-ghost btn-sm" data-action="open-q-modal" data-qtype="match">
             <span class="material-symbols-outlined" style="font-size:16px">sync_alt</span>
             <span>Editor Pasangan MATCH</span>
           </button>
@@ -808,9 +808,9 @@
             <p style="font-size:12px; color:var(--ink-2)" id="gr-subtitle">Periksa skor otomatis dan berikan nilai pada butir Essay</p>
           </div>
           <div style="display:flex; align-items:center; gap:6px">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window._stepStudent(-1)" aria-label="Siswa Sebelumnya">&lsaquo; Sebelumnya</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="step-student" data-step="-1" aria-label="Siswa Sebelumnya">&lsaquo; Sebelumnya</button>
             <span class="badge badge-neutral tabular-nums" id="gr-student-counter">Semua Siswa</span>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window._stepStudent(1)" aria-label="Siswa Berikutnya">Berikutnya &rsaquo;</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="step-student" data-step="1" aria-label="Siswa Berikutnya">Berikutnya &rsaquo;</button>
           </div>
         </div>
 
@@ -949,24 +949,24 @@
           <h2 id="modal-q-title" style="font-size:16px; font-weight:600">Tambah Butir Soal Baru</h2>
           <span class="badge badge-neutral">4 Tipe Soal</span>
         </div>
-        <button type="button" class="icon-action-btn" onclick="window._closeQModal()" aria-label="Tutup Modal" style="width:30px; height:30px">
+        <button type="button" class="icon-action-btn" data-action="close-q-modal" aria-label="Tutup Modal" style="width:30px; height:30px">
           <span class="material-symbols-outlined" style="font-size:18px">close</span>
         </button>
       </div>
       <div class="seg-tabs" role="tablist">
-        <button type="button" class="seg-tab active" data-mtype="pg" onclick="window._switchQModalType('pg')">
+        <button type="button" class="seg-tab active" data-mtype="pg" data-action="switch-qmodal-type">
           <span class="badge badge-pg">PG</span>
           <span>Pilihan Ganda</span>
         </button>
-        <button type="button" class="seg-tab" data-mtype="bs" onclick="window._switchQModalType('bs')">
+        <button type="button" class="seg-tab" data-mtype="bs" data-action="switch-qmodal-type">
           <span class="badge badge-bs">BS</span>
           <span>Benar/Salah</span>
         </button>
-        <button type="button" class="seg-tab" data-mtype="match" onclick="window._switchQModalType('match')">
+        <button type="button" class="seg-tab" data-mtype="match" data-action="switch-qmodal-type">
           <span class="badge badge-match">MATCH</span>
           <span>Menjodohkan</span>
         </button>
-        <button type="button" class="seg-tab" data-mtype="essay" onclick="window._switchQModalType('essay')">
+        <button type="button" class="seg-tab" data-mtype="essay" data-action="switch-qmodal-type">
           <span class="badge badge-essay">ESSAY</span>
           <span>Uraian</span>
         </button>
@@ -1029,7 +1029,7 @@
             <div><label>Kolom B (Pasangan Benar 2)</label><input class="mq-kanan" placeholder="Contoh: Menyaring partikel debu" value=""></div>
           </div>
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="window._addModalMatchRow()">+ Tambah Baris Pasangan</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-modal-match-row">+ Tambah Baris Pasangan</button>
       </div>
 
       <!-- Panel ESSAY -->
@@ -1043,8 +1043,8 @@
     <div class="modal-footer">
       <span style="font-size:12px; color:var(--ok); font-weight:500">&#10003; Format soal tervalidasi</span>
       <div style="display:flex; gap:8px">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="window._closeQModal()">Batal</button>
-        <button type="button" class="btn btn-ink btn-sm" onclick="window._commitQModal()">Simpan Butir Soal</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="close-q-modal">Batal</button>
+        <button type="button" class="btn btn-ink btn-sm" data-action="commit-q-modal">Simpan Butir Soal</button>
       </div>
     </div>
   </div>
@@ -1059,11 +1059,11 @@
         <span class="modal-sub" id="modal-preview-sub">Tampilan simulasi persis seperti di layar HP / Laptop siswa</span>
       </div>
       <div style="display:flex; align-items:center; gap:8px">
-        <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-viewport" onclick="window._togglePreviewViewport()">
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-viewport" data-action="toggle-preview-viewport">
           <span class="material-symbols-outlined" style="font-size:16px">smartphone</span>
           <span id="preview-mode-lbl">Mode HP (375px)</span>
         </button>
-        <button type="button" class="icon-action-btn" onclick="window._closePreviewModal()" aria-label="Tutup Pratinjau" style="width:30px; height:30px">
+        <button type="button" class="icon-action-btn" data-action="close-preview-modal" aria-label="Tutup Pratinjau" style="width:30px; height:30px">
           <span class="material-symbols-outlined" style="font-size:18px">close</span>
         </button>
       </div>
@@ -1073,7 +1073,7 @@
     </div>
     <div class="modal-footer" style="justify-content:space-between">
       <span style="font-size:12px; color:var(--ink-2)">Simulasi interaktif tidak mengirimkan jawaban ke server</span>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="window._closePreviewModal()">Tutup Pratinjau</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-action="close-preview-modal">Tutup Pratinjau</button>
     </div>
   </div>
 </div>

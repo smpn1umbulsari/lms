@@ -175,5 +175,11 @@ export function filterNilaiSection(type) {
   }
 }
 
-window._filterNilaiSection = filterNilaiSection;
+export function initNilaiHandlers() {
+  document.querySelectorAll("[data-action='filter-nilai']").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterNilaiSection(btn.dataset.filter || "all");
+    });
+  });
+}
 
