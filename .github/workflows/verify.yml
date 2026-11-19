@@ -37,6 +37,7 @@ jobs:
           node spike/quiz-utils.test.mjs
           node spike/export.test.mjs
           node spike/submission-queue.test.mjs
+          node spike/attempt-queue.test.mjs
           node tests/smoke.test.mjs
 
       - name: Run Firestore Security Rules Tests

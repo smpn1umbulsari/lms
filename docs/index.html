@@ -156,6 +156,7 @@
 
   <!-- DASHBOARD PANEL -->
   <div id="sec-dashboard" class="hidden">
+    <div id="pending-exam-banner" class="hidden"></div>
 
     <!-- BERANDA SISWA SUMMARY HERO (Stitch Screens 14 & 10) -->
     <section class="beranda-hero" id="beranda-summary">
@@ -357,11 +358,14 @@
 
   <!-- RESULT MODAL -->
   <div id="sec-result" class="panel hidden" style="max-width:550px; margin:2rem auto; text-align:center; padding:28px">
-    <span class="badge badge-ok" style="margin-bottom:8px">Lembar Jawaban Tersimpan</span>
+    <span id="res-badge" class="badge badge-ok" style="margin-bottom:8px">Lembar Jawaban Tersimpan</span>
     <h2>Hasil Pengerjaan</h2>
     <div id="res-score" style="font-size:2.75rem; font-weight:700; color:var(--ok); margin:12px 0">0</div>
     <p id="res-desc" style="color:var(--ink-2); margin-bottom:20px"></p>
-    <button id="btn-res-back" class="btn btn-primary" style="width:100%">Kembali ke Dashboard</button>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <button id="btn-res-retry" type="button" class="btn btn-primary hidden" style="width:100%">Coba Kirim Ulang</button>
+      <button id="btn-res-back" type="button" class="btn btn-secondary" style="width:100%">Kembali ke Beranda</button>
+    </div>
   </div>
 </div>
 

@@ -33,8 +33,7 @@ export function initGlobalErrorObserver() {
     const reason = event.reason;
     const msg = reason?.message || String(reason);
 
-    // Suppress benign abort or permission denials that are handled locally
-    if (msg.includes("aborted") || msg.includes("permission-denied")) {
+    if (msg.includes("aborted")) {
       return;
     }
 
@@ -43,7 +42,9 @@ export function initGlobalErrorObserver() {
       stack: reason?.stack
     });
 
-    if (msg.toLowerCase().includes("network") || msg.toLowerCase().includes("offline")) {
+    if (msg.includes("permission-denied") || reason?.code === "permission-denied") {
+      showToast("Akses ke data ditolak. Pastikan Anda masuk dengan akun yang benar.", "error");
+    } else if (msg.toLowerCase().includes("network") || msg.toLowerCase().includes("offline")) {
       showToast("Koneksi terputus. Bekerja dalam mode offline.", "warn");
     }
   });

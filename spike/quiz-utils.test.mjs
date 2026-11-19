@@ -1,6 +1,6 @@
 // Runnable check: node spike/quiz-utils.test.mjs
 import assert from "node:assert/strict";
-import { fnv1a, mulberry32, shuffle } from "../docs/js/shared/quiz-utils.js";
+import { fnv1a, mulberry32, shuffle, getQuizStatus } from "../docs/js/shared/quiz-utils.js";
 
 let pass = 0;
 const test = (name, fn) => {
@@ -70,6 +70,28 @@ test("shuffle: menangani array kosong & 1 elemen tanpa error", () => {
 
   const single = shuffle(["Single"], mulberry32(1));
   assert.deepEqual(single, ["Single"]);
+});
+
+// 4. Status jendela ujian jujur
+test("getQuizStatus: membedakan belum dibuka, terbuka, terlambat, ditutup, terkirim, lanjutkan, remedial", () => {
+  const openAt = 1_000_000;
+  const closeAt = openAt + 120 * 60000;
+  const q = { openAt, closeAt, toleransiMulai: 30, maxAttempts: 1 };
+
+  assert.equal(getQuizStatus(q, openAt - 1000).code, "belum_dibuka");
+  assert.equal(getQuizStatus(q, openAt - 1000).canStart, false);
+
+  assert.equal(getQuizStatus(q, openAt + 10 * 60000).code, "terbuka");
+  assert.equal(getQuizStatus(q, openAt + 10 * 60000).canStart, true);
+
+  assert.equal(getQuizStatus(q, openAt + 40 * 60000).code, "terlambat");
+  assert.equal(getQuizStatus(q, openAt + 40 * 60000).canStart, false);
+
+  assert.equal(getQuizStatus(q, closeAt + 1000).code, "ditutup");
+  assert.equal(getQuizStatus(q, openAt + 40 * 60000, { started: true, deadlineMs: openAt + 70 * 60000 }).code, "lanjutkan");
+  assert.equal(getQuizStatus(q, openAt + 10 * 60000, { submitted: true }).code, "terkirim");
+  assert.equal(getQuizStatus(q, openAt + 10 * 60000, { submitted: true, graded: true }).code, "dinilai");
+  assert.equal(getQuizStatus({ ...q, maxAttempts: 2 }, openAt + 10 * 60000, { submittedCount: 1 }).code, "remedial");
 });
 
 console.log(`\n=== ${pass} PASS / 0 FAIL ===`);

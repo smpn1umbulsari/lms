@@ -19,8 +19,9 @@ import { registerServiceWorker } from "../core/pwa.js";
 import { initGlobalErrorObserver } from "../core/error-handler.js";
 import { loadMateri, initMateriSearch } from "./materi.js";
 import { loadTugas, initTugasHandlers } from "./tugas.js";
-import { loadAsesmen } from "./asesmen.js";
+import { loadAsesmen, fetchStudentQuizStatuses, applyHeroCta } from "./asesmen.js";
 import { startQuiz, initExamRunnerControls, getActiveExamId } from "./exam-runner.js";
+import { flushPendingAttempts } from "./exam-sync.js";
 import { loadNilai, initNilaiHandlers } from "./nilai.js";
 
 let currentUser = null;
@@ -61,6 +62,14 @@ async function getClassMeta() {
   return null;
 }
 
+function launchStudentQuiz(qid, quizzesMeta, meta) {
+  startQuiz(qid, currentUser, userProfile, quizzesMeta, () => {
+    loadedStudentTabs.delete("sec-nilai");
+    loadedStudentTabs.delete("tab-asesmen");
+    loadAsesmen(currentUser, userProfile, (id, m) => launchStudentQuiz(id, m, meta), meta, activateStudentTab);
+  });
+}
+
 export async function loadStudentTab(tabId) {
   if (!currentUser || !userProfile) return;
   const meta = await getClassMeta();
@@ -68,26 +77,10 @@ export async function loadStudentTab(tabId) {
     const keys = Object.keys(meta.quizzes);
     const stAs = document.getElementById("st-count-asesmen");
     if (stAs) stAs.textContent = keys.length;
-
-    const heroBtn = document.getElementById("hero-cta-btn");
-    const ctaTitle = document.getElementById("hero-cta-title");
-    const ctaMeta = document.getElementById("hero-cta-meta");
-    if (keys.length > 0) {
-      const firstQid = keys[0];
-      const firstQ = meta.quizzes[firstQid];
-      if (ctaTitle) ctaTitle.textContent = firstQ.judul || `Asesmen Terjadwal (${firstQid})`;
-      if (ctaMeta) ctaMeta.textContent = `Durasi ${firstQ.duration} Menit · Siap Dikerjakan`;
-      if (heroBtn) {
-        heroBtn.innerHTML = `<span>Mulai Asesmen</span><span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>`;
-        heroBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          startQuiz(firstQid, currentUser, userProfile, meta.quizzes, () => {
-            loadedStudentTabs.delete("sec-nilai");
-            loadAsesmen(currentUser, userProfile, null, meta);
-          });
-        };
-      }
+    if (tabId !== "tab-asesmen") {
+      fetchStudentQuizStatuses(currentUser.uid, meta.quizzes).then((stMap) => {
+        applyHeroCta(meta.quizzes, stMap, (qid, qm) => launchStudentQuiz(qid, qm, meta), activateStudentTab);
+      });
     }
   }
   if (tabId === "tab-materi" && !loadedStudentTabs.has("tab-materi")) {
@@ -100,13 +93,9 @@ export async function loadStudentTab(tabId) {
     await loadAsesmen(
       currentUser,
       userProfile,
-      (qid, quizzesMeta) => {
-        startQuiz(qid, currentUser, userProfile, quizzesMeta, () => {
-          loadedStudentTabs.delete("sec-nilai");
-          loadAsesmen(currentUser, userProfile, null, meta);
-        });
-      },
-      meta
+      (qid, quizzesMeta) => launchStudentQuiz(qid, quizzesMeta, meta),
+      meta,
+      activateStudentTab
     );
     loadedStudentTabs.add("tab-asesmen");
   } else if (tabId === "sec-nilai" && !loadedStudentTabs.has("sec-nilai")) {
@@ -168,6 +157,11 @@ function enterStudentDashboard() {
   document.getElementById("sec-nis")?.classList.add("hidden");
   document.getElementById("sec-dashboard")?.classList.remove("hidden");
   document.getElementById("mobile-student-nav")?.classList.remove("hidden");
+
+  flushPendingAttempts(currentUser, () => {
+    loadedStudentTabs.delete("tab-asesmen");
+    loadedStudentTabs.delete("sec-nilai");
+  });
 
   const activeQuizId = getActiveExamId();
   if (activeQuizId) {
