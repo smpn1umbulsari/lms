@@ -2,7 +2,7 @@
 
 export function scoreOf(r) {
   if (!r) return undefined;
-  for (const k of ["totalScore", "score", "nilai", "total"]) {
+  for (const k of ["pct", "totalScore", "score", "nilai", "total"]) {
     if (r[k] !== undefined && r[k] !== null && r[k] !== "") return Number(r[k]);
   }
   return undefined;

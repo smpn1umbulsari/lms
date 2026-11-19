@@ -1,5 +1,6 @@
 // Analisis Butir Soal & Tingkat Kesulitan untuk Koreksi Ujian
 import { escAttr } from "../core/dom.js";
+import { isAutoCorrect } from "../core/scoring.js";
 
 export function renderItemAnalysis(quizDoc, attempts, keys) {
   const container = document.getElementById("gr-item-analysis");
@@ -26,18 +27,7 @@ export function renderItemAnalysis(quizDoc, attempts, keys) {
 
     let correctCount = 0;
     attempts.forEach((att) => {
-      const ans = (att.answers || {})[q.id];
-      if (q.tipe === "pg" || q.tipe === "bs") {
-        if (ans && ans === keys[q.id]) correctCount++;
-      } else if (q.tipe === "match") {
-        const correctM = keys[q.id] || {};
-        if (
-          Object.keys(correctM).length &&
-          Object.keys(correctM).every((k) => (ans || {})[k] === correctM[k])
-        ) {
-          correctCount++;
-        }
-      }
+      if (isAutoCorrect(q, (att.answers || {})[q.id], keys[q.id])) correctCount++;
     });
 
     const pct = Math.round((correctCount / total) * 100);

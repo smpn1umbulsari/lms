@@ -1,23 +1,20 @@
 // Admin Penugasan & Pengumpulan Siswa
 import {
-  auth,
   db,
   doc,
   getDoc,
   getDocs,
   setDoc,
   deleteDoc,
-  updateDoc,
   collection,
-  query,
-  where,
-  limit,
   Timestamp
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
-import { mediaEmbed } from "../core/media.js";
 import { updateClassOptions } from "./ringkasan.js";
 import { showToast, showConfirmDialog } from "../core/toast.js";
+import { viewSub, gradeSub, initTugasSubmissionsHandlers } from "./tugas-submissions.js";
+
+export { viewSub, gradeSub };
 
 let tugasData = [];
 let editingAsg = null;
@@ -142,51 +139,6 @@ export async function editAsg(id) {
   document.getElementById("t-judul")?.focus();
 }
 
-export async function viewSub(assignmentId, title) {
-  document.getElementById("tug-sub-title").textContent = `Kiriman Tugas: ${title}`;
-  const sSnap = await getDocs(
-    query(collection(db, "submissions"), where("assignmentId", "==", assignmentId), limit(50))
-  );
-  const stbody = document.querySelector("#tug-sub-table tbody");
-  if (!sSnap.docs.length) {
-    stbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:18px; color:var(--ink-3)">Belum ada kiriman siswa untuk tugas ini.</td></tr>`;
-  } else {
-    stbody.innerHTML = sSnap.docs
-      .map((sd) => {
-        const s = sd.data();
-        return `<tr>
-        <td><code>${s.uid.slice(0, 8)}</code></td>
-        <td style="max-width:240px; white-space:pre-wrap">${escAttr(s.teks || "-")}</td>
-        <td style="min-width:220px">${
-          s.link ? `<div class="embed-wrap">${mediaEmbed(s.link)}</div>` : "-"
-        }</td>
-        <td><input id="score_${sd.id}" type="number" style="width:72px" value="${
-          s.nilai !== undefined ? s.nilai : ""
-        }" placeholder="0-100"></td>
-        <td style="text-align:right"><button type="button" class="btn btn-primary btn-sm" data-action="grade-sub" data-sub-id="${escAttr(
-          sd.id
-        )}">Simpan Nilai</button></td>
-      </tr>`;
-      })
-      .join("");
-  }
-  document.getElementById("tug-sub-panel").classList.remove("hidden");
-  document.getElementById("tug-sub-panel").scrollIntoView({ behavior: "smooth" });
-}
-
-export async function gradeSub(subId) {
-  const el = document.getElementById("score_" + subId);
-  const n = parseInt(el.value, 10);
-  if (isNaN(n) || n < 0 || n > 100) return showToast("Nilai harus berada di rentang 0-100", "warn");
-  await updateDoc(doc(db, "submissions", subId), {
-    nilai: n,
-    updatedAt: Timestamp.now(),
-    gradedAt: Timestamp.now(),
-    gradedBy: auth.currentUser?.uid || ""
-  });
-  showToast("Nilai tugas tersimpan!");
-}
-
 export async function loadTugasTable(onDataChanged) {
   const snap = await getDocs(collection(db, "assignments"));
   tugasData = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
@@ -241,8 +193,9 @@ export function initTugasHandlers(onDataChanged) {
   });
 
   document.getElementById("tug-search")?.addEventListener("input", filterTugas);
+  initTugasSubmissionsHandlers();
 
-  document.getElementById("btn-add-tug-link")?.addEventListener("click", () => {
+  document.getElementById("btn-add-tlink")?.addEventListener("click", () => {
     const extra = document.getElementById("t-links-extra");
     const row = document.createElement("div");
     row.className = "link-row";

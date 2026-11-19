@@ -75,7 +75,8 @@ t("rekap: rata-rata & nilai akhir 40/60, sel kosong tetap kosong", () => {
   assert.deepEqual(rows[1], ["007", "Ani", "7A", 80, 80, 90, 90, 86]);
   assert.deepEqual(rows[2], ["8", "Budi", "7A", "", "", "", "", ""]);
 });
-t("scoreOf: prioritas field & nilai 0 dihitung", () => {
+t("scoreOf: prioritas field (pct > totalScore) & nilai 0 dihitung", () => {
+  assert.equal(scoreOf({ pct: 75, totalScore: 150 }), 75);
   assert.equal(scoreOf({ totalScore: 0, score: 5 }), 0);
   assert.equal(scoreOf({ nilai: "70" }), 70);
   assert.equal(scoreOf({}), undefined);

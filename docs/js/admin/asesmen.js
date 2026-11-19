@@ -37,6 +37,7 @@ export function renderAsesmenTable(rows) {
       const q = d.data || d;
       const open = q.openAt ? (q.openAt.toDate ? q.openAt.toDate() : new Date(q.openAt)) : null;
       const aksi = `
+        <button type="button" class="btn btn-primary btn-sm" data-action="grade-asesmen" data-code="${escAttr(d.id)}" title="Koreksi & Nilai Ujian">Koreksi</button>
         <button type="button" class="btn btn-secondary btn-sm" data-action="edit-asesmen" data-code="${escAttr(d.id)}" title="Edit Soal & Jadwal">Edit</button>
         <button type="button" class="btn btn-ghost btn-sm" data-action="export-quiz-soal" data-code="${escAttr(d.id)}" title="Export Soal Kuis ini ke Excel (.xlsx)">Soal</button>
         <button type="button" class="btn btn-ghost btn-sm" data-action="export-quiz-nilai" data-code="${escAttr(d.id)}" title="Unduh Nilai Kuis ini ke CSV">Nilai</button>
@@ -191,14 +192,16 @@ export async function loadAsesmenTable(onDataChanged) {
   }
 }
 
-export function initAsesmenHandlers(onDataChanged) {
+export function initAsesmenHandlers(onDataChanged, onGradeQuiz) {
   const tbody = document.querySelector("#as-table tbody");
   if (tbody) {
     tbody.addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-action]");
       if (!btn) return;
       const code = btn.dataset.code;
-      if (btn.dataset.action === "edit-asesmen") {
+      if (btn.dataset.action === "grade-asesmen") {
+        if (typeof onGradeQuiz === "function") onGradeQuiz(code);
+      } else if (btn.dataset.action === "edit-asesmen") {
         await editAsesmen(code);
       } else if (btn.dataset.action === "export-quiz-soal") {
         const { exportSingleQuizXLSX } = await import("./import/export-templates.js");

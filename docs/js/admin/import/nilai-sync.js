@@ -58,13 +58,16 @@ export async function downloadTemplateNilaiKuis(quizCode, { db, doc, getDoc, col
   }
 }
 
-export async function saveNilaiImport(quizCode, items, { db, doc, collection, getDocs, writeBatch, Timestamp, showToast }) {
+export async function saveNilaiImport(quizCode, items, { auth, db, doc, collection, query, where, getDocs, writeBatch, Timestamp, showToast }) {
   if (!quizCode) return showToast("Kode kuis tidak valid!", "warn");
   if (!items.length) return showToast("Tidak ada nilai yang dapat disimpan.", "warn");
 
   try {
-    // Muat mapping NIS -> UID dari users
-    const uSnap = await getDocs(collection(db, "users"));
+    const [uSnap, rSnap] = await Promise.all([
+      getDocs(collection(db, "users")),
+      getDocs(query(collection(db, "results"), where("quizId", "==", quizCode))).catch(() => ({ docs: [] }))
+    ]);
+    const prevRev = new Map(rSnap.docs.map((d) => [d.id, Number(d.data().revisionNo) || 0]));
     const nisToUid = new Map();
     uSnap.docs.forEach((d) => {
       const u = d.data();
@@ -85,6 +88,7 @@ export async function saveNilaiImport(quizCode, items, { db, doc, collection, ge
       }
     });
 
+    const gradedBy = auth?.currentUser?.uid || "";
     const BATCH_LIMIT = 400;
     for (let i = 0; i < matched.length; i += BATCH_LIMIT) {
       const bChunk = matched.slice(i, i + BATCH_LIMIT);
@@ -93,18 +97,23 @@ export async function saveNilaiImport(quizCode, items, { db, doc, collection, ge
       bChunk.forEach(({ uid, it }) => {
         const resultId = `${uid}_${quizCode}_1`;
         const resRef = doc(db, "results", resultId);
+        const nextRev = (prevRev.get(resultId) || 0) + 1;
         batch.set(
           resRef,
           {
             uid,
             quizId: quizCode,
+            pct: it.nilai,
+            points: it.nilai,
+            maxScore: 100,
             totalScore: it.nilai,
             essayScore: it.nilai,
             catatanGuru: it.catatan || "",
             isFullyGraded: true,
             isImported: true,
+            gradedBy,
             gradedAt: Timestamp.now(),
-            revisionNo: 1
+            revisionNo: nextRev
           },
           { merge: true }
         );

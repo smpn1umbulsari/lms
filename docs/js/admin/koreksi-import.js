@@ -1,5 +1,5 @@
 // Koreksi Massal & Import Nilai Ujian Orchestrator
-import { db, doc, getDoc, collection, query, where, getDocs, writeBatch, Timestamp } from "../core/firebase.js";
+import { auth, db, doc, getDoc, collection, query, where, getDocs, writeBatch, Timestamp } from "../core/firebase.js";
 import { showToast } from "../core/toast.js";
 import { readExcelFile, renderErrorsBox, esc } from "./import/excel-core.js";
 import { parseNilaiImport } from "./import/nilai-importer.js";
@@ -86,7 +86,7 @@ export function initKoreksiImport() {
 
     saveBtn.disabled = true;
     try {
-      await saveNilaiImport(code, parsedItems, { db, doc, collection, getDocs, writeBatch, Timestamp, showToast });
+      await saveNilaiImport(code, parsedItems, { auth, db, doc, collection, query, where, getDocs, writeBatch, Timestamp, showToast });
       if (ribbon) ribbon.textContent = `Selesai: ${parsedItems.length} nilai kuis ${code} berhasil disimpan.`;
     } catch (e) {
       saveBtn.disabled = false;

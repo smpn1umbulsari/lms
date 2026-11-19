@@ -22,7 +22,7 @@ import { loadTugasTable, initTugasHandlers, getTugasData } from "./tugas.js";
 import { loadAsesmenTable, initAsesmenHandlers, getAsesmenData } from "./asesmen.js";
 import { initQBuilder, renderQBuilder } from "./qbuilder.js";
 import { initQPreview } from "./qpreview.js";
-import { initKoreksi } from "./koreksi.js";
+import { initKoreksi, populateGradingQuizSelect, fetchAttemptsForGrading } from "./koreksi.js";
 import { initCSVExport } from "./export-csv.js";
 import { initImportExport } from "./import-export.js";
 
@@ -111,6 +111,8 @@ export function switchAdminTab(tabId, forceReload = false) {
       loadedAdminTabs.add("sec-asesmen");
       refreshActivity();
     });
+  } else if (tabId === "sec-grading" && (forceReload || !loadedAdminTabs.has("sec-grading"))) {
+    populateGradingQuizSelect().then(() => loadedAdminTabs.add("sec-grading"));
   }
 }
 window.switchAdminTab = switchAdminTab;
@@ -133,10 +135,16 @@ document.addEventListener("click", (e) => {
 // Initialize Handlers
 initMateriHandlers(refreshActivity);
 initTugasHandlers(refreshActivity);
-initAsesmenHandlers(refreshActivity);
+initAsesmenHandlers(refreshActivity, async (code) => {
+  switchAdminTab("sec-grading");
+  await populateGradingQuizSelect(code);
+  loadedAdminTabs.add("sec-grading");
+  await fetchAttemptsForGrading(false);
+});
 initQBuilder((code) => {
   log(`Asesmen ${code} tersimpan.`);
   loadedAdminTabs.delete("sec-asesmen");
+  loadedAdminTabs.delete("sec-grading");
   loadAsesmenTable(() => {
     loadedAdminTabs.add("sec-asesmen");
     refreshActivity();
