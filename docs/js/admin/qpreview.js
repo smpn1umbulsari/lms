@@ -2,6 +2,7 @@
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
 import { fnv1a, mulberry32, shuffle } from "../shared/quiz-utils.js";
+import { getQuestionType, normalizeQuestion } from "../core/scoring.js";
 import { matchBoardHTML } from "../core/match-board.js";
 
 let isPhoneViewport = false;
@@ -15,7 +16,7 @@ export function openPreviewModal(questions, metadata = {}) {
     return;
   }
 
-  activePreviewQuestions = questions;
+  activePreviewQuestions = (questions || []).map((q, i) => normalizeQuestion(q, i));
   previewAnswers = {};
   previewSelectedPremise = {};
   isPhoneViewport = false;
@@ -55,8 +56,9 @@ function renderPreviewContent(meta = {}) {
 
   const cardsHtml = activePreviewQuestions
     .map((q, idx) => {
+      const tipe = getQuestionType(q);
       let qContent = "";
-      if (q.tipe === "pg") {
+      if (tipe === "pg") {
         qContent = Object.entries(q.pilihan || {})
           .map(
             ([k, val]) => `
@@ -68,16 +70,16 @@ function renderPreviewContent(meta = {}) {
           </label>`
           )
           .join("");
-      } else if (q.tipe === "bs") {
+      } else if (tipe === "bs") {
         const cur = previewAnswers[q.id];
         qContent = `
           <div class="bs-group">
             <button type="button" class="bs-btn ${cur === "true" ? "active-benar" : ""}" data-action="prev-ans-bs" data-qid="${escAttr(q.id)}" data-val="true">✓ BENAR</button>
             <button type="button" class="bs-btn ${cur === "false" ? "active-salah" : ""}" data-action="prev-ans-bs" data-qid="${escAttr(q.id)}" data-val="false">✕ SALAH</button>
           </div>`;
-      } else if (q.tipe === "match") {
+      } else if (tipe === "match") {
         qContent = `<div id="prev_match_${q.id}">${generatePreviewMatchHTML(q)}</div>`;
-      } else if (q.tipe === "essay") {
+      } else if (tipe === "essay") {
         const curText = previewAnswers[q.id] || "";
         qContent = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
@@ -90,17 +92,17 @@ function renderPreviewContent(meta = {}) {
       }
 
       return `
-        <div class="q-card" data-qtype="${q.tipe}" style="background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px">
+        <div class="q-card" data-qtype="${tipe}" style="background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
             <span class="badge ${
-              q.tipe === "match"
+              tipe === "match"
                 ? "badge-match"
-                : q.tipe === "bs"
+                : tipe === "bs"
                 ? "badge-bs"
-                : q.tipe === "essay"
+                : tipe === "essay"
                 ? "badge-essay"
                 : "badge-pg"
-            }">Soal ${idx + 1} · ${q.tipe.toUpperCase()}</span>
+            }">Soal ${idx + 1} · ${tipe.toUpperCase()}</span>
             <span style="font-size:12px; color:var(--ink-3)">Bobot: ${
               q.bobot || 25
             } Poin</span>

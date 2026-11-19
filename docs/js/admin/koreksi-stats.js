@@ -1,6 +1,6 @@
 // Analisis Butir Soal & Tingkat Kesulitan untuk Koreksi Ujian
 import { escAttr } from "../core/dom.js";
-import { isAutoCorrect } from "../core/scoring.js";
+import { getQuestionType, isAutoCorrect } from "../core/scoring.js";
 
 export function renderItemAnalysis(quizDoc, attempts, keys) {
   const container = document.getElementById("gr-item-analysis");
@@ -12,7 +12,8 @@ export function renderItemAnalysis(quizDoc, attempts, keys) {
 
   const total = attempts.length;
   const analysis = quizDoc.questions.map((q, idx) => {
-    if (q.tipe === "essay") {
+    const tipe = getQuestionType(q);
+    if (tipe === "essay") {
       return {
         no: idx + 1,
         tipe: "ESSAY",
@@ -46,7 +47,7 @@ export function renderItemAnalysis(quizDoc, attempts, keys) {
 
     return {
       no: idx + 1,
-      tipe: q.tipe.toUpperCase(),
+      tipe: tipe.toUpperCase(),
       teks: q.teks || "",
       correctCount,
       pct,

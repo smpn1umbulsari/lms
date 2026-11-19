@@ -1,6 +1,6 @@
 // Runnable check: node spike/scoring.test.mjs
 import assert from "node:assert/strict";
-import { hitungSkor, gradeAttempt, isAutoCorrect, getBobot, BOBOT_DEFAULT } from "../docs/js/core/scoring.js";
+import { hitungSkor, gradeAttempt, isAutoCorrect, getBobot, getQuestionType, normalizeQuestion, BOBOT_DEFAULT } from "../docs/js/core/scoring.js";
 
 const Q = [
   { id: "q1", tipe: "pg", kunci: "B", bobot: 40 },
@@ -72,4 +72,27 @@ assert(!isAutoCorrect({ id: "q1", tipe: "pg" }, "A", ""));
 const gClamp = gradeAttempt(QMix, AMix, KMix, { q4: 999 });
 assert.equal(gClamp.essayPoints, 50);
 
-console.log("=== 9 PASS / 0 FAIL ===");
+// 10. Regresi soal warisan (tanpa field `tipe` / `bobot`), sesuai bentuk seed lama.
+const legacyPg = { id: "q1", teks: "Ibu kota Indonesia?", pilihan: { A: "Jakarta", B: "Bandung" }, kunci: "A" };
+assert.equal(getQuestionType(legacyPg), "pg");
+const normLegacy = normalizeQuestion(legacyPg, 0);
+assert.equal(normLegacy.tipe, "pg");
+assert.equal(normLegacy.bobot, BOBOT_DEFAULT);
+assert.deepEqual(Object.keys(normLegacy.pilihan), ["A", "B", "C", "D"]);
+
+const strippedPg = { id: "q2", teks: "Soal resmi tanpa kunci", pilihan: { A: "Ya", B: "Tidak" } };
+const normStripped = normalizeQuestion(strippedPg, 1);
+assert.equal(normStripped.tipe, "pg");
+assert.equal("kunci" in normStripped, false);
+
+const legacyMatch = { id: "q3", teks: "Jodoh", kiri: ["RI", "JP"], kanan: ["Jakarta", "Tokyo"] };
+assert.equal(getQuestionType(legacyMatch), "match");
+const legacyBs = { id: "q4", teks: "Benar?", kunci: true };
+assert.equal(getQuestionType(legacyBs), "bs");
+
+const legacyScore = hitungSkor([legacyPg], { q1: "A" });
+assert.deepEqual([legacyScore.dapat, legacyScore.total, legacyScore.pct, legacyScore.benar], [25, 25, 100, 1]);
+const legacyGrade = gradeAttempt([legacyPg, legacyBs], { q1: "A", q4: "true" });
+assert.deepEqual([legacyGrade.autoPoints, legacyGrade.maxScore, legacyGrade.pct, legacyGrade.benar], [50, 50, 100, 2]);
+
+console.log("=== 10 PASS / 0 FAIL ===");

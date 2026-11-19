@@ -11,6 +11,7 @@ import {
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { showToast, showConfirmDialog } from "../core/toast.js";
+import { normalizeQuestion } from "../core/scoring.js";
 import { updateClassOptions } from "./ringkasan.js";
 import {
   setQuestionsList,
@@ -113,7 +114,7 @@ export async function editAsesmen(code) {
     const qData = snapDoc.data();
 
     document.getElementById("as-code").value = code;
-    const classes = qData.classes || [];
+    const classes = Array.isArray(qData.classes) ? qData.classes : [];
     const asKelasInput =
       document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
     if (asKelasInput) asKelasInput.value = classes.join(", ");
@@ -151,9 +152,11 @@ export async function editAsesmen(code) {
     if (qData.mode === "ujian") {
       const keySnap = await getDoc(doc(db, "quizKeys", code));
       const keys = keySnap.exists() && keySnap.data().keys ? keySnap.data().keys : {};
-      cloned.forEach((q) => {
-        const kVal = keys[q.id];
+      cloned.forEach((q, idx) => {
+        const qid = q.id || `q${idx + 1}`;
+        const kVal = keys[qid];
         if (kVal && typeof kVal === "object" && !Array.isArray(kVal)) {
+          q.tipe = q.tipe || "match";
           q.kiri = Object.keys(kVal);
           q.kanan = Object.values(kVal);
         } else if (kVal !== undefined) {
@@ -162,7 +165,7 @@ export async function editAsesmen(code) {
       });
     }
 
-    setQuestionsList(cloned);
+    setQuestionsList(cloned.map((q, idx) => normalizeQuestion(q, idx)));
     setEditingQuizCode(code);
     renderQBuilder();
     document.getElementById("btn-as-save").textContent = "Update & Publikasikan Perubahan";

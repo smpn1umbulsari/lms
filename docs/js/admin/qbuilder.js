@@ -8,6 +8,7 @@ import {
 } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
 import { showToast } from "../core/toast.js";
+import { getQuestionType, normalizeQuestion } from "../core/scoring.js";
 import { openPreviewModal } from "./qpreview.js";
 import {
   openQModal,
@@ -49,7 +50,7 @@ export function getQuestionsList() {
 }
 
 export function setQuestionsList(list) {
-  questionsList = list || [];
+  questionsList = (list || []).map((q, idx) => normalizeQuestion(q, idx));
 }
 
 export function setEditingQuizCode(code) {
@@ -97,14 +98,15 @@ export function renderQBuilder() {
   el.innerHTML = questionsList
     .map((q, idx) => {
       let specFields = "";
-      const badgeCls = `badge-${q.tipe}`;
-      const badgeLbl = badgeLabels[q.tipe] || q.tipe.toUpperCase();
-      if (q.tipe === "pg") {
+      const tipe = getQuestionType(q);
+      const badgeCls = `badge-${tipe}`;
+      const badgeLbl = badgeLabels[tipe] || tipe.toUpperCase();
+      if (tipe === "pg") {
         const opts = ["A", "B", "C", "D"]
           .map(
             (o) =>
               `<div><label>Opsi ${o}</label><input value="${escAttr(
-                q.pilihan[o] || ""
+                (q.pilihan || {})[o] || ""
               )}" data-field="pilihan" data-opt="${o}" data-idx="${idx}"></div>`
           )
           .join("");
@@ -112,7 +114,7 @@ export function renderQBuilder() {
           .map((o) => `<option value="${o}" ${q.kunci === o ? "selected" : ""}>Opsi ${o}</option>`)
           .join("");
         specFields = `<div class="row">${opts}<div style="max-width:130px"><label>Kunci Benar</label><select data-field="kunci" data-idx="${idx}">${keys}</select></div></div>`;
-      } else if (q.tipe === "bs") {
+      } else if (tipe === "bs") {
         specFields = `
         <label>Kunci Jawaban Benar / Salah</label>
         <select data-field="kunci" data-idx="${idx}" style="max-width:240px">
@@ -120,7 +122,7 @@ export function renderQBuilder() {
           <option value="false" ${q.kunci === "false" ? "selected" : ""}>Salah (False)</option>
         </select>
       `;
-      } else if (q.tipe === "match") {
+      } else if (tipe === "match") {
         specFields = `
         <label>Pasangan Kolom A (Kiri) ↔ Kolom B (Kanan) — Pisahkan koma jika jamak</label>
         <div class="row">
@@ -132,12 +134,12 @@ export function renderQBuilder() {
           )}" data-field="kanan" data-idx="${idx}"></div>
         </div>
       `;
-      } else if (q.tipe === "essay") {
+      } else if (tipe === "essay") {
         specFields = `<div class="badge badge-danger">Dinilai Manual Guru (Tanpa Kunci Otomatis)</div>`;
       }
 
       return `
-      <div class="q-card" data-qtype="${q.tipe}">
+      <div class="q-card" data-qtype="${tipe}">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
           <div style="display:flex; align-items:center; gap:8px">
             <span class="time-pill" style="min-width:34px">0${idx + 1}</span>

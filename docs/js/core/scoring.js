@@ -7,12 +7,49 @@ export function getBobot(q) {
   return Number.isFinite(n) && n > 0 ? n : BOBOT_DEFAULT;
 }
 
+export function getQuestionType(q) {
+  const raw = typeof q?.tipe === "string" ? q.tipe.trim().toLowerCase() : "";
+  if (raw === "pg" || raw === "bs" || raw === "match" || raw === "essay") return raw;
+  if (Array.isArray(q?.kiri) && q.kiri.length) return "match";
+  if (q?.pilihan && typeof q.pilihan === "object" && Object.keys(q.pilihan).length) return "pg";
+  if (typeof q?.kunci === "boolean" || q?.kunci === "true" || q?.kunci === "false") return "bs";
+  return raw || "pg";
+}
+
+export function normalizeQuestion(q, idx = 0) {
+  const tipe = getQuestionType(q);
+  const out = {
+    ...(q && typeof q === "object" ? q : {}),
+    id: q?.id || `q${idx + 1}`,
+    tipe,
+    teks: q?.teks || "",
+    bobot: getBobot(q)
+  };
+  if (tipe === "pg") {
+    out.pilihan = { A: "", B: "", C: "", D: "", ...(q?.pilihan || {}) };
+    if (q?.kunci !== undefined && q?.kunci !== null) out.kunci = String(q.kunci).toUpperCase();
+  } else if (tipe === "bs") {
+    if (q?.kunci !== undefined && q?.kunci !== null) {
+      out.kunci = q.kunci === false || String(q.kunci).toLowerCase() === "false" ? "false" : "true";
+    }
+  } else if (tipe === "match") {
+    out.kiri = Array.isArray(q?.kiri) ? q.kiri : [];
+    out.kanan = Array.isArray(q?.kanan) ? q.kanan : [];
+  }
+  return out;
+}
+
 export function isAutoCorrect(q, studentAns, keyVal) {
-  if (!q || q.tipe === "essay") return false;
-  if (q.tipe === "pg" || q.tipe === "bs") {
+  const tipe = getQuestionType(q);
+  if (!q || tipe === "essay") return false;
+  if (tipe === "pg") {
     return keyVal !== undefined && keyVal !== null && keyVal !== "" && studentAns === keyVal;
   }
-  if (q.tipe === "match" && keyVal && typeof keyVal === "object") {
+  if (tipe === "bs") {
+    if (keyVal === undefined || keyVal === null || keyVal === "") return false;
+    return String(studentAns).toLowerCase() === String(keyVal).toLowerCase();
+  }
+  if (tipe === "match" && keyVal && typeof keyVal === "object") {
     const keys = Object.keys(keyVal);
     if (!keys.length) return false;
     const map = studentAns && typeof studentAns === "object" ? studentAns : {};
@@ -29,7 +66,7 @@ export function hitungSkor(questions, answers, keysMap = null) {
   let auto = 0;
 
   (questions || []).forEach((q) => {
-    if (!q || q.tipe === "essay") return;
+    if (!q || getQuestionType(q) === "essay") return;
     const bobot = getBobot(q);
     total += bobot;
     auto++;
@@ -60,11 +97,12 @@ export function gradeAttempt(questions, answers, keysMap = null, essayScores = {
 
   (questions || []).forEach((q) => {
     if (!q) return;
+    const tipe = getQuestionType(q);
     const bobot = getBobot(q);
     const keyVal = keysMap ? keysMap[q.id] : q.kunci;
     const ans = answers ? answers[q.id] : undefined;
 
-    if (q.tipe === "essay") {
+    if (tipe === "essay") {
       essayCount++;
       essayMax += bobot;
       const raw = essayScores ? essayScores[q.id] : undefined;

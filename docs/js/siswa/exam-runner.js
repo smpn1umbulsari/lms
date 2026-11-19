@@ -3,7 +3,7 @@ import { db, doc, getDoc, setDoc, serverTimestamp, Timestamp } from "../core/fir
 import { escAttr } from "../core/dom.js";
 import { fnv1a, mulberry32, shuffle } from "../shared/quiz-utils.js";
 import { showConfirmDialog, showToast } from "../core/toast.js";
-import { hitungSkor, getBobot } from "../core/scoring.js";
+import { getBobot, getQuestionType, hitungSkor, normalizeQuestion } from "../core/scoring.js";
 import { matchBoardHTML } from "../core/match-board.js";
 import { putLocalAttempt, getLocalAttempt, deleteLocalAttempt } from "../core/attempt-queue.js";
 import { syncAttemptToServer, createThrottledSyncer, toLocalRecord } from "./exam-sync.js";
@@ -68,7 +68,7 @@ export async function startQuiz(quizId, currentUser, userProfile, quizzesMeta, o
   examState = {
     quizId, startId, attemptNo, uid: currentUser.uid, mode: qDoc.mode || meta.mode || "latihan",
     deadlineMs, submitSeq, warned5m: false, warned1m: false,
-    questions: shuffle(qDoc.questions || [], rnd), answers: savedAnswers,
+    questions: shuffle((qDoc.questions || []).map((q, i) => normalizeQuestion(q, i)), rnd), answers: savedAnswers,
     expireAt: startData.expireAt, expireAtSec: startData.expireAt?.seconds || 0, expireAtNs: startData.expireAt?.nanoseconds || 0,
     locked: false, currentUser, onFinish
   };
@@ -98,13 +98,14 @@ export function updateExamPalette() {
   if (!pal || !examState) return;
   let answeredCount = 0;
   pal.innerHTML = examState.questions.map((q, idx) => {
+    const tipe = getQuestionType(q);
     const ans = examState.answers[q.id];
     const isAns = ans !== undefined && ans !== "" && (typeof ans !== "object" || Object.keys(ans).length > 0);
     if (isAns) answeredCount++;
     return `
       <button type="button" class="q-pal-btn ${isAns ? "answered" : ""}" data-action="jump-q" data-qid="${q.id}">
         <strong class="tabular-nums" style="font-size:12.5px">0${idx + 1} ${isAns ? "✓" : ""}</strong>
-        <span class="badge badge-${q.tipe}" style="font-size:10px; padding:1px 6px">${q.tipe.toUpperCase()}</span>
+        <span class="badge badge-${tipe}" style="font-size:10px; padding:1px 6px">${tipe.toUpperCase()}</span>
       </button>`;
   }).join("");
   const bar = document.getElementById("ex-progress-bar");
@@ -126,19 +127,20 @@ export function renderExam() {
   const container = document.getElementById("ex-questions");
   if (!container || !examState) return;
   container.innerHTML = examState.questions.map((q, idx) => {
+    const tipe = getQuestionType(q);
     let qContent = "";
-    if (q.tipe === "pg") {
+    if (tipe === "pg") {
       qContent = Object.entries(q.pilihan || {}).map(([k, val]) => `
         <label class="opt-label"><input type="radio" name="ans_${q.id}" value="${k}" ${examState.answers[q.id] === k ? "checked" : ""} data-action="ans-pg" data-qid="${q.id}">
         <span><strong>${k}.</strong> ${escAttr(val)}</span></label>`).join("");
-    } else if (q.tipe === "bs") {
+    } else if (tipe === "bs") {
       const cur = examState.answers[q.id];
       qContent = `<div class="bs-group">
         <div class="bs-btn ${cur === "true" ? "active-benar" : ""}" data-action="ans-bs" data-qid="${q.id}" data-val="true">✓ BENAR</div>
         <div class="bs-btn ${cur === "false" ? "active-salah" : ""}" data-action="ans-bs" data-qid="${q.id}" data-val="false">✕ SALAH</div></div>`;
-    } else if (q.tipe === "match") {
+    } else if (tipe === "match") {
       qContent = `<div id="match_wrap_${q.id}">${generateMatchHTML(q)}</div>`;
-    } else if (q.tipe === "essay") {
+    } else if (tipe === "essay") {
       const curText = examState.answers[q.id] || "";
       qContent = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
         <span class="badge badge-essay">Dinilai Guru</span>
@@ -146,12 +148,12 @@ export function renderExam() {
         <textarea placeholder="Ketikkan uraian jawaban Anda di sini..." data-action="ans-essay" data-qid="${q.id}">${escAttr(curText)}</textarea>`;
     }
     return `
-      <div class="q-item ${q.tipe === "essay" ? "essay-border" : ""}" data-qtype="${q.tipe}" id="qcard_${q.id}">
+      <div class="q-item ${tipe === "essay" ? "essay-border" : ""}" data-qtype="${tipe}" id="qcard_${q.id}">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
           <span style="font-weight:600; color:var(--ink)">Soal No. ${idx + 1}</span>
           <span style="display:flex; align-items:center; gap:8px">
             <span class="tabular-nums" style="font-size:11.5px; color:var(--ink-3)">${getBobot(q)} Poin</span>
-            <span class="badge badge-${q.tipe}">${q.tipe.toUpperCase()}</span>
+            <span class="badge badge-${tipe}">${tipe.toUpperCase()}</span>
           </span>
         </div>
         <div style="margin-bottom:14px; line-height:1.6; color:var(--ink); font-weight:500">${escAttr(q.teks)}</div>
