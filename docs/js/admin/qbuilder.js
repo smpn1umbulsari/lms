@@ -1,5 +1,6 @@
 // Admin Question Builder & Assessment Editor
 import {
+  auth,
   db,
   doc,
   setDoc,
@@ -165,14 +166,17 @@ export async function saveAssessment(onSaved) {
   }
   const asKelasInput =
     document.querySelector("input#as-kelas") || document.getElementById("as-kelas");
-  const kelas = (asKelasInput ? asKelasInput.value : "").trim();
+  const kelasStr = (asKelasInput ? asKelasInput.value : "").trim();
+  const classes = kelasStr.split(",").map((s) => s.trim()).filter(Boolean);
   const judul = document.getElementById("as-judul").value.trim();
   const mode = document.getElementById("as-mode").value;
   const duration = parseInt(document.getElementById("as-durasi").value, 10);
   const toleransiMulai = parseInt(document.getElementById("as-tol").value, 10);
+  const maxAttemptsEl = document.getElementById("as-max-attempts");
+  const maxAttempts = Math.min(3, Math.max(1, parseInt(maxAttemptsEl?.value, 10) || 1));
   const openVal = document.getElementById("as-open").value;
   const closeVal = document.getElementById("as-close").value;
-  if (!code || !kelas || !judul || !questionsList.length || !openVal || !closeVal) {
+  if (!code || !classes.length || !judul || !questionsList.length || !openVal || !closeVal) {
     showToast("Lengkapi metadata dan butir soal!", "warn");
     return;
   }
@@ -180,6 +184,7 @@ export async function saveAssessment(onSaved) {
   const openAt = Timestamp.fromDate(new Date(openVal));
   const closeAt = Timestamp.fromDate(new Date(closeVal));
   const version = 1;
+  const createdBy = auth.currentUser?.uid || "";
 
   try {
     if (mode === "ujian") {
@@ -212,12 +217,14 @@ export async function saveAssessment(onSaved) {
         version,
         duration,
         toleransiMulai,
+        maxAttempts,
         openAt,
         closeAt,
-        classes: [kelas],
+        classes,
+        createdBy,
         questions: strippedQuestions
       });
-      await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt });
+      await setDoc(doc(db, "quizKeys", code), { keys: keysMap, version, closeAt, createdBy });
     } else {
       await setDoc(doc(db, "quizzes", code), {
         judul,
@@ -225,30 +232,36 @@ export async function saveAssessment(onSaved) {
         version,
         duration,
         toleransiMulai,
+        maxAttempts,
         openAt,
         closeAt,
-        classes: [kelas],
+        classes,
+        createdBy,
         questions: questionsList
       });
     }
 
-    await setDoc(
-      doc(db, "classes", kelas),
-      {
-        quizzes: {
-          [code]: {
-            openAt,
-            closeAt,
-            duration,
-            toleransiMulai,
-            version,
-            classes: [kelas],
-            judul
+    for (const k of classes) {
+      await setDoc(
+        doc(db, "classes", k),
+        {
+          quizzes: {
+            [code]: {
+              openAt,
+              closeAt,
+              duration,
+              toleransiMulai,
+              maxAttempts,
+              mode,
+              version,
+              classes,
+              judul
+            }
           }
-        }
-      },
-      { merge: true }
-    );
+        },
+        { merge: true }
+      );
+    }
 
     showToast(editingQuizCode ? "Asesmen berhasil diperbarui!" : "Asesmen berhasil diterbitkan!", "ok");
     editingQuizCode = null;

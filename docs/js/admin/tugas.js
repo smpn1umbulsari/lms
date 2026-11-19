@@ -1,5 +1,6 @@
 // Admin Penugasan & Pengumpulan Siswa
 import {
+  auth,
   db,
   doc,
   getDoc,
@@ -179,7 +180,9 @@ export async function gradeSub(subId) {
   if (isNaN(n) || n < 0 || n > 100) return showToast("Nilai harus berada di rentang 0-100", "warn");
   await updateDoc(doc(db, "submissions", subId), {
     nilai: n,
-    gradedAt: Timestamp.now()
+    updatedAt: Timestamp.now(),
+    gradedAt: Timestamp.now(),
+    gradedBy: auth.currentUser?.uid || ""
   });
   showToast("Nilai tugas tersimpan!");
 }

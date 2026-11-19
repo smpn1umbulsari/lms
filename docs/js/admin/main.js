@@ -176,6 +176,7 @@ onAuthStateChanged(auth, async (user) => {
           nama: inv.nama || emailKey.split("@")[0],
           nip: inv.nip || "",
           mapel: inv.mapel || "",
+          role: "guru",
           activatedAt: serverTimestamp()
         });
         showToast("Akun Guru berhasil diaktivasi!", "ok");

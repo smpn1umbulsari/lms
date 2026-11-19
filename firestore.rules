@@ -9,43 +9,85 @@ service cloud.firestore {
       return request.auth != null
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-    // isSuperAdmin: khusus role 'admin' (atau dokumen legacy tanpa field role)
+    // isSuperAdmin: WAJIB memiliki role == 'admin' (tidak ada fallback tanpa role)
     function isSuperAdmin() {
       return isStaff()
-        && (!('role' in adminDoc()) || adminDoc().role == 'admin');
+        && ('role' in adminDoc())
+        && adminDoc().role == 'admin';
+    }
+    function isOwnNis(nis) {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() == nis.lower() + '@smpn1umbulsari.sch.id';
+    }
+    function isSiswaOwner(nis, docData) {
+      return isOwnNis(nis)
+        || (request.auth != null && request.auth.token.email != null
+            && docData != null && 'email' in docData
+            && docData.email.lower() == request.auth.token.email.lower());
     }
     // get() ke path sama di-cache per evaluasi = 1 access-call walau dipanggil berulang
     function q(qid) { return get(/databases/$(database)/documents/quizzes/$(qid)).data; }
     function st(sid) { return get(/databases/$(database)/documents/starts/$(sid)).data; }
+    function asg(aid) { return get(/databases/$(database)/documents/assignments/$(aid)).data; }
+    function quizMaxAttempts(qid) {
+      return 'maxAttempts' in q(qid) ? q(qid).maxAttempts : 1;
+    }
+    function validQuiz(data) {
+      return data.judul is string && data.judul.size() > 0 && data.judul.size() <= 200
+        && data.duration is int && data.duration > 0 && data.duration <= 300
+        && data.classes is list && data.classes.size() > 0
+        && data.questions is list && data.questions.size() > 0 && data.questions.size() <= 100
+        && (!('maxAttempts' in data) || (data.maxAttempts is int && data.maxAttempts >= 1 && data.maxAttempts <= 3));
+    }
+    function validAssignment(data) {
+      return data.judul is string && data.judul.size() > 0 && data.judul.size() <= 200
+        && data.classes is list && data.classes.size() > 0;
+    }
+    function beforeAsgDue(aid) {
+      return exists(/databases/$(database)/documents/assignments/$(aid))
+        && (!('dueAt' in asg(aid)) || asg(aid).dueAt == null || request.time <= asg(aid).dueAt);
+    }
 
-    // ---- starts: create divalidasi penuh, immutable setelah dibuat ----
+    // ---- starts: create divalidasi penuh + dukung attemptNo (remedial <= maxAttempts), immutable ----
     match /starts/{startId} {
       allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isStaff());
       allow create: if request.auth != null
-        && startId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.attemptNo == 1
+        && request.resource.data.attemptNo is int
+        && request.resource.data.attemptNo >= 1
+        && request.resource.data.attemptNo <= quizMaxAttempts(request.resource.data.quizId)
+        && startId == request.auth.uid + '_' + request.resource.data.quizId + '_' + string(request.resource.data.attemptNo)
         && request.resource.data.startedAt == request.time
         && request.resource.data.keys().hasOnly(['uid','quizId','attemptNo','startedAt','duration','closeAt','maxAttempts','quizVersion','keyVersion','expireAt'])
         && request.resource.data.duration == q(request.resource.data.quizId).duration
-        && request.resource.data.maxAttempts == 1
+        && request.resource.data.maxAttempts == quizMaxAttempts(request.resource.data.quizId)
         && request.resource.data.quizVersion == q(request.resource.data.quizId).version
         && request.resource.data.closeAt == q(request.resource.data.quizId).closeAt
         && request.resource.data.expireAt == request.resource.data.closeAt + duration.value(30, 'd')
         && request.time >= q(request.resource.data.quizId).openAt
         && request.time <= q(request.resource.data.quizId).openAt + duration.value(q(request.resource.data.quizId).toleransiMulai, 'm')
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.kelas in q(request.resource.data.quizId).classes;
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.kelas in q(request.resource.data.quizId).classes
+        && (request.resource.data.attemptNo == 1
+          || (exists(/databases/$(database)/documents/attempts/$(request.auth.uid + '_' + request.resource.data.quizId + '_' + string(request.resource.data.attemptNo - 1)))
+              && get(/databases/$(database)/documents/attempts/$(request.auth.uid + '_' + request.resource.data.quizId + '_' + string(request.resource.data.attemptNo - 1))).data.submittedAt != null));
       allow update, delete: if false;
     }
 
-    // ---- quizzes: staff (guru/admin) bebas; siswa baca setelah mulai & dalam jendela; kunci setelah openAt ----
+    // ---- quizzes: staff bebas; siswa baca setelah mulai & dalam jendela; kunci setelah openAt ----
     match /quizzes/{quizId} {
       allow read: if request.auth != null && (
-        (request.time >= resource.data.openAt && request.time <= resource.data.closeAt
-            && exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_1')))
-        || isStaff());
-      allow create: if isStaff();
-      allow update, delete: if isStaff() && request.time < resource.data.openAt;
+        isStaff() || (
+          request.time >= resource.data.openAt
+          && request.time <= resource.data.closeAt
+          && (exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_1'))
+              || exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_2'))
+              || exists(/databases/$(database)/documents/starts/$(request.auth.uid + '_' + quizId + '_3')))
+        )
+      );
+      allow create: if isStaff() && validQuiz(request.resource.data);
+      allow update: if isStaff() && request.time < resource.data.openAt && validQuiz(request.resource.data);
+      allow delete: if isStaff() && request.time < resource.data.openAt;
     }
 
     // ---- quizKeys: staff-only; terkunci setelah openAt ----
@@ -55,22 +97,26 @@ service cloud.firestore {
       allow update, delete: if isStaff() && request.time < q(quizId).openAt;
     }
 
-    // ---- attempts: create+update terbatas, idempoten, jendela dari starts ----
+    // ---- attempts: idempoten, terkunci setelah submittedAt diisi, batas jawaban 100 ----
     match /attempts/{attemptId} {
       allow read: if request.auth != null && resource != null && (request.auth.uid == resource.data.uid || isStaff());
       allow create: if request.auth != null
-        && attemptId == request.auth.uid + '_' + request.resource.data.quizId + '_1'
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.attemptNo == 1
-        && request.resource.data.keys().hasOnly(['answers','updatedAt','submitSeq','uid','quizId','attemptNo','expireAt'])
-        && request.resource.data.answers.size() <= 50
+        && request.resource.data.attemptNo is int
+        && request.resource.data.attemptNo >= 1
+        && attemptId == request.auth.uid + '_' + request.resource.data.quizId + '_' + string(request.resource.data.attemptNo)
+        && request.resource.data.keys().hasOnly(['answers','updatedAt','submitSeq','uid','quizId','attemptNo','expireAt','submittedAt'])
+        && (!('submittedAt' in request.resource.data) || request.resource.data.submittedAt == request.time)
+        && request.resource.data.answers.size() <= 100
         && request.resource.data.expireAt == st(attemptId).closeAt + duration.value(30, 'd')
         && request.time <= st(attemptId).closeAt
         && request.time <= st(attemptId).startedAt + duration.value(st(attemptId).duration, 'm') + duration.value(90, 's');
       allow update: if request.auth != null
         && request.auth.uid == resource.data.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers','updatedAt','submitSeq'])
-        && request.resource.data.answers.size() <= 50
+        && (!('submittedAt' in resource.data) || resource.data.submittedAt == null)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers','updatedAt','submitSeq','submittedAt'])
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['submittedAt']) || request.resource.data.submittedAt == request.time)
+        && request.resource.data.answers.size() <= 100
         && request.time <= st(attemptId).closeAt
         && request.time <= st(attemptId).startedAt + duration.value(st(attemptId).duration, 'm') + duration.value(90, 's');
       allow delete: if false;
@@ -83,53 +129,68 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // ---- quizExplanations: terbuka setelah closeAt (0 access-call) ----
+    // ---- quizExplanations: terbuka setelah closeAt ----
     match /quizExplanations/{quizId} {
       allow read: if request.auth != null && request.time > resource.data.closeAt;
       allow write: if isStaff();
     }
 
-    // ---- siswa: roster hasil impor Excel (hanya SuperAdmin write); login baca untuk binding ----
+    // ---- siswa: staf / pemilik NIS saja yang boleh membaca (blokir enumerasi roster) ----
     match /siswa/{nis} {
-      allow read: if request.auth != null;
-      allow write: if isSuperAdmin();
-      // siswa hanya boleh mengklaim dirinya sekali: claimedBy null -> uid sendiri
-      allow update: if request.auth != null
+      allow read: if isStaff()
+        || isOwnNis(nis)
+        || (request.auth != null && resource != null && 'email' in resource.data
+            && request.auth.token.email != null
+            && resource.data.email.lower() == request.auth.token.email.lower());
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin() || (
+        resource != null
+        && isSiswaOwner(nis, resource.data)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimedBy'])
         && resource.data.claimedBy == null
-        && request.resource.data.claimedBy == request.auth.uid;
+        && request.resource.data.claimedBy == request.auth.uid
+      );
     }
 
-    // ---- users: pemilik (kelas immutable oleh siswa) atau superadmin ----
+    // ---- users: wajib lewat NIS roster yang belum diklaim + verifikasi email sekolah ----
     match /users/{uid} {
       allow read: if request.auth != null && (request.auth.uid == uid || isStaff());
-      allow create: if request.auth != null && request.auth.uid == uid && (
-        (!('nis' in request.resource.data)
-          && exists(/databases/$(database)/documents/classes/$(request.resource.data.kelas)))
-        || ('nis' in request.resource.data
-          && exists(/databases/$(database)/documents/siswa/$(request.resource.data.nis))
-          && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.kelas == request.resource.data.kelas
-          && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.nama == request.resource.data.nama
-          && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.claimedBy == null));
-      allow update: if request.auth != null && (
-        (request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nama','updatedAt']))
-        || isSuperAdmin());
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nis','nama','kelas','createdAt'])
+        && 'nis' in request.resource.data
+        && 'nama' in request.resource.data
+        && 'kelas' in request.resource.data
+        && exists(/databases/$(database)/documents/siswa/$(request.resource.data.nis))
+        && isSiswaOwner(request.resource.data.nis, get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data)
+        && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.kelas == request.resource.data.kelas
+        && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.nama == request.resource.data.nama
+        && get(/databases/$(database)/documents/siswa/$(request.resource.data.nis)).data.claimedBy == null;
+      allow update: if (request.auth != null && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nama','updatedAt']))
+        || isSuperAdmin();
+      allow delete: if isSuperAdmin();
     }
 
-    // ---- progress: pemilik tulis/baca, staff baca ----
+    // ---- progress: pemilik tulis/baca field latihan mandiri saja ----
     match /progress/{uid} {
       allow read: if request.auth != null && (request.auth.uid == uid || isStaff());
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['xp','quizScores','updatedAt']);
     }
 
-    // ---- admins: superadmin bebas; guru aktivasi diri sekali lewat guruInvites ----
+    // ---- admins: SuperAdmin bebas; guru aktivasi diri wajib role == 'guru' lewat guruInvites ----
     match /admins/{uid} {
       allow read: if isStaff() || (request.auth != null && request.auth.uid == uid);
-      allow write: if isSuperAdmin();
-      allow create: if request.auth != null && request.auth.uid == uid
+      allow create: if isSuperAdmin() || (
+        request.auth != null
+        && request.auth.uid == uid
         && request.auth.token.email != null
+        && request.resource.data.keys().hasOnly(['email','nama','nip','mapel','role','activatedAt'])
+        && request.resource.data.role == 'guru'
+        && request.resource.data.email == request.auth.token.email.lower()
         && exists(/databases/$(database)/documents/guruInvites/$(request.auth.token.email.lower()))
-        && get(/databases/$(database)/documents/guruInvites/$(request.auth.token.email.lower())).data.aktif == true;
+        && get(/databases/$(database)/documents/guruInvites/$(request.auth.token.email.lower())).data.aktif == true
+      );
+      allow update, delete: if isSuperAdmin();
     }
 
     // ---- guruInvites: hasil impor Excel (hanya SuperAdmin write, doc ID = email lowercase) ----
@@ -140,10 +201,15 @@ service cloud.firestore {
       allow write: if isSuperAdmin();
     }
 
-    // ---- classes: superadmin-only write; dibaca semua login (berisi metadata jadwal) ----
+    // ---- classes: staf/siswa kelas tersebut baca; create/delete SuperAdmin; staf hanya update quizzes/materialsVersion ----
     match /classes/{code} {
-      allow read: if request.auth != null;
-      allow write: if isSuperAdmin();
+      allow read: if isStaff()
+        || (request.auth != null
+            && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.kelas == code);
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin()
+        || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['quizzes', 'materialsVersion']));
     }
 
     // ---- materials: staff write; semua login baca ----
@@ -156,13 +222,14 @@ service cloud.firestore {
       allow delete: if isStaff();
     }
 
-    // ---- assignments: staff write; semua login baca ----
+    // ---- assignments: staff write tervalidasi; semua login baca ----
     match /assignments/{id} {
       allow read: if request.auth != null;
-      allow write: if isStaff();
+      allow create, update: if isStaff() && validAssignment(request.resource.data);
+      allow delete: if isStaff();
     }
 
-    // ---- submissions: siswa tulis miliknya sendiri, staff baca/nilai semua ----
+    // ---- submissions: siswa tulis sblm tenggat & sblm dinilai; staf nilai + feedback ----
     match /submissions/{subId} {
       allow read: if request.auth != null && resource != null
         && (resource.data.uid == request.auth.uid || isStaff());
@@ -171,21 +238,23 @@ service cloud.firestore {
         && subId == request.auth.uid + '__' + request.resource.data.assignmentId
         && request.resource.data.keys().hasOnly(['uid','assignmentId','teks','link','submittedAt','updatedAt'])
         && request.resource.data.teks.size() <= 20000
-        && request.resource.data.link.size() <= 500;
+        && request.resource.data.link.size() <= 500
+        && beforeAsgDue(request.resource.data.assignmentId);
       allow update: if request.auth != null && (
         (resource.data.uid == request.auth.uid
+          && (!('nilai' in resource.data) || resource.data.nilai == null)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teks','link','updatedAt'])
           && request.resource.data.teks.size() <= 20000
-          && request.resource.data.link.size() <= 500)
-        || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nilai','catatanGuru','updatedAt']))
+          && request.resource.data.link.size() <= 500
+          && beforeAsgDue(resource.data.assignmentId))
+        || (isStaff() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nilai','catatanGuru','updatedAt','gradedAt','gradedBy']))
       );
       allow delete: if false;
     }
 
-    // ---- certificates: staff write, publik read (verifikasi) ----
+    // ---- certificates: staf-only (belum dipakai publik) ----
     match /certificates/{id} {
-      allow read: if true;
-      allow write: if isStaff();
+      allow read, write: if isStaff();
     }
 
     // ---- leaderboard: staff write, login read ----

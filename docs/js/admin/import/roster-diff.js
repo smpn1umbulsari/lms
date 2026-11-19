@@ -2,7 +2,7 @@
 // Tujuan: tidak menimpa data yang sama & tidak pernah mereset `claimedBy` siswa.
 
 export function isSuperAdminDoc(d) {
-  return !!d && (!("role" in d) || d.role === "admin");
+  return !!d && d.role === "admin";
 }
 
 /** existing: Map<nis, data> */

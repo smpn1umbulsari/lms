@@ -255,7 +255,6 @@ document.querySelectorAll("[data-action='set-role']").forEach((btn) => {
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
-    nilaiLoaded = false;
 
     // Smart Role Check: If user is an Admin, redirect to admin.html
     const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);

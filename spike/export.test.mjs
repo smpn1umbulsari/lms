@@ -56,7 +56,7 @@ t("guru diff: aktif undefined dianggap true (tanpa perubahan)", () => {
 });
 t("unknownClasses & isSuperAdminDoc", () => {
   assert.deepEqual(unknownClasses([{ kelas: "7A" }, { kelas: "9Z" }, { kelas: "9Z" }], new Set(["7A"])), { "9Z": 2 });
-  assert(isSuperAdminDoc({ ok: true }));
+  assert(!isSuperAdminDoc({ ok: true }));
   assert(isSuperAdminDoc({ role: "admin" }));
   assert(!isSuperAdminDoc({ role: "guru" }));
   assert(!isSuperAdminDoc(undefined));

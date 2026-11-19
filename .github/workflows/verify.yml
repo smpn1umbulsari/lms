@@ -18,6 +18,15 @@ jobs:
         with:
           node-version: 20
 
+      - name: Setup Java 21 (Firestore Emulator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Spike Rules Dependencies
+        run: npm --prefix spike ci
+
       - name: Verify Code Size Standards
         run: node tools/check-size.mjs
 
@@ -29,3 +38,6 @@ jobs:
           node spike/export.test.mjs
           node spike/submission-queue.test.mjs
           node tests/smoke.test.mjs
+
+      - name: Run Firestore Security Rules Tests
+        run: npx --yes firebase-tools emulators:exec --only firestore --project demo-lms "node spike/rules.test.mjs"
