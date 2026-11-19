@@ -3,3 +3,4 @@ node_modules/
 *.log
 firestore-debug.log
 .firebase/
+out/

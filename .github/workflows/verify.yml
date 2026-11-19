@@ -30,6 +30,9 @@ jobs:
       - name: Verify Code Size Standards
         run: node tools/check-size.mjs
 
+      - name: Verify Code Hygiene & Syntax
+        run: node tools/check-hygiene.mjs
+
       - name: Run Unit & Smoke Tests
         run: |
           node spike/scoring.test.mjs

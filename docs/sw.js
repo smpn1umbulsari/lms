@@ -1,5 +1,5 @@
 // SITURI LMS Lightweight Service Worker
-const CACHE_NAME = "situri-shell-v3";
+const CACHE_NAME = "situri-shell-v4";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
@@ -42,15 +42,20 @@ const SHELL_ASSETS = [
   "./css/pages/admin-asesmen.css"
 ];
 
-// Install: Precache App Shell
+// Install: Precache App Shell (aktivasi menunggu konfirmasi pengguna atau tutup semua tab)
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => cache.addAll(SHELL_ASSETS))
-      .then(() => self.skipWaiting())
       .catch((err) => console.warn("[SW] Precache failed:", err))
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 // Activate: Clean up stale caches
@@ -87,8 +92,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML Page Navigation: Network-First with Offline Fallback
-  if (req.mode === "navigate") {
+  const isDynamicShell =
+    req.mode === "navigate" ||
+    url.pathname === "/" ||
+    url.pathname.endsWith(".html") ||
+    (url.pathname.endsWith(".js") && !url.pathname.includes("/vendor/"));
+
+  // HTML, Partials & JS Modules: Network-First (cegah campuran versi saat CBT)
+  if (isDynamicShell) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -101,13 +112,14 @@ self.addEventListener("fetch", (event) => {
         .catch(async () => {
           const cached = await caches.match(req);
           if (cached) return cached;
-          return caches.match("./index.html");
+          if (req.mode === "navigate") return caches.match("./index.html");
+          return new Response("Offline", { status: 503, statusText: "Offline" });
         })
     );
     return;
   }
 
-  // Static Assets (CSS, JS, Icons): Stale-While-Revalidate
+  // Static Assets (CSS, Vendor, Icons): Stale-While-Revalidate
   event.respondWith(
     caches.match(req).then((cached) => {
       const fetchPromise = fetch(req)
