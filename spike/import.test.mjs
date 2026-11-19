@@ -102,5 +102,25 @@ check('guru: Aktif: "Tidak" -> false; kosong -> true', () => {
   assert.strictEqual(res.items[1].aktif, true);
 });
 
+// 7. soal: multi-baris MATCH (merge / sel lanjutan kosong + pengulangan kode/no)
+check("soal: multi-baris MATCH menggabung pasangan ke 1 soal tanpa duplikat", () => {
+  const rows = [
+    ["No", "Kode", "Tipe", "Teks", "Opsi A", "Opsi B", "Opsi C", "Opsi D", "Kunci", "Kiri", "Kanan", "Bobot"],
+    [1, "q_bio", "match", "Jodohkan organ!", "", "", "", "", "", "Alveolus", "Pertukaran O2", 30],
+    ["", "", "", "", "", "", "", "", "", "Trakea", "Saring debu", ""],
+    ["1", "q_bio", "match", "Jodohkan organ!", "", "", "", "", "", "Diafragma", "Pengatur napas", ""],
+    [2, "q_bio", "match", "Jodohkan besaran!", "", "", "", "", "", "Panjang", "Meter", 20],
+    ["", "", "", "", "", "", "", "", "", "Massa", "Kilogram", ""]
+  ];
+  const res = parseSoal(rows);
+  assert.equal(res.errors.length, 0, JSON.stringify(res.errors));
+  assert.equal(res.items.length, 2);
+  assert.deepEqual(res.ringkasan, { pg: 0, bs: 0, match: 2, essay: 0 });
+  assert.deepEqual(res.items[0].kiri, ["Alveolus", "Trakea", "Diafragma"]);
+  assert.deepEqual(res.items[0].kanan, ["Pertukaran O2", "Saring debu", "Pengatur napas"]);
+  assert.equal(res.items[0].kunci, "Alveolus>Pertukaran O2;Trakea>Saring debu;Diafragma>Pengatur napas");
+  assert.deepEqual(res.items[1].kiri, ["Panjang", "Massa"]);
+});
+
 console.log(`\n=== ${pass} PASS / ${fail} FAIL ===`);
 process.exit(fail ? 1 : 0);

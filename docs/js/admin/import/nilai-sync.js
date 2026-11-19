@@ -42,14 +42,22 @@ export async function downloadTemplateNilaiKuis(quizCode, { db, doc, getDoc, col
 
     studentList.sort((a, b) => a.kelas.localeCompare(b.kelas) || a.nama.localeCompare(b.nama));
     const aoa = [HEADER_NILAI];
-    studentList.forEach((s) => {
-      aoa.push([String(s.nis), String(s.nama), String(s.kelas), "", ""]);
-    });
+    if (studentList.length) {
+      studentList.forEach((s) => {
+        aoa.push([String(s.nis), String(s.nama), String(s.kelas), "", ""]);
+      });
+    } else {
+      aoa.push(["1001", "Contoh Siswa 1", "7A", "85", "Sudah baik"]);
+      aoa.push(["1002", "Contoh Siswa 2", "7A", "78", "Perlu pendalaman materi"]);
+    }
 
     downloadSheet(`Template_Nilai_${quizCode}.xlsx`, aoa, `Nilai ${quizCode}`, {
       extra: [{ name: "Petunjuk", aoa: PETUNJUK_NILAI }],
+      colWidths: [14, 30, 10, 10, 34],
       textCols: [0],
-      padRows: Math.max(aoa.length, 50)
+      centerCols: [2, 3],
+      borderPadRows: Math.max(aoa.length + 10, 40),
+      padRows: Math.max(aoa.length + 10, 60)
     });
 
     showToast(`Template nilai untuk ${quizCode} (${studentList.length} siswa) berhasil diunduh.`, "ok");

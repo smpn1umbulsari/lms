@@ -1,13 +1,21 @@
 // Tes unit: CSV aman, diff roster, rekap nilai, round-trip export->import soal, validasi parser
 // Jalankan: node spike/export.test.mjs
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
 import { csvCell, toCSV } from "../docs/js/core/csv.js";
 import { diffSiswa, diffGuru, unknownClasses, isSuperAdminDoc } from "../docs/js/admin/import/roster-diff.js";
 import { buildRekapRows, scoreOf } from "../docs/js/admin/export/rekap.js";
-import { buildSoalRows } from "../docs/js/admin/import/soal-exporter.js";
+import { buildSoalRows, buildSoalSheetData } from "../docs/js/admin/import/soal-exporter.js";
 import { parseSoal } from "../docs/js/admin/import/soal-importer.js";
 import { parseSiswa, parseGuru } from "../docs/js/admin/import/user-importer.js";
 import { parseNilaiImport } from "../docs/js/admin/import/nilai-importer.js";
+import { buildStyledWorkbookBytes } from "../docs/js/admin/import/xlsx-style.js";
+import {
+  buildTemplateSoalSpec,
+  buildTemplateSiswaSpec,
+  buildTemplateGuruSpec
+} from "../docs/js/admin/import/export-templates.js";
 
 let pass = 0;
 const t = (name, fn) => {
@@ -163,6 +171,55 @@ t("nilai: nilai di luar 0-100, duplikat, atau tanpa header ditolak", () => {
   const noHdr = parseNilaiImport([["Nama", "Kelas"]]);
   assert.equal(noHdr.errors.length, 1);
   assert.equal(noHdr.items.length, 0);
+});
+
+t("template xlsx: style header teal, border tipis, freeze pane, merge MATCH & round-trip parser bersih", () => {
+  const ctx = { window: {}, self: {}, global: {}, Uint8Array, ArrayBuffer, DataView, TextEncoder, TextDecoder };
+  vm.runInNewContext(readFileSync(new URL("../docs/vendor/xlsx.full.min.js", import.meta.url), "utf8"), ctx);
+  const X = ctx.XLSX || ctx.window.XLSX;
+  const dec = new TextDecoder();
+
+  const specSoal = buildTemplateSoalSpec();
+  const soalBytes = buildStyledWorkbookBytes(X, [
+    { name: specSoal.sheetName, aoa: specSoal.aoa, ...specSoal.opts },
+    ...(specSoal.opts.extra || []).map((e) => ({ ...e, borderPadRows: e.aoa.length }))
+  ]);
+  const zipSoal = X.CFB.read(soalBytes, { type: "array" });
+  const stylesXml = dec.decode(Uint8Array.from(X.CFB.find(zipSoal, "/xl/styles.xml").content));
+  const sheet1Xml = dec.decode(Uint8Array.from(X.CFB.find(zipSoal, "/xl/worksheets/sheet1.xml").content));
+
+  assert(stylesXml.includes('style="thin"'), "Border tipis harus tertulis di styles.xml");
+  assert(stylesXml.includes("FF0F6B5C"), "Warna header teal #0F6B5C harus ada");
+  assert(stylesXml.includes("FFF4F9F7"), "Warna baris zebra harus ada");
+  assert(stylesXml.includes('numFmtId="49"'), "Format teks @ harus ada");
+  assert(sheet1Xml.includes('ySplit="1"'), "Freeze pane baris header harus aktif");
+  assert(sheet1Xml.includes("<mergeCells"), "Merge vertikal untuk contoh MATCH multi-baris harus ada");
+  assert(sheet1Xml.includes('s="1"'), "Sel header harus memakai style 1");
+
+  const wbSoal = X.read(soalBytes, { type: "array", raw: false });
+  const rowsSoal = X.utils.sheet_to_json(wbSoal.Sheets[specSoal.sheetName], { header: 1, defval: "", raw: false });
+  const parsedSoal = parseSoal(rowsSoal);
+  assert.equal(parsedSoal.errors.length, 0, JSON.stringify(parsedSoal.errors));
+  assert.deepEqual(parsedSoal.ringkasan, { pg: 1, bs: 1, match: 1, essay: 1 });
+  assert.equal(parsedSoal.items[2].kiri.length, 3);
+
+  const specSiswa = buildTemplateSiswaSpec();
+  const siswaBytes = buildStyledWorkbookBytes(X, [{ name: specSiswa.sheetName, aoa: specSiswa.aoa, ...specSiswa.opts }]);
+  const wbSiswa = X.read(siswaBytes, { type: "array", raw: false });
+  const parsedSiswa = parseSiswa(X.utils.sheet_to_json(wbSiswa.Sheets[specSiswa.sheetName], { header: 1, defval: "", raw: false }));
+  assert.equal(parsedSiswa.errors.length, 0);
+  assert.strictEqual(parsedSiswa.items[0].nis, "007");
+
+  const specGuru = buildTemplateGuruSpec();
+  const guruBytes = buildStyledWorkbookBytes(X, [{ name: specGuru.sheetName, aoa: specGuru.aoa, ...specGuru.opts }]);
+  const wbGuru = X.read(guruBytes, { type: "array", raw: false });
+  const parsedGuru = parseGuru(X.utils.sheet_to_json(wbGuru.Sheets[specGuru.sheetName], { header: 1, defval: "", raw: false }));
+  assert.equal(parsedGuru.errors.length, 0);
+  assert.strictEqual(parsedGuru.items[0].nip, "198501122010011005");
+
+  const sheetData = buildSoalSheetData([{ id: "q_m", data: { questions: [{ id: "q1", tipe: "match", teks: "Jodoh", kiri: ["1", "2"], kanan: ["Satu", "Dua"] }] } }]);
+  assert.equal(sheetData.aoa.length, 3);
+  assert.equal(sheetData.merges.length, 10);
 });
 
 console.log(`\n=== ${pass} PASS / 0 FAIL ===`);

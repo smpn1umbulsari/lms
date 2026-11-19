@@ -15,6 +15,7 @@ export function parseSoal(rows) {
   }
 
   const hdr = normHeader(rows[0]);
+  const cNo = findCol(hdr, ["no", "nomor", "no."]);
   const cKode = findCol(hdr, ["kode"]);
   const cTipe = findCol(hdr, ["tipe"]);
   const cTeks = findCol(hdr, ["teks", "pertanyaan", "soal"]);
@@ -27,11 +28,15 @@ export function parseSoal(rows) {
   const cKanan = findCol(hdr, ["kanan", "kolom b"]);
   const cBobot = findCol(hdr, ["bobot", "skor", "poin"]);
 
+  let lastMatchItem = null;
+  let lastMatchNo = "";
+
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     if (isRowEmpty(row)) continue;
     const baris = i + 1;
 
+    const noVal = cNo !== -1 ? getCell(row, cNo) : "";
     const kode = cKode !== -1 ? getCell(row, cKode) : `q${items.length + 1}`;
     const rawTipe = getCell(row, cTipe);
     const tipe = (rawTipe || "pg").toLowerCase();
@@ -44,11 +49,39 @@ export function parseSoal(rows) {
     const rawKiri = getCell(row, cKiri);
     const rawKanan = getCell(row, cKanan);
 
+    // Baris lanjutan pasangan MATCH multi-baris (mis. sel ter-merge atau tanpa ulang teks soal)
+    const canContinueMatch =
+      lastMatchItem &&
+      rawKiri &&
+      rawKanan &&
+      !opsiA &&
+      !opsiB &&
+      !opsiC &&
+      !opsiD &&
+      !rawKunci &&
+      (!rawTipe || tipe === "match") &&
+      (cKode === -1 || !kode || kode === lastMatchItem.kode) &&
+      (!noVal || !lastMatchNo || noVal === lastMatchNo) &&
+      (!teks || teks === lastMatchItem.teks || (cNo !== -1 && noVal && noVal === lastMatchNo));
+
+    if (canContinueMatch) {
+      const lArr = (rawKiri.includes(";") ? rawKiri.split(";") : [rawKiri]).map((s) => s.trim()).filter(Boolean);
+      const rArr = (rawKanan.includes(";") ? rawKanan.split(";") : [rawKanan]).map((s) => s.trim()).filter(Boolean);
+      if (lArr.length > 0 && lArr.length === rArr.length) {
+        lastMatchItem.kiri.push(...lArr);
+        lastMatchItem.kanan.push(...rArr);
+        lastMatchItem.kunci = lastMatchItem.kiri.map((l, idx) => `${l}>${lastMatchItem.kanan[idx]}`).join(";");
+        continue;
+      }
+    }
+
     if (cKode !== -1 && !kode) {
+      lastMatchItem = null;
       errors.push({ baris, pesan: "Kode tidak boleh kosong" });
       continue;
     }
     if (!teks) {
+      lastMatchItem = null;
       errors.push({ baris, pesan: "Teks soal tidak boleh kosong" });
       continue;
     }
@@ -148,7 +181,7 @@ export function parseSoal(rows) {
       kunci = rawKunci;
     }
 
-    items.push({
+    const item = {
       id: `q${items.length + 1}`,
       kode,
       tipe,
@@ -158,8 +191,16 @@ export function parseSoal(rows) {
       kunci,
       kiri,
       kanan
-    });
+    };
+    items.push(item);
     ringkasan[tipe]++;
+    if (tipe === "match") {
+      lastMatchItem = item;
+      lastMatchNo = noVal;
+    } else {
+      lastMatchItem = null;
+      lastMatchNo = "";
+    }
   }
 
   return { items, errors, ringkasan };

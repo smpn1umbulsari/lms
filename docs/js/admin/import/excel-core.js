@@ -1,5 +1,6 @@
 // SheetJS (XLSX) Core Helper & Common Row Parsers
 // Digunakan bersama oleh import/export Soal, Siswa, dan Guru
+import { buildStyledWorkbookBytes } from "./xlsx-style.js";
 
 export function normHeader(row) {
   return (Array.isArray(row) ? row : []).map((c) => String(c ?? "").trim().toLowerCase());
@@ -41,31 +42,54 @@ export function validateFile(file) {
 }
 
 /**
- * @param opts.extra    sheet tambahan [{ name, aoa }] (mis. Petunjuk)
- * @param opts.textCols indeks kolom yang diformat teks (nol depan aman)
- * @param opts.padRows  jumlah baris kosong berformat teks di bawah header
+ * @param opts.extra         sheet tambahan [{ name, aoa, colWidths }]
+ * @param opts.textCols      indeks kolom yang diformat teks (nol depan & NIP aman)
+ * @param opts.centerCols    indeks kolom rata tengah
+ * @param opts.padRows       jumlah baris kosong berformat teks di bawah header
+ * @param opts.borderPadRows jumlah baris ber-border rapi siap isi
+ * @param opts.merges        daftar SheetJS merge ranges
+ * @param opts.rowGroups     indeks grup per baris data (zebra grouping untuk multi-baris)
  */
 export function downloadSheet(filename, aoa, sheetName = "Data", opts = {}) {
   if (typeof window === "undefined" || !window.XLSX) return;
   const X = window.XLSX;
-  const wb = X.utils.book_new();
-  const ws = X.utils.aoa_to_sheet(aoa);
-  const ncols = Math.max(...aoa.map((r) => r.length));
-  if (opts.textCols?.length && opts.padRows) {
-    for (let r = aoa.length; r <= opts.padRows; r++) {
-      for (const c of opts.textCols) ws[X.utils.encode_cell({ r, c })] = { t: "s", v: "", z: "@" };
-    }
-    ws["!ref"] = X.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: Math.max(opts.padRows, aoa.length - 1), c: ncols - 1 } });
+  const sheets = [
+    {
+      name: sheetName,
+      aoa,
+      colWidths: opts.colWidths,
+      textCols: opts.textCols,
+      centerCols: opts.centerCols,
+      padRows: opts.padRows,
+      borderPadRows: opts.borderPadRows,
+      merges: opts.merges,
+      rowGroups: opts.rowGroups,
+      freezeHeader: opts.freezeHeader !== false
+    },
+    ...(opts.extra || []).map((ex) => ({
+      name: ex.name,
+      aoa: ex.aoa,
+      colWidths: ex.colWidths || [24, 92],
+      borderPadRows: ex.aoa.length,
+      freezeHeader: true
+    }))
+  ];
+
+  const outBytes = buildStyledWorkbookBytes(X, sheets);
+  const mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  if (typeof Blob !== "undefined" && typeof URL?.createObjectURL === "function") {
+    const blob = new Blob([outBytes], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return;
   }
-  ws["!cols"] = Array.from({ length: ncols }, (_, c) => ({
-    wch: Math.min(60, Math.max(10, ...aoa.map((r) => String(r[c] ?? "").length)) + 2)
-  }));
-  X.utils.book_append_sheet(wb, ws, sheetName);
-  for (const ex of opts.extra || []) {
-    const s2 = X.utils.aoa_to_sheet(ex.aoa);
-    s2["!cols"] = [{ wch: 28 }, { wch: 90 }];
-    X.utils.book_append_sheet(wb, s2, ex.name);
-  }
+  const wb = X.read(outBytes, { type: "array" });
   X.writeFile(wb, filename);
 }
 
