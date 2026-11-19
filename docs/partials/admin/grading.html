@@ -1,0 +1,112 @@
+<section id="sec-grading" class="tab-pane hidden">
+  <div class="page-header">
+    <div>
+      <div class="flex items-center gap-8 mb-4">
+        <span class="badge badge-pg">Koreksi &amp; Nilai</span>
+        <span class="text-sm text-subtle">PG/B-S/Menjodohkan otomatis &middot; Uraian diisi guru</span>
+      </div>
+      <h1 class="page-title">Penilaian &amp; Koreksi Ujian</h1>
+      <p class="page-subtitle">Periksa lembar jawaban siswa, isi nilai Uraian, lalu simpan dan bagikan nilai</p>
+    </div>
+    <div class="header-actions">
+      <select id="rekap-kelas" aria-label="Filter kelas rekap" class="w-auto mb-0"><option value="">Semua kelas</option></select>
+      <button id="btn-export-rekap-terpadu" type="button" class="btn btn-secondary">
+        <span class="material-symbols-outlined icon-md">table_view</span>
+        <span>Rekap Terpadu (Ujian + Tugas)</span>
+      </button>
+      <button id="btn-export-csv" type="button" class="btn btn-secondary">
+        <span class="material-symbols-outlined icon-md">download</span>
+        <span>Unduh Rekap CSV</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row items-end gap-8 flex-wrap">
+      <div class="flex-2 min-w-240">
+        <label for="gr-code">Pilih Ujian</label>
+        <select id="gr-code" class="mb-0">
+          <option value="">-- Memuat daftar ujian... --</option>
+        </select>
+      </div>
+      <button id="btn-gr-refresh-list" type="button" class="btn btn-ghost" title="Muat Ulang Daftar Ujian" aria-label="Muat Ulang Daftar Ujian">
+        <span class="material-symbols-outlined icon-md">refresh</span>
+      </button>
+      <button id="btn-gr-fetch" type="button" class="btn btn-primary">
+        <span class="material-symbols-outlined icon-md">download_for_offline</span>
+        <span>Muat Lembar Ujian</span>
+      </button>
+      <button id="btn-toggle-import-nilai" type="button" class="btn btn-secondary">
+        <span class="material-symbols-outlined icon-md">upload_file</span>
+        <span>Unggah Nilai Excel</span>
+      </button>
+    </div>
+
+    <div id="panel-import-nilai" class="hidden panel-divider">
+      <div class="flex justify-between items-center mb-8 flex-wrap gap-8">
+        <div>
+          <strong class="text-135 text-ink">Unggah Nilai Ujian dari Excel / CSV</strong>
+          <div class="text-sm text-subtle">Unduh template berisi daftar siswa untuk ujian ini, isi nilai di Excel, lalu unggah kembali.</div>
+        </div>
+        <button id="btn-tpl-nilai" type="button" class="btn btn-secondary btn-sm">
+          <span class="material-symbols-outlined icon-sm">download</span>
+          <span>Unduh Template Nilai</span>
+        </button>
+      </div>
+      <div class="row items-end gap-8 mt-8 flex-wrap">
+        <div class="flex-2 min-w-220">
+          <label for="file-import-nilai">Pilih Berkas Nilai (.xlsx, .xls, .csv)</label>
+          <input id="file-import-nilai" type="file" accept=".xlsx,.xls,.csv" class="mb-0">
+        </div>
+        <button id="btn-save-import-nilai" type="button" class="btn btn-primary" disabled>Simpan Nilai ke Sistem</button>
+      </div>
+      <div id="ribbon-import-nilai" class="hidden ribbon-info"></div>
+      <div id="err-import-nilai" class="hidden err-box"></div>
+      <div id="preview-import-nilai"></div>
+    </div>
+  </div>
+
+  <div id="gr-eval-panel" class="panel hidden">
+    <div id="gr-item-analysis"></div>
+
+    <div class="panel-head">
+      <div>
+        <h2>Lembar Jawaban Siswa</h2>
+        <p class="text-sm text-muted" id="gr-subtitle">Nilai pilihan ganda otomatis sesuai bobot soal; isi nilai Uraian jika ada</p>
+      </div>
+      <div class="flex items-center gap-6 flex-wrap">
+        <select id="gr-filter-kelas" aria-label="Filter kelas koreksi" class="filter-select"><option value="">Semua Kelas</option></select>
+        <input type="search" id="gr-filter-nama" placeholder="Cari nama / NIS..." aria-label="Cari siswa" class="w-180 mb-0">
+        <button type="button" class="btn btn-ghost btn-sm" data-action="step-student" data-step="-1" aria-label="Siswa Sebelumnya">&lsaquo; Sebelumnya</button>
+        <span class="badge badge-neutral tabular-nums" id="gr-student-counter">Semua Siswa</span>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="step-student" data-step="1" aria-label="Siswa Berikutnya">Berikutnya &rsaquo;</button>
+      </div>
+    </div>
+
+    <div class="split-grid">
+      <div>
+        <div id="gr-cards"></div>
+        <div id="gr-paging-bar" class="hidden flex justify-between items-center py-12 gap-10 flex-wrap">
+          <span id="gr-paging-info" class="tabular-nums text-md text-muted"></span>
+          <button type="button" id="btn-gr-more" class="btn btn-secondary btn-sm hidden">Muat 50 Lembar Berikutnya</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-14">
+        <div class="panel mb-0 bg-paper">
+          <div class="panel-head">
+            <h2>Ringkasan Penilaian</h2>
+            <span class="badge badge-bs" id="gr-count-badge">0 Lembar</span>
+          </div>
+          <p class="text-md text-muted mb-12">
+            Nilai Pilihan Ganda, Benar-Salah, dan Menjodohkan dihitung otomatis oleh sistem sesuai bobot tiap soal. Isi nilai Uraian bila diperlukan lalu tekan tombol simpan di bawah.
+          </p>
+          <button id="btn-gr-publish" type="button" class="btn btn-primary w-full">
+            <span class="material-symbols-outlined icon-md">publish</span>
+            <span>Simpan &amp; Bagikan Nilai</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -11,8 +11,8 @@ html, body {
   background: var(--paper);
   color: var(--ink);
   font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 13.5px;
-  line-height: 1.48;
+  font-size: 14px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -21,10 +21,17 @@ body {
   flex-direction: column;
 }
 
-.tabular-nums, .stat-val, td code, input[type="number"], .mono-num {
+.tabular-nums, .num, td.num, th.num, .stat-val, .stat-col-val, .timer-clock, td code, input[type="number"], .mono-num {
   font-variant-numeric: tabular-nums;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+[role="button"]:focus-visible,
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -33,7 +40,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

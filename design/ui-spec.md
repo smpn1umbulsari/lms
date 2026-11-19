@@ -1,3 +1,5 @@
+> **[DEPRECATED — Arsip v0.8]** Dokumen ini sudah digantikan sepenuhnya oleh [`design/UI UX.md`](UI%20UX.md) sebagai satu-satunya sumber kebenaran desain kanonik SITURI LMS.
+
 # LMS SITURI — Figma-ready UI Spec (v0.8 fitur: Materi, Tugas, Asesmen 4-tipe)
 
 Sumber visual: `guru_mock.html` / `siswa_mock.html` (render 1150 & 420). Spec ini untuk disusun ulang sebagai frame Figma dengan Auto Layout.

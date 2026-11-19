@@ -1,5 +1,6 @@
 // Admin Portal Main Entry Point (Unified Single-Door Redirect + Tab Orchestration)
 import { auth, db, doc, getDoc, onAuthStateChanged, signOut } from "../core/firebase.js";
+import { mountPartials } from "../core/partials.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
 import { registerServiceWorker } from "../core/pwa.js";
@@ -15,11 +16,6 @@ import { initKoreksi, populateGradingQuizSelect, fetchAttemptsForGrading } from 
 import { initCSVExport } from "./export-csv.js";
 import { initImportExport } from "./import-export.js";
 
-initTheme();
-initToast();
-initGlobalErrorObserver();
-registerServiceWorker();
-
 export function toggleQuickClass(inputId, clsName) {
   const el = document.getElementById(inputId);
   if (!el) return;
@@ -30,16 +26,11 @@ export function toggleQuickClass(inputId, clsName) {
   el.value = parts.join(", ");
 }
 
-document.querySelectorAll("[data-action='toggle-class']").forEach((btn) => {
-  btn.addEventListener("click", () => toggleQuickClass(btn.dataset.target, btn.dataset.class));
-});
-
 export function log(m) {
   const el = document.getElementById("log");
   if (el) el.textContent = `[${new Date().toLocaleTimeString()}] ${m}\n` + el.textContent;
   showToast(m);
 }
-window.log = log;
 
 const loadedAdminTabs = new Set();
 
@@ -87,83 +78,99 @@ export function switchAdminTab(tabId, forceReload = false) {
     populateGradingQuizSelect().then(() => loadedAdminTabs.add("sec-grading"));
   }
 }
-window.switchAdminTab = switchAdminTab;
 
-document.querySelectorAll(".nav-btn[data-tab], .mobile-nav-btn[data-tab], .mobile-nav-item[data-tab]").forEach((b) => {
-  b.addEventListener("click", () => switchAdminTab(b.dataset.tab));
-});
+async function boot() {
+  initTheme();
+  initToast();
+  initGlobalErrorObserver();
+  registerServiceWorker();
+  await mountPartials();
 
-document.addEventListener("click", (e) => {
-  const switchBtn = e.target.closest("[data-action='switch-tab']");
-  if (switchBtn?.dataset.tab) switchAdminTab(switchBtn.dataset.tab);
-  if (e.target.closest("[data-action='export-tugas-csv']")) {
-    document.getElementById("btn-export-tugas-csv")?.click();
-  }
-});
+  document.querySelectorAll("[data-action='toggle-class']").forEach((btn) => {
+    btn.addEventListener("click", () => toggleQuickClass(btn.dataset.target, btn.dataset.class));
+  });
 
-initMateriHandlers(refreshActivity);
-initTugasHandlers(refreshActivity);
-initAsesmenHandlers(refreshActivity, async (code) => {
-  switchAdminTab("sec-grading");
-  await populateGradingQuizSelect(code);
-  loadedAdminTabs.add("sec-grading");
-  await fetchAttemptsForGrading(false);
-});
-initQBuilder((code) => {
-  log(`Ujian ${code} tersimpan.`);
-  loadedAdminTabs.delete("sec-asesmen");
-  loadedAdminTabs.delete("sec-grading");
-  loadAsesmenTable(() => { loadedAdminTabs.add("sec-asesmen"); refreshActivity(); });
-  loadRingkasan();
-});
-initQPreview();
-initKoreksi();
-initCSVExport();
-initImportExport();
-renderQBuilder();
+  document.querySelectorAll(".nav-btn[data-tab], .mobile-nav-btn[data-tab], .mobile-nav-item[data-tab]").forEach((b) => {
+    b.addEventListener("click", () => switchAdminTab(b.dataset.tab));
+  });
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.replace("index.html");
-    return;
-  }
+  document.addEventListener("click", (e) => {
+    const switchBtn = e.target.closest("[data-action='switch-tab']");
+    if (switchBtn?.dataset.tab) switchAdminTab(switchBtn.dataset.tab);
+    if (e.target.closest("[data-action='export-tugas-csv']")) {
+      document.getElementById("btn-export-tugas-csv")?.click();
+    }
+  });
 
-  const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
-  if (!adminSnap?.exists()) {
-    showToast("Halaman ini khusus Guru & Admin. Mengarahkan ke Portal Siswa...", "warn");
-    setTimeout(() => { window.location.replace("index.html"); }, 500);
-    return;
-  }
+  initMateriHandlers(refreshActivity);
+  initTugasHandlers(refreshActivity);
+  initAsesmenHandlers(refreshActivity, async (code) => {
+    switchAdminTab("sec-grading");
+    await populateGradingQuizSelect(code);
+    loadedAdminTabs.add("sec-grading");
+    await fetchAttemptsForGrading(false);
+  });
+  initQBuilder((code) => {
+    log(`Ujian ${code} tersimpan.`);
+    loadedAdminTabs.delete("sec-asesmen");
+    loadedAdminTabs.delete("sec-grading");
+    loadAsesmenTable(() => { loadedAdminTabs.add("sec-asesmen"); refreshActivity(); });
+    loadRingkasan();
+  });
+  initQPreview();
+  initKoreksi();
+  initCSVExport();
+  initImportExport();
+  renderQBuilder();
 
-  const adminData = adminSnap.data();
-  const isSuper = isSuperAdminDoc(adminData);
-  document.querySelectorAll(".superadmin-only").forEach((el) => el.classList.toggle("hidden", !isSuper));
-  const roleBadge = document.querySelector(".sidebar-role-badge");
-  if (roleBadge) roleBadge.textContent = isSuper ? "Admin Utama" : "Guru Pengampu";
-  const topRole = document.getElementById("topbar-role-badge");
-  if (topRole) topRole.textContent = isSuper ? "Admin" : "Guru";
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.replace("index.html");
+      return;
+    }
 
-  document.body.classList.remove("auth-mode");
-  document.getElementById("app-content")?.classList.remove("hidden");
-  document.getElementById("sidebar")?.classList.remove("hidden");
-  document.getElementById("mobile-nav")?.classList.remove("hidden");
-  document.getElementById("admin-topbar")?.classList.remove("hidden");
+    const adminSnap = await getDoc(doc(db, "admins", user.uid)).catch(() => null);
+    if (!adminSnap?.exists()) {
+      showToast("Halaman ini khusus Guru & Admin. Mengarahkan ke Portal Siswa...", "warn");
+      setTimeout(() => { window.location.replace("index.html"); }, 500);
+      return;
+    }
 
-  const label = adminData.nama || user.email;
-  const uDisplay = document.getElementById("u-display");
-  if (uDisplay) uDisplay.textContent = label;
-  const hEmail = document.getElementById("header-user-email");
-  if (hEmail) hEmail.textContent = user.email;
-  const initial = (label || "G").charAt(0).toUpperCase();
-  const hAvatar = document.getElementById("header-avatar");
-  if (hAvatar) hAvatar.textContent = initial;
-  const sAvatar = document.getElementById("sidebar-avatar");
-  if (sAvatar) sAvatar.textContent = initial;
+    const adminData = adminSnap.data();
+    const isSuper = isSuperAdminDoc(adminData);
+    document.querySelectorAll(".superadmin-only").forEach((el) => el.classList.toggle("hidden", !isSuper));
+    const roleBadge = document.querySelector(".sidebar-role-badge");
+    if (roleBadge) roleBadge.textContent = isSuper ? "Admin Utama" : "Guru Pengampu";
+    const topRole = document.getElementById("topbar-role-badge");
+    if (topRole) topRole.textContent = isSuper ? "Admin" : "Guru";
 
-  loadedAdminTabs.clear();
-  loadRingkasan();
-});
+    document.body.classList.remove("auth-mode");
+    document.getElementById("app-content")?.classList.remove("hidden");
+    document.getElementById("sidebar")?.classList.remove("hidden");
+    document.getElementById("mobile-nav")?.classList.remove("hidden");
+    document.getElementById("admin-topbar")?.classList.remove("hidden");
 
-document.querySelectorAll("#btn-logout, #btn-header-logout, .btn-logout-icon").forEach((b) => {
-  b.addEventListener("click", () => signOut(auth));
+    const label = adminData.nama || user.email;
+    const uDisplay = document.getElementById("u-display");
+    if (uDisplay) uDisplay.textContent = label;
+    const hEmail = document.getElementById("header-user-email");
+    if (hEmail) hEmail.textContent = user.email;
+    const initial = (label || "G").charAt(0).toUpperCase();
+    const hAvatar = document.getElementById("header-avatar");
+    if (hAvatar) hAvatar.textContent = initial;
+    const sAvatar = document.getElementById("sidebar-avatar");
+    if (sAvatar) sAvatar.textContent = initial;
+
+    loadedAdminTabs.clear();
+    loadRingkasan();
+  });
+
+  document.querySelectorAll("#btn-logout, #btn-header-logout, .btn-logout-icon").forEach((b) => {
+    b.addEventListener("click", () => signOut(auth));
+  });
+}
+
+boot().catch((err) => {
+  console.error(err);
+  showToast("Gagal memuat komponen halaman admin", "err");
 });

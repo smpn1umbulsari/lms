@@ -1,0 +1,147 @@
+<section id="sec-ringkasan" class="tab-pane">
+  <div class="page-header">
+    <div>
+      <div class="flex items-center gap-8 mb-4">
+        <span class="badge badge-pg">KBM Aktif</span>
+        <span class="text-sm text-subtle">SMPN 1 Umbulsari</span>
+      </div>
+      <h1 class="page-title">Ringkasan</h1>
+      <p class="page-subtitle">Semester Ganjil · 2026/2027 · Kelas Aktif Terintegrasi</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" data-action="export-tugas-csv">
+        <span class="material-symbols-outlined icon-md">download</span>
+        <span>Ekspor Nilai</span>
+      </button>
+      <button type="button" class="btn btn-primary" data-action="switch-tab" data-tab="sec-asesmen">
+        <span class="material-symbols-outlined icon-md">add</span>
+        <span>+ Buat Ujian Baru</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 1-Row High-Density Stat Strip -->
+  <div class="stat-strip" role="region" aria-label="Statistik Ringkasan">
+    <div class="stat-cell" data-action="switch-tab" data-tab="sec-materi">
+      <div class="stat-lbl">
+        <span>Materi Aktif</span>
+        <span class="material-symbols-outlined icon-17 text-subtle">menu_book</span>
+      </div>
+      <div id="rk-materi" class="stat-val">–</div>
+      <div class="stat-meta">Modul teks &amp; video terbit</div>
+    </div>
+    <div class="stat-cell highlight" data-action="switch-tab" data-tab="sec-tugas">
+      <div class="stat-lbl">
+        <span class="text-accent">Penugasan Aktif</span>
+        <span class="status-dot dot-pg"></span>
+      </div>
+      <div id="rk-tugas" class="stat-val">–</div>
+      <div class="stat-meta">Lembar kerja &amp; proyek kelas</div>
+    </div>
+    <div class="stat-cell" data-action="switch-tab" data-tab="sec-asesmen">
+      <div class="stat-lbl">
+        <span>Ulangan Terjadwal</span>
+        <span class="material-symbols-outlined icon-17 text-warn">event_upcoming</span>
+      </div>
+      <div id="rk-asesmen" class="stat-val">–</div>
+      <div class="stat-meta">Penilaian harian &amp; CBT</div>
+    </div>
+    <div class="stat-cell" data-action="switch-tab" data-tab="sec-grading">
+      <div class="stat-lbl">
+        <span>Tugas Masuk</span>
+        <span class="badge badge-bs">Sinkron</span>
+      </div>
+      <div id="rk-kiriman" class="stat-val">–</div>
+      <div class="stat-meta">Kiriman siswa tersimpan</div>
+    </div>
+  </div>
+
+  <!-- 2-Column Asymmetric Split -->
+  <div class="split-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>
+          <span class="material-symbols-outlined text-accent">history_edu</span>
+          <span>Aktivitas Terkini &amp; Kurikulum Aktif</span>
+        </h2>
+        <span class="text-sm text-subtle">Sinkronisasi Real-time</span>
+      </div>
+      <div id="rk-activity-feed" class="list-feed">
+        <div class="list-row">
+          <div class="list-row-main">
+            <span class="status-dot dot-accent"></span>
+            <div>
+              <div class="font-medium text-ink">Memuat ringkasan aktivitas kelas...</div>
+              <div class="text-sm text-subtle">Materi, penugasan, dan asesmen terbit akan tampil di sini.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-14">
+      <div class="panel mb-0">
+        <div class="panel-head">
+          <h2>
+            <span class="material-symbols-outlined text-accent">fact_check</span>
+            <span>Progres Penilaian &amp; Koreksi</span>
+          </h2>
+          <span class="badge badge-pg tabular-nums" id="rk-grade-pct">Siap</span>
+        </div>
+        <div class="flex justify-between text-md text-muted mb-8">
+          <span>Status Antrean Koreksi Ujian &amp; Essay</span>
+          <strong class="text-ink tabular-nums" id="rk-grade-summary">Auto-Check + Manual</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill w-full"></div>
+        </div>
+        <div class="flex justify-between items-center panel-divider-soft text-sm text-subtle">
+          <span>Koreksi Hibrida (PG/BS/Match otomatis)</span>
+          <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-grading">Buka Antrean &rarr;</button>
+        </div>
+      </div>
+
+      <div class="panel mb-0">
+        <div class="panel-head">
+          <h2>
+            <span class="material-symbols-outlined text-muted">calendar_today</span>
+            <span>Akses Cepat Modul Guru</span>
+          </h2>
+          <span class="badge badge-bs">Hari Ini</span>
+        </div>
+        <div class="list-feed">
+          <div class="list-row">
+            <div class="list-row-main items-center">
+              <span class="time-pill">07:30</span>
+              <div>
+                <div class="font-medium text-ink">Distribusi Materi Pembelajaran</div>
+                <div class="text-sm text-muted">Teks ringkasan, YouTube &amp; Google Drive</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-materi">Buka</button>
+          </div>
+          <div class="list-row">
+            <div class="list-row-main items-center">
+              <span class="time-pill">09:15</span>
+              <div>
+                <div class="font-medium text-ink">Monitoring Penugasan &amp; Tenggat</div>
+                <div class="text-sm text-muted">1 kiriman deterministik per siswa</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-tugas">Buka</button>
+          </div>
+          <div class="list-row">
+            <div class="list-row-main items-center">
+              <span class="time-pill time-pill-accent">11:00</span>
+              <div>
+                <div class="font-semibold text-accent">Asesmen CBT 4 Tipe Soal</div>
+                <div class="text-sm text-muted">PG, Benar/Salah, Menjodohkan, Essay</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="switch-tab" data-tab="sec-asesmen">Buka</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

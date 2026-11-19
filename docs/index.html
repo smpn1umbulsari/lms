@@ -1,11 +1,10 @@
-<!-- index.html — Minimalist Blue Design (Stitch Project 1529169781025736343) -->
 <!doctype html>
 <html lang="id" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="shell-type" content="mobile_tab">
-<meta name="theme-color" content="#1d4ed8">
+<meta name="theme-color" content="#0f6b5c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SITURI LMS">
@@ -40,7 +39,7 @@
     <div class="flex flex-col min-w-0">
       <div class="flex items-center gap-6">
         <strong class="truncate text-ink">SMPN 1 Umbulsari</strong>
-        <span class="badge badge-neutral text-xs" style="font-size:10px; padding:2px 6px">Siswa</span>
+        <span class="badge badge-neutral badge-xs">Siswa</span>
       </div>
       <span id="crumb-section" class="hide-mobile text-xs text-subtle">Materi Pembelajaran</span>
     </div>
@@ -53,59 +52,58 @@
     <button type="button" id="btn-theme-toggle" class="icon-action-btn" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
       <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
     </button>
-    <div id="user-info" class="hidden flex items-center gap-8 border-l-line" style="padding-left:6px">
+    <div id="user-info" class="hidden flex items-center gap-8 border-l-line pl-6">
       <div class="avatar-circle avatar-circle-sm" id="u-avatar">S</div>
       <div class="hide-mobile flex flex-col">
         <div class="flex items-center gap-4">
-          <span id="u-name" class="font-semibold text-ink leading-tight truncate" style="font-size:12px; max-width:130px">-</span>
-          <span id="u-class" class="badge badge-pg" style="font-size:10px; padding:1px 5px">(-)</span>
+          <span id="u-name" class="font-semibold text-ink leading-tight truncate truncate-130">-</span>
+          <span id="u-class" class="badge badge-pg badge-tag">(-)</span>
         </div>
-        <span class="text-xs text-subtle" style="font-size:10.5px">Kurikulum Merdeka</span>
+        <span class="sub-xs text-subtle">Kurikulum Merdeka</span>
       </div>
     </div>
     <button type="button" id="btn-logout" class="icon-action-btn btn-logout-icon" title="Keluar Portal Siswa" aria-label="Keluar">
-      <span class="material-symbols-outlined text-danger" style="font-size:19px">logout</span>
+      <span class="material-symbols-outlined text-danger icon-19">logout</span>
     </button>
   </div>
 </header>
 
 <div class="container">
-
   <!-- LOGIN PANEL (Unified Single-Door Portal) -->
   <div id="sec-login" class="auth-wrap">
     <div class="auth-card">
       <div class="auth-main">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px">
-          <div style="display:flex; align-items:center; gap:8px">
-            <div class="brand-mark" style="width:28px; height:28px; font-size:13px">U</div>
-            <span style="font-weight:600; font-size:13px">SITURI LMS</span>
+        <div class="flex justify-between items-center mb-18">
+          <div class="flex items-center gap-8">
+            <div class="brand-mark brand-mark-sm">U</div>
+            <span class="font-semibold text-13">SITURI LMS</span>
           </div>
-          <span class="badge badge-neutral" style="font-size:11px">SMPN 1 Umbulsari</span>
+          <span class="badge badge-neutral text-xs">SMPN 1 Umbulsari</span>
         </div>
         <div class="auth-header">
           <h2 id="auth-title">Masuk Portal Belajar</h2>
           <p id="auth-sub">Satu pintu masuk untuk Siswa, Guru, dan Admin Sekolah</p>
         </div>
         <div id="login-err" class="callout callout-warn hidden" role="alert"></div>
-        <div class="field" style="margin-bottom:12px">
+        <div class="field mb-12">
           <label for="l-email" id="lbl-email">NIS Siswa atau Email Guru</label>
           <input id="l-email" type="text" placeholder="Contoh: 1001 atau nama@smpn1umbulsari.sch.id" autocomplete="username">
         </div>
-        <div class="field" style="margin-bottom:12px">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
-            <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" data-action="forgot-password" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
+        <div class="field mb-12">
+          <div class="flex justify-between items-center mb-4">
+            <label for="l-pass" class="mb-0">Kata Sandi</label>
+            <button type="button" class="link-btn" data-action="forgot-password">Lupa sandi?</button>
           </div>
           <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password">
         </div>
-        <button id="btn-login" type="button" class="btn btn-primary auth-submit">Masuk Portal →</button>
+        <button id="btn-login" type="button" class="btn btn-primary auth-submit">Masuk Portal &rarr;</button>
         <div class="auth-demo-chips hidden" id="auth-chips-box"></div>
         <div class="auth-footer-note">
-          <span style="display:inline-flex; align-items:center; gap:5px; color:var(--ink-3)">
-            <span class="material-symbols-outlined" style="font-size:15px; color:var(--ok)">save</span>
+          <span class="inline-flex items-center gap-4 text-subtle">
+            <span class="material-symbols-outlined icon-15 text-ok">save</span>
             Cadangan jawaban lokal aktif
           </span>
-          <a href="panduan-guru.html" target="_blank" rel="noopener" style="font-size:12px">Panduan Pemakaian</a>
+          <a href="panduan-guru.html" target="_blank" rel="noopener" class="text-sm">Panduan Pemakaian</a>
         </div>
       </div>
       <aside class="auth-aside" aria-label="Panduan Singkat Masuk">
@@ -116,20 +114,20 @@
           <div class="auth-feature-list">
             <div class="auth-feature-item">
               <span>Siswa</span>
-              <span style="color:var(--ink-2)">Masukkan NIS dari kartu ujian</span>
+              <span class="text-muted">Masukkan NIS dari kartu ujian</span>
             </div>
             <div class="auth-feature-item">
               <span>Guru / Admin</span>
-              <span style="color:var(--ink-2)">Gunakan email terdaftar</span>
+              <span class="text-muted">Gunakan email terdaftar</span>
             </div>
             <div class="auth-feature-item">
               <span>Kendala Akun</span>
-              <span style="color:var(--ink-2)">Hubungi Operator / Wali Kelas</span>
+              <span class="text-muted">Hubungi Operator / Wali Kelas</span>
             </div>
           </div>
         </div>
-        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; font-size:11.5px; color:var(--ink-2)">
-          <div style="font-weight:600; color:var(--ink); margin-bottom:2px">Jika Sinyal Terputus Saat Ujian</div>
+        <div class="panel-callout-box">
+          <div class="font-semibold text-ink mb-2">Jika Sinyal Terputus Saat Ujian</div>
           Jawaban tersimpan sementara di perangkat ini. Pastikan tombol <strong>Kirim</strong> berhasil sebelum keluar.
         </div>
       </aside>
@@ -138,258 +136,27 @@
 
   <!-- NIS CLAIM PANEL (Siswa Baru Pertama Kali Masuk) -->
   <div id="sec-nis" class="auth-wrap hidden">
-    <div class="auth-card" style="max-width:460px; grid-template-columns:1fr">
+    <div class="auth-card auth-single">
       <div class="auth-main">
         <div class="auth-header">
           <h2>Konfirmasi Data Siswa</h2>
           <p>Tautkan akun Anda dengan Nomor Induk Siswa (NIS) resmi sekolah untuk melanjutkan.</p>
         </div>
         <div id="nis-err" class="callout callout-warn hidden" role="alert"></div>
-        <div class="field" style="margin-bottom:12px">
+        <div class="field mb-12">
           <label for="input-nis">Nomor Induk Siswa (NIS)</label>
           <input id="input-nis" type="text" placeholder="Masukkan NIS (misal: 1001)">
         </div>
-        <div style="display:flex; gap:8px">
+        <div class="flex gap-8">
           <button id="btn-nis-logout" type="button" class="btn btn-secondary">Keluar</button>
-          <button id="btn-submit-nis" type="button" class="btn btn-primary" style="flex:1">Simpan &amp; Masuk Kelas</button>
+          <button id="btn-submit-nis" type="button" class="btn btn-primary flex-1">Simpan &amp; Masuk Kelas</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- DASHBOARD PANEL -->
-  <div id="sec-dashboard" class="hidden">
-    <div id="pending-exam-banner" class="hidden"></div>
-
-    <!-- BERANDA SISWA SUMMARY HERO (Stitch Screens 14 & 10) -->
-    <section class="beranda-hero" id="beranda-summary">
-      <div class="greeting-row">
-        <div>
-          <div class="greeting-hi">Selamat belajar,</div>
-          <h1 class="greeting-name" id="hero-student-name">Siswa SMPN 1 Umbulsari</h1>
-        </div>
-        <div id="net-status-badge" style="display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--ok-soft); color:var(--ok); font-size:11.5px; font-weight:600">
-          <span id="net-status-icon" class="material-symbols-outlined" style="font-size:15px">cloud_done</span>
-          <span id="net-status-text">Terhubung</span>
-        </div>
-      </div>
-
-      <!-- Single Primary CTA Card per Screen Rule -->
-      <div class="cta-hero-card" id="hero-cta-card">
-        <div>
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
-            <span class="badge badge-match" id="hero-cta-badge">Agenda Hari Ini</span>
-            <span style="font-size:12px; color:var(--ink-2)" id="hero-cta-meta">Kurikulum Merdeka · Semester Ganjil</span>
-          </div>
-          <h2 style="font-size:16px; font-weight:600; color:var(--ink)" id="hero-cta-title">Pelajari Materi &amp; Cek Jadwal Ujian Kelas Anda</h2>
-        </div>
-        <button type="button" class="btn btn-primary" id="hero-cta-btn" data-action="switch-tab" data-tab="tab-asesmen">
-          <span>Buka Daftar Ujian</span>
-          <span class="material-symbols-outlined" style="font-size:17px">arrow_forward</span>
-        </button>
-      </div>
-
-      <!-- 3-Column High-Density Stat Strip -->
-      <div class="stat-strip-3" role="region" aria-label="Ringkasan Belajar Siswa">
-        <div class="stat-col-3">
-          <span class="stat-col-lbl">Materi Kelas</span>
-          <span class="stat-col-val" id="st-count-materi">0</span>
-          <span class="stat-col-meta">Modul tersedia</span>
-        </div>
-        <div class="stat-col-3">
-          <span class="stat-col-lbl">Tugas Aktif</span>
-          <span class="stat-col-val" id="st-count-tugas" style="color:var(--accent)">0</span>
-          <span class="stat-col-meta">Tugas kelas</span>
-        </div>
-        <div class="stat-col-3">
-          <span class="stat-col-lbl">Jadwal Ujian</span>
-          <span class="stat-col-val" id="st-count-asesmen" style="color:var(--ok)">0</span>
-          <span class="stat-col-meta">Kuis &amp; Ujian</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- NAVIGATION TABS -->
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="tab-materi" role="tab">
-        <span class="material-symbols-outlined">menu_book</span>
-        <span>Materi</span>
-      </button>
-      <button class="tab-btn" data-tab="tab-tugas" role="tab">
-        <span class="material-symbols-outlined">assignment_turned_in</span>
-        <span>Tugas</span>
-      </button>
-      <button class="tab-btn" data-tab="tab-asesmen" role="tab">
-        <span class="material-symbols-outlined">quiz</span>
-        <span>Ujian</span>
-      </button>
-      <button class="tab-btn" data-tab="sec-nilai" role="tab">
-        <span class="material-symbols-outlined">military_tech</span>
-        <span>Daftar Nilai</span>
-      </button>
-    </div>
-
-    <!-- TAB 1: MATERI PEMBELAJARAN (Stitch Screens 11 & 13) -->
-    <section id="tab-materi" class="tab-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
-        <div class="search-box">
-          <span class="material-symbols-outlined">search</span>
-          <input type="text" id="material-search" placeholder="Cari materi pembelajaran..." aria-label="Cari materi pembelajaran">
-        </div>
-        <span class="badge badge-neutral" style="font-size:12px; padding:6px 12px">Materi Terbit Kurikulum Merdeka</span>
-      </div>
-      <div id="materi-list" class="grid"></div>
-    </section>
-
-    <!-- TAB 2: TUGAS & PENGUMPULAN (Stitch Screens 7 & 8) -->
-    <section id="tab-tugas" class="tab-content hidden">
-      <div id="tugas-list" class="grid"></div>
-
-      <!-- SUBMISSION MODAL / BOTTOM SHEET -->
-      <div id="sub-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="sub-title">
-        <div class="modal-dialog">
-          <div class="modal-header">
-            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
-              <h2 id="sub-title" style="margin:0; font-size:16px; font-weight:700">Kirim Tugas</h2>
-              <button type="button" class="modal-close-btn" data-action="close-sub-modal" aria-label="Tutup Formulir">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-          </div>
-          <div class="modal-body">
-            <p id="sub-instruksi" style="color:var(--ink-2); font-size:13px; margin-bottom:14px"></p>
-            <div id="sub-status" class="notice notice-ok hidden" style="font-weight:600; margin-bottom:12px"></div>
-            <label for="sub-teks">Catatan / Jawaban Teks (Opsional)</label>
-            <textarea id="sub-teks" rows="4" placeholder="Tuliskan jawaban atau ringkasan pengerjaan..."></textarea>
-            <label for="sub-link">Tautan Tugas (Google Drive / Docs / Video)</label>
-            <input id="sub-link" type="text" placeholder="https://drive.google.com/..." style="margin-bottom:14px">
-          </div>
-          <div class="modal-footer">
-            <button id="btn-sub-cancel" type="button" class="btn btn-secondary">Batal</button>
-            <button id="btn-sub-save" type="button" class="btn btn-primary">Kirim Jawaban</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: ASESMEN & UJIAN CBT -->
-    <section id="tab-asesmen" class="tab-content hidden">
-      <div id="asesmen-list" class="grid"></div>
-    </section>
-
-    <!-- TAB 4: REKAP NILAI SAYA (Stitch Screens 5 & 12) -->
-    <section id="sec-nilai" class="tab-content hidden">
-      <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px">
-        <div>
-          <span class="badge badge-pg" style="margin-bottom:4px">Transkrip Nilai Akademik</span>
-          <h2 style="margin-bottom:2px">Rekapitulasi Hasil Belajar Siswa</h2>
-          <p style="font-size:12px; color:var(--ink-2)">Nilai Tugas Mandiri & Evaluasi CBT Terverifikasi</p>
-        </div>
-        <div style="display:flex; gap:6px" id="nilai-filter-tabs">
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="all">Semua</button>
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="tugas">Tugas</button>
-          <button type="button" class="btn btn-secondary" style="min-height:34px; padding:4px 12px; font-size:12px" data-action="filter-nilai" data-filter="ujian">CBT & Ujian</button>
-        </div>
-      </div>
-
-      <div class="panel" id="panel-nilai-tugas">
-        <h2>Rekap Nilai Tugas</h2>
-        <div class="table-container">
-          <table class="table-cards-mobile">
-            <thead>
-              <tr>
-                <th>Judul Tugas</th>
-                <th>Nilai</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="nilai-tugas-tbody">
-              <tr><td colspan="3" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada nilai</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel" id="panel-nilai-ujian">
-        <h2>Nilai Ujian Resmi (Terverifikasi Guru)</h2>
-        <div class="table-container">
-          <table class="table-cards-mobile">
-            <thead>
-              <tr>
-                <th>Ujian</th>
-                <th>Skor</th>
-              </tr>
-            </thead>
-            <tbody id="nilai-ujian-tbody">
-              <tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada nilai ujian resmi</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel" id="panel-nilai-latihan">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px">
-          <h2 style="margin:0">Riwayat Latihan Mandiri</h2>
-          <span class="badge badge-neutral">Latihan mandiri — tidak masuk nilai rapor</span>
-        </div>
-        <div class="table-container">
-          <table class="table-cards-mobile">
-            <thead>
-              <tr>
-                <th>Judul Latihan</th>
-                <th>Skor Latihan</th>
-              </tr>
-            </thead>
-            <tbody id="nilai-latihan-tbody">
-              <tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada riwayat latihan mandiri</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- EXAM RUNNER VIEW (Stitch Screens 6, 9, and 8 Menjodohkan MATCH) -->
-  <div id="sec-exam" class="hidden">
-    <div id="timer-hero">
-      <div class="timer-top-row">
-        <div>
-          <span class="badge badge-pg" style="margin-bottom:4px">CBT SMPN 1 UMBULSARI</span>
-          <h2 id="ex-title" style="font-size:16px; font-weight:600; color:var(--ink)">Ujian</h2>
-          <span id="ex-save-indicator" style="font-size:12px; color:var(--ok)">Menghubungkan...</span>
-        </div>
-        <div class="timer-pill">
-          <span class="material-symbols-outlined" style="font-size:17px">timer</span>
-          <div class="timer-clock" id="ex-timer">00:00</div>
-        </div>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="ex-progress-bar" style="width:100%"></div>
-      </div>
-    </div>
-
-    <!-- Lembar Nomor Soal Horizontal Palette -->
-    <div id="ex-palette" class="q-palette" aria-label="Navigasi Nomor Soal"></div>
-
-    <div id="ex-questions"></div>
-
-    <div class="panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px">
-      <span style="font-size:12.5px; color:var(--ink-2)">Pastikan seluruh butir soal telah terjawab sebelum mengumpulkan lembar ujian.</span>
-      <button id="btn-ex-finish" class="btn btn-primary">Selesaikan & Kirim</button>
-    </div>
-  </div>
-
-  <!-- RESULT MODAL -->
-  <div id="sec-result" class="panel hidden" style="max-width:550px; margin:2rem auto; text-align:center; padding:28px">
-    <span id="res-badge" class="badge badge-ok" style="margin-bottom:8px">Lembar Jawaban Tersimpan</span>
-    <h2>Hasil Pengerjaan</h2>
-    <div id="res-score" style="font-size:2.75rem; font-weight:700; color:var(--ok); margin:12px 0">0</div>
-    <p id="res-desc" style="color:var(--ink-2); margin-bottom:20px"></p>
-    <div style="display:flex; flex-direction:column; gap:8px">
-      <button id="btn-res-retry" type="button" class="btn btn-primary hidden" style="width:100%">Coba Kirim Ulang</button>
-      <button id="btn-res-back" type="button" class="btn btn-secondary" style="width:100%">Kembali ke Beranda</button>
-    </div>
-  </div>
+  <div data-partial="partials/siswa/dashboard.html"></div>
+  <div data-partial="partials/siswa/exam.html"></div>
 </div>
 
 <!-- MOBILE BOTTOM NAVIGATION BAR (4 Tabs) -->
@@ -412,9 +179,8 @@
   </button>
 </nav>
 
-<!-- FLOATING TOAST PILL -->
 <div id="toast-pill" class="hidden" role="status" aria-live="polite">
-  <span class="material-symbols-outlined" style="font-size:18px">info</span>
+  <span class="material-symbols-outlined icon-md">info</span>
   <span id="toast-text">Pemberitahuan</span>
 </div>
 

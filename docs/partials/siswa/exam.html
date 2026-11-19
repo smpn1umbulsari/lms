@@ -1,0 +1,39 @@
+<!-- EXAM RUNNER VIEW -->
+<div id="sec-exam" class="hidden">
+  <div id="timer-hero">
+    <div class="timer-top-row">
+      <div>
+        <span class="badge badge-pg mb-4">CBT SMPN 1 UMBULSARI</span>
+        <h2 id="ex-title" class="text-lg font-semibold text-ink">Ujian</h2>
+        <span id="ex-save-indicator" class="text-sm text-ok">Menghubungkan...</span>
+      </div>
+      <div class="timer-pill">
+        <span class="material-symbols-outlined icon-17">timer</span>
+        <div class="timer-clock" id="ex-timer">00:00</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill w-full" id="ex-progress-bar"></div>
+    </div>
+  </div>
+
+  <div id="ex-palette" class="q-palette" aria-label="Navigasi Nomor Soal"></div>
+  <div id="ex-questions"></div>
+
+  <div class="panel flex justify-between items-center flex-wrap gap-12">
+    <span class="text-md text-muted">Pastikan seluruh butir soal telah terjawab sebelum mengumpulkan lembar ujian.</span>
+    <button id="btn-ex-finish" class="btn btn-primary">Selesaikan &amp; Kirim</button>
+  </div>
+</div>
+
+<!-- RESULT VIEW -->
+<div id="sec-result" class="panel hidden result-panel">
+  <span id="res-badge" class="badge badge-ok mb-8">Lembar Jawaban Tersimpan</span>
+  <h2>Hasil Pengerjaan</h2>
+  <div id="res-score" class="score-hero">0</div>
+  <p id="res-desc" class="text-muted mb-18"></p>
+  <div class="flex flex-col gap-8">
+    <button id="btn-res-retry" type="button" class="btn btn-primary hidden w-full">Coba Kirim Ulang</button>
+    <button id="btn-res-back" type="button" class="btn btn-secondary w-full">Kembali ke Beranda</button>
+  </div>
+</div>

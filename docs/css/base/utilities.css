@@ -1,7 +1,4 @@
-/* Base CSS Utilities — SITURI LMS
-   Kelas utilitas semantik untuk meminimalisasi inline style repetitif. */
-
-/* Display & Flexbox */
+/* Base CSS Utilities — SITURI LMS */
 .flex { display: flex; }
 .inline-flex { display: inline-flex; }
 .flex-row { flex-direction: row; }
@@ -15,37 +12,50 @@
 .justify-center { justify-content: center; }
 .justify-end { justify-content: flex-end; }
 .flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.flex-3 { flex: 3; }
 .flex-shrink-0 { flex-shrink: 0; }
 .min-w-0 { min-width: 0; }
+.min-w-110 { min-width: 110px; }
+.min-w-120 { min-width: 120px; }
+.min-w-150 { min-width: 150px; }
+.min-w-200 { min-width: 200px; }
+.min-w-220 { min-width: 220px; }
+.min-w-240 { min-width: 240px; }
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.w-180 { width: 180px; }
 
-/* Gaps */
 .gap-2 { gap: 2px; }
 .gap-4 { gap: 4px; }
 .gap-6 { gap: 6px; }
 .gap-8 { gap: 8px; }
 .gap-10 { gap: 10px; }
 .gap-12 { gap: 12px; }
+.gap-14 { gap: 14px; }
 .gap-16 { gap: 16px; }
 
-/* Typography */
+.text-2xs { font-size: 11.5px; }
 .text-xs { font-size: 11px; }
 .text-sm { font-size: 12px; }
+.text-md { font-size: 12.5px; }
+.text-13 { font-size: 13px; }
+.text-135 { font-size: 13.5px; }
 .text-base { font-size: 14px; }
 .text-lg { font-size: 16px; }
+.text-hero { font-size: 2.5rem; line-height: 1.1; }
+.score-hero { font-size: 2.75rem; font-weight: 700; color: var(--ok); margin: 12px 0; }
 .font-normal { font-weight: 400; }
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
 .leading-tight { line-height: 1.15; }
-.leading-normal { line-height: 1.5; }
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.leading-normal { line-height: 1.45; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .whitespace-nowrap { white-space: nowrap; }
 
-/* Colors */
 .text-ink { color: var(--ink); }
 .text-muted { color: var(--ink-2); }
 .text-subtle { color: var(--ink-3); }
@@ -54,54 +64,118 @@
 .text-danger { color: var(--danger); }
 .text-accent { color: var(--accent); }
 
-/* Spacing */
-.mt-2 { margin-top: 2px; }
+.mt-0 { margin-top: 0; }
 .mt-4 { margin-top: 4px; }
-.mt-6 { margin-top: 6px; }
 .mt-8 { margin-top: 8px; }
 .mt-12 { margin-top: 12px; }
 .mt-16 { margin-top: 16px; }
+.mb-0 { margin-bottom: 0; }
 .mb-2 { margin-bottom: 2px; }
 .mb-4 { margin-bottom: 4px; }
 .mb-6 { margin-bottom: 6px; }
 .mb-8 { margin-bottom: 8px; }
+.mb-10 { margin-bottom: 10px; }
 .mb-12 { margin-bottom: 12px; }
-.mb-16 { margin-bottom: 16px; }
+.mb-14 { margin-bottom: 14px; }
+.mb-18 { margin-bottom: 18px; }
 .ml-6 { margin-left: 6px; }
-.p-8 { padding: 8px; }
+.pl-6 { padding-left: 6px; }
+.pt-12 { padding-top: 12px; }
+.pt-14 { padding-top: 14px; }
+.py-12 { padding-top: 12px; padding-bottom: 12px; }
+.p-0 { padding: 0; }
 .p-12 { padding: 12px; }
 .p-16 { padding: 16px; }
+.p-20 { padding: 20px; }
+.p-28 { padding: 28px; }
+.chip-nudge { margin-top: -6px; margin-bottom: 10px; }
 
-/* Borders & Surfaces */
 .border-line { border: 1px solid var(--line); }
+.border-none { border: none; }
 .border-l-line { border-left: 1px solid var(--line); }
 .border-t-line { border-top: 1px solid var(--line); }
-.rounded-sm { border-radius: 6px; }
-.rounded-md { border-radius: 8px; }
-.rounded-lg { border-radius: 12px; }
-.rounded-full { border-radius: 9999px; }
+.border-t-soft { border-top: 1px solid var(--line-soft); }
+.rounded-none { border-radius: 0; }
+.rounded-sm { border-radius: var(--radius-chip, 6px); }
+.rounded-md { border-radius: var(--radius-input, 9px); }
+.rounded-lg { border-radius: var(--radius-card, 12px); }
+.rounded-full { border-radius: var(--radius-pill, 999px); }
+.overflow-hidden { overflow: hidden; }
 .bg-paper { background: var(--paper); }
 .bg-surface { background: var(--surface); }
 .bg-surface-low { background: var(--surface-low); }
 .bg-surface-high { background: var(--surface-high); }
+.bg-accent-soft { background: var(--accent-soft); }
 
-/* Common UI Elements */
-.brand-mark-sm {
-  width: 28px;
-  height: 28px;
-  font-size: 13px;
+.panel-accent-box { background: var(--accent-soft); border-color: var(--accent); }
+.panel-accent-left { border-left: 4px solid var(--accent); }
+.panel-ok-left { border-left: 4px solid var(--ok); }
+.panel-warn-left { border-left: 4px solid var(--warn); }
+.panel-callout-box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; font-size: 12px; color: var(--ink-2); }
+.err-box { margin-top: 8px; padding: 10px; border-radius: 8px; background: var(--danger-soft); color: var(--danger); font-size: 12.5px; }
+.ribbon-info { margin-top: 10px; font-size: 12.5px; font-weight: 600; }
+.info-pill-row { margin-top: 10px; padding: 10px; border-radius: 8px; background: var(--surface-low); font-size: 12.5px; }
+.auth-single { max-width: 460px; grid-template-columns: 1fr; }
+.result-panel { max-width: 550px; margin: 2rem auto; text-align: center; padding: 28px; }
+.modal-dialog-wide { max-width: 820px; transition: max-width 0.2s ease; }
+.modal-scroll-body { max-height: 70vh; overflow-y: auto; background: var(--surface); }
+.dialog-title { margin: 0; font-size: 16px; font-weight: 700; color: var(--ink); }
+.brand-mark-sm { width: 28px; height: 28px; font-size: 13px; border-radius: 8px; flex-shrink: 0; }
+.avatar-circle-sm { width: 28px; height: 28px; font-size: 12px; flex-shrink: 0; }
+.avatar-circle-md { width: 30px; height: 30px; font-size: 12px; flex-shrink: 0; }
+.dot-accent { background: var(--accent); }
+.dot-pg { background: var(--badge-pg); margin-top: 0; }
+.icon-xs { font-size: 14px; }
+.icon-15 { font-size: 15px; }
+.icon-sm { font-size: 16px; }
+.icon-17 { font-size: 17px; }
+.icon-md { font-size: 18px; }
+.icon-19 { font-size: 19px; }
+.icon-btn-xs { width: 30px; height: 30px; min-width: 30px; min-height: 30px; }
+.truncate-130 { max-width: 130px; font-size: 12px; }
+.sub-xs { font-size: 10.5px; }
+.badge-xs { font-size: 10px; padding: 2px 6px; }
+.badge-tag { font-size: 10px; padding: 1px 5px; }
+.badge-compact { font-size: 12px; padding: 5px 10px; }
+.stat-mode-val { font-size: 20px; color: var(--ok); }
+.stat-pg-val { color: var(--badge-pg); }
+.text-badge-match { color: var(--badge-match); }
+.filter-select { width: auto; min-width: 120px; margin-bottom: 0; }
+.filter-select-wide { width: auto; min-width: 150px; margin-bottom: 0; }
+.filter-compact { min-height: 34px; padding: 4px 12px; font-size: 12px; }
+.time-pill-accent { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.toolbar-paper { margin-bottom: 12px; background: var(--paper); }
+.panel-divider { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.panel-divider-soft { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line-soft); }
+.callout-match { border-left-color: var(--badge-match); background: var(--badge-match-bg); }
+.empty-msg { text-align: center; padding: 20px; color: var(--ink-3); font-size: 13px; }
+.empty-cell { text-align: center; color: var(--ink-3); padding: 16px; }
+.link-btn { background: none; border: none; padding: 0; font: inherit; font-size: 11.5px; color: var(--accent); cursor: pointer; text-decoration: underline; }
+.hide-desktop { display: none; }
+
+/* Network Status Pill */
+.net-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600;
+}
+.net-online { background: var(--ok-soft); color: var(--ok); }
+.net-offline { background: var(--warn-soft); color: var(--warn); }
+
+/* Skeleton Shimmer Loader */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-low);
   border-radius: 8px;
-  flex-shrink: 0;
+  min-height: 18px;
 }
-.avatar-circle-sm {
-  width: 28px;
-  height: 28px;
-  font-size: 12px;
-  flex-shrink: 0;
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+  animation: situri-shimmer 1.5s infinite;
 }
-.avatar-circle-md {
-  width: 30px;
-  height: 30px;
-  font-size: 12px;
-  flex-shrink: 0;
-}
+@keyframes situri-shimmer { 100% { transform: translateX(100%); } }

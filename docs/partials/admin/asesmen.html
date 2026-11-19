@@ -1,0 +1,183 @@
+<section id="sec-asesmen" class="tab-pane hidden">
+  <div class="page-header">
+    <div>
+      <div class="flex items-center gap-8 mb-4">
+        <span class="badge badge-pg">Pembuat Soal Ujian</span>
+        <span class="text-sm text-subtle">4 Tipe Soal</span>
+      </div>
+      <h1 class="page-title">Ujian &amp; Buat Soal</h1>
+      <p class="page-subtitle">Susun soal Pilihan Ganda, Benar-Salah, Menjodohkan, dan Uraian beserta jadwal pengerjaan siswa</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-as-preview" type="button" class="btn btn-secondary">
+        <span class="material-symbols-outlined icon-md">visibility</span>
+        <span>Pratinjau Soal</span>
+      </button>
+      <button type="button" class="btn btn-secondary" data-action="open-q-modal" data-qtype="pg">
+        <span class="material-symbols-outlined icon-md">add_circle</span>
+        <span>+ Tambah Soal Baru</span>
+      </button>
+      <button id="btn-as-save" type="button" class="btn btn-primary">
+        <span class="material-symbols-outlined icon-md">publish</span>
+        <span>Simpan &amp; Terbitkan Ujian</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="stat-strip" role="region" aria-label="Ringkasan Paket Soal">
+    <div class="stat-cell">
+      <div class="stat-lbl"><span>Jumlah Soal</span></div>
+      <div class="stat-val" id="as-stat-count">0</div>
+      <div class="stat-meta">Soal dalam paket ini</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl"><span>Total Bobot Poin</span></div>
+      <div class="stat-val stat-pg-val" id="as-stat-weight">0</div>
+      <div class="stat-meta">Acuan skor akhir (0&ndash;100)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl"><span>Durasi</span></div>
+      <div class="stat-val" id="as-stat-dur">60</div>
+      <div class="stat-meta">Menit pengerjaan</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-lbl"><span>Jenis Paket</span></div>
+      <div class="stat-val stat-mode-val" id="as-stat-mode">Latihan</div>
+      <div class="stat-meta">Kunci aman saat Ujian Resmi</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>
+        <span class="material-symbols-outlined text-accent">tune</span>
+        <span>Pengaturan Jadwal &amp; Kelas</span>
+      </h2>
+      <span class="badge badge-bs">Siap Terbit</span>
+    </div>
+    <div class="row">
+      <div>
+        <label for="as-code">Kode Ujian (otomatis jika kosong)</label>
+        <input id="as-code" placeholder="misal: u_ipa_01" class="mono-num">
+      </div>
+      <div>
+        <label for="as-kelas">Kelas Target * (pisahkan koma)</label>
+        <input id="as-kelas" value="c1" placeholder="misal: 7A, 7B">
+      </div>
+      <div>
+        <label for="as-mode">Jenis *</label>
+        <select id="as-mode">
+          <option value="latihan">Latihan (Nilai Otomatis Langsung)</option>
+          <option value="ujian">Ujian Resmi (Kunci Disimpan Aman)</option>
+        </select>
+      </div>
+    </div>
+    <label for="as-judul">Judul Ujian *</label>
+    <input id="as-judul" placeholder="Contoh: Penilaian Tengah Semester &mdash; IPA">
+    <div class="row">
+      <div>
+        <label for="as-durasi">Durasi (Menit)</label>
+        <input id="as-durasi" type="number" value="60">
+      </div>
+      <div>
+        <label for="as-tol">Batas Telat Masuk (Menit)</label>
+        <input id="as-tol" type="number" value="120">
+      </div>
+      <div>
+        <label for="as-max-attempts">Maks. Percobaan (Remedial)</label>
+        <select id="as-max-attempts">
+          <option value="1">1x (Sekali)</option>
+          <option value="2">2x (Izinkan Remedial)</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div>
+        <label for="as-open">Waktu Buka *</label>
+        <input id="as-open" type="datetime-local">
+      </div>
+      <div>
+        <label for="as-close">Waktu Tutup *</label>
+        <input id="as-close" type="datetime-local">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-accent-box">
+    <div class="flex items-center justify-between flex-wrap gap-12">
+      <div>
+        <h2 class="text-base text-ink">Tambah Soal ke Paket Ini</h2>
+        <p class="text-sm text-muted">Pilih jenis soal yang ingin ditambahkan</p>
+      </div>
+      <div class="flex flex-wrap gap-8">
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="pg">
+          <span class="badge badge-pg">PG</span>
+          <span>+ Pilihan Ganda</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="bs">
+          <span class="badge badge-bs">B/S</span>
+          <span>+ Benar-Salah</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="match">
+          <span class="badge badge-match">Jodoh</span>
+          <span>+ Menjodohkan</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="essay">
+          <span class="badge badge-essay">Uraian</span>
+          <span>+ Uraian</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>
+        <span class="material-symbols-outlined text-accent">format_list_numbered</span>
+        <span>Daftar Soal</span>
+      </h2>
+      <button type="button" class="btn btn-ghost btn-sm" data-action="open-q-modal" data-qtype="match">
+        <span class="material-symbols-outlined icon-sm">sync_alt</span>
+        <span>Editor Soal Menjodohkan</span>
+      </button>
+    </div>
+    <div id="as-questions-list">
+      <div class="empty-msg">Belum ada soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Daftar Paket Asesmen Terbit</h2>
+      <span class="text-sm text-subtle">Bank Soal &amp; Jadwal Kelas</span>
+    </div>
+    <div class="toolbar-strip toolbar-paper">
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input type="search" id="as-search" placeholder="Cari kode atau judul asesmen..." aria-label="Cari asesmen">
+      </div>
+      <div class="flex items-center gap-8 flex-wrap flex-1 justify-end">
+        <select id="as-kelas" aria-label="Filter Kelas Asesmen" class="filter-select-wide">
+          <option value="">Semua Kelas</option>
+        </select>
+        <div id="as-kelas-chips" class="chip-group">
+          <button type="button" class="chip active" data-val="">Semua</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-container">
+      <table id="as-table">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Judul Asesmen</th>
+            <th>Mode</th>
+            <th>Kelas</th>
+            <th>Waktu Buka</th>
+            <th class="text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>

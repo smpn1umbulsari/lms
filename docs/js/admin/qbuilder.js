@@ -50,7 +50,6 @@ export function getQuestionsList() {
 
 export function setQuestionsList(list) {
   questionsList = list || [];
-  window.questionsList = questionsList;
 }
 
 export function setEditingQuizCode(code) {
@@ -87,7 +86,6 @@ export function addQ(type) {
 }
 
 export function renderQBuilder() {
-  window.questionsList = questionsList;
   syncBuilderStats();
   const el = document.getElementById("as-questions-list");
   if (!el) return;

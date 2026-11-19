@@ -1,0 +1,128 @@
+<section id="sec-tugas" class="tab-pane hidden">
+  <div class="page-header">
+    <div>
+      <div class="flex items-center gap-8 mb-4">
+        <span class="badge badge-match">Penugasan Terjadwal</span>
+        <span class="text-sm text-subtle">1 Dokumen per Siswa per Tugas</span>
+      </div>
+      <h1 class="page-title">Penugasan Siswa</h1>
+      <p class="page-subtitle">Kelola instruksi tugas, batas waktu pengumpulan, dan pemeriksaan nilai</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export-tugas-csv" type="button" class="btn btn-secondary">
+        <span class="material-symbols-outlined icon-md">download</span>
+        <span>Unduh Rekap Nilai Tugas</span>
+      </button>
+      <button id="btn-tug-new" type="button" class="btn btn-primary">
+        <span class="material-symbols-outlined icon-md">add</span>
+        <span>+ Buat Tugas Baru</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="tug-form-panel" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="tug-form-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="flex justify-between items-center w-full">
+          <div>
+            <h2 id="tug-form-title" class="dialog-title">Formulir Penugasan Siswa</h2>
+            <span class="text-sm text-muted">Tenggat pengumpulan &amp; instruksi tugas kelas</span>
+          </div>
+          <button type="button" class="modal-close-btn" data-action="close-tug-form" aria-label="Tutup Formulir">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <label for="t-judul">Judul Tugas *</label>
+        <input id="t-judul" placeholder="Contoh: Laporan Praktikum Uji Makanan &amp; Fotosintesis">
+        <div class="row">
+          <div>
+            <label for="t-kelas">Target Kelas (pisahkan koma) *</label>
+            <input id="t-kelas" placeholder="c1, 7A, 8A">
+            <div class="chip-group chip-nudge">
+              <span class="text-2xs text-subtle">Pilih cepat:</span>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="c1">c1</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="7A">7A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8A">8A</button>
+              <button type="button" class="chip" data-action="toggle-class" data-target="t-kelas" data-class="8B">8B</button>
+            </div>
+          </div>
+          <div>
+            <label for="t-due">Batas Waktu Pengumpulan (Due Date) *</label>
+            <input id="t-due" type="datetime-local">
+          </div>
+        </div>
+        <label for="t-instruksi">Instruksi Pengerjaan</label>
+        <textarea id="t-instruksi" rows="4" placeholder="Jelaskan langkah pengerjaan dan format tautan Google Drive yang harus dikumpulkan siswa..."></textarea>
+        <label for="t-link">Tautan Materi/Referensi Pendukung (Opsional)</label>
+        <input id="t-link" placeholder="https://...">
+        <div id="t-links-extra"></div>
+        <button type="button" id="btn-add-tlink" class="btn btn-secondary btn-sm mb-10">+ Tambah tautan</button>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-tug-cancel" type="button" class="btn btn-secondary">Batal</button>
+        <button id="btn-tug-save" type="button" class="btn btn-primary">Terbitkan Tugas</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar-strip">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input type="search" id="tug-search" placeholder="Cari judul atau instruksi tugas..." aria-label="Cari tugas">
+    </div>
+    <div class="flex items-center gap-8 flex-wrap flex-1 justify-end">
+      <select id="tug-kelas" aria-label="Filter Kelas Tugas" class="filter-select-wide">
+        <option value="">Semua Kelas</option>
+      </select>
+      <div id="tug-kelas-chips" class="chip-group">
+        <button type="button" class="chip active" data-val="">Semua</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel p-0 overflow-hidden">
+    <div class="table-container border-none rounded-none">
+      <table id="tug-table">
+        <thead>
+          <tr>
+            <th>Judul Tugas</th>
+            <th>Kelas</th>
+            <th>Tenggat (Due Date)</th>
+            <th>Kiriman Siswa</th>
+            <th class="text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tug-sub-panel" class="panel panel-ok-left hidden">
+    <div class="panel-head">
+      <div>
+        <h2 id="tug-sub-title">Daftar Kiriman Tugas</h2>
+        <span id="tug-sub-count" class="text-sm text-muted">0 kiriman</span>
+      </div>
+      <div class="flex gap-8 items-center">
+        <button type="button" id="btn-tug-sub-more" class="btn btn-secondary btn-sm hidden">Muat Berikutnya</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="close-sub-panel">Tutup Panel</button>
+      </div>
+    </div>
+    <div class="table-container">
+      <table id="tug-sub-table">
+        <thead>
+          <tr>
+            <th>Siswa</th>
+            <th>Jawaban &amp; Waktu Kirim</th>
+            <th>Tautan Berkas</th>
+            <th>Nilai &amp; Catatan Guru</th>
+            <th class="text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,131 @@
+<!-- MODAL TAMBAH BUTIR SOAL BARU -->
+<div id="modal-add-q" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-q-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-8">
+          <h2 id="modal-q-title" class="dialog-title font-semibold">Tambah Butir Soal Baru</h2>
+          <span class="badge badge-neutral">4 Tipe Soal</span>
+        </div>
+        <button type="button" class="icon-action-btn icon-btn-xs" data-action="close-q-modal" aria-label="Tutup Modal">
+          <span class="material-symbols-outlined icon-md">close</span>
+        </button>
+      </div>
+      <div class="seg-tabs" role="tablist">
+        <button type="button" class="seg-tab active" data-mtype="pg" data-action="switch-qmodal-type">
+          <span class="badge badge-pg">PG</span>
+          <span>Pilihan Ganda</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="bs" data-action="switch-qmodal-type">
+          <span class="badge badge-bs">BS</span>
+          <span>Benar/Salah</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="match" data-action="switch-qmodal-type">
+          <span class="badge badge-match">MATCH</span>
+          <span>Menjodohkan</span>
+        </button>
+        <button type="button" class="seg-tab" data-mtype="essay" data-action="switch-qmodal-type">
+          <span class="badge badge-essay">ESSAY</span>
+          <span>Uraian</span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="flex-3">
+          <label for="mq-teks">Teks Pertanyaan Utama *</label>
+          <textarea id="mq-teks" rows="3" placeholder="Tuliskan pokok soal atau instruksi perjodohan di sini..."></textarea>
+        </div>
+        <div class="flex-1 min-w-110">
+          <label for="mq-bobot">Bobot Poin</label>
+          <input id="mq-bobot" type="number" value="25" min="1" max="100">
+        </div>
+      </div>
+
+      <div id="mq-panel-pg">
+        <label>Opsi Pilihan Ganda &amp; Kunci Jawaban</label>
+        <div class="row">
+          <div><label for="mq-pg-a">Opsi A</label><input id="mq-pg-a" placeholder="Teks opsi A"></div>
+          <div><label for="mq-pg-b">Opsi B</label><input id="mq-pg-b" placeholder="Teks opsi B"></div>
+        </div>
+        <div class="row">
+          <div><label for="mq-pg-c">Opsi C</label><input id="mq-pg-c" placeholder="Teks opsi C"></div>
+          <div><label for="mq-pg-d">Opsi D</label><input id="mq-pg-d" placeholder="Teks opsi D"></div>
+        </div>
+        <label for="mq-pg-key">Kunci Jawaban Benar</label>
+        <select id="mq-pg-key">
+          <option value="A">Opsi A</option>
+          <option value="B">Opsi B</option>
+          <option value="C">Opsi C</option>
+          <option value="D">Opsi D</option>
+        </select>
+      </div>
+
+      <div id="mq-panel-bs" class="hidden">
+        <label for="mq-bs-key">Kunci Validitas Pernyataan (Benar / Salah)</label>
+        <select id="mq-bs-key">
+          <option value="true">BENAR (True)</option>
+          <option value="false">SALAH (False)</option>
+        </select>
+      </div>
+
+      <div id="mq-panel-match" class="hidden">
+        <div class="callout callout-match">
+          <strong class="text-badge-match">Konfigurasi Pasangan Menjodohkan (Kolom A &harr; Kolom B):</strong>
+          Sistem akan mengacak urutan respon Kolom B secara deterministik di perangkat siswa.
+        </div>
+        <div id="mq-match-rows">
+          <div class="row mq-match-pair">
+            <div><label>Kolom A (Premis 1)</label><input class="mq-kiri" placeholder="Contoh: Alveolus" value=""></div>
+            <div><label>Kolom B (Pasangan Benar 1)</label><input class="mq-kanan" placeholder="Contoh: Difusi gas O2 &amp; CO2" value=""></div>
+          </div>
+          <div class="row mq-match-pair">
+            <div><label>Kolom A (Premis 2)</label><input class="mq-kiri" placeholder="Contoh: Trakea" value=""></div>
+            <div><label>Kolom B (Pasangan Benar 2)</label><input class="mq-kanan" placeholder="Contoh: Menyaring partikel debu" value=""></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" data-action="add-modal-match-row">+ Tambah Baris Pasangan</button>
+      </div>
+
+      <div id="mq-panel-essay" class="hidden">
+        <div class="callout callout-danger">
+          <strong class="text-danger">Dinilai Manual oleh Guru:</strong>
+          Butir soal Essay tidak memiliki kunci otomatis dan akan masuk ke antrean koreksi manual.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="text-sm text-ok font-medium">&#10003; Format soal tervalidasi</span>
+      <div class="flex gap-8">
+        <button type="button" class="btn btn-ghost btn-sm" data-action="close-q-modal">Batal</button>
+        <button type="button" class="btn btn-ink btn-sm" data-action="commit-q-modal">Simpan Butir Soal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PREVIEW ASESMEN CBT -->
+<div id="modal-preview-q" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-preview-title">
+  <div class="modal-dialog modal-dialog-wide" id="preview-dialog-box">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-preview-title" class="dialog-title font-semibold">Pratinjau Asesmen CBT Siswa</h2>
+        <span class="modal-sub" id="modal-preview-sub">Tampilan simulasi persis seperti di layar HP / Laptop siswa</span>
+      </div>
+      <div class="flex items-center gap-8">
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-viewport" data-action="toggle-preview-viewport">
+          <span class="material-symbols-outlined icon-sm">smartphone</span>
+          <span id="preview-mode-lbl">Mode HP (375px)</span>
+        </button>
+        <button type="button" class="icon-action-btn icon-btn-xs" data-action="close-preview-modal" aria-label="Tutup Pratinjau">
+          <span class="material-symbols-outlined icon-md">close</span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body modal-scroll-body" id="modal-preview-body"></div>
+    <div class="modal-footer justify-between">
+      <span class="text-sm text-muted">Simulasi interaktif tidak mengirimkan jawaban ke server</span>
+      <button type="button" class="btn btn-secondary btn-sm" data-action="close-preview-modal">Tutup Pratinjau</button>
+    </div>
+  </div>
+</div>

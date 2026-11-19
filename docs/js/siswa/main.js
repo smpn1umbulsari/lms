@@ -1,5 +1,6 @@
 // Student Portal Main Entry Point
 import { db, doc, getDoc } from "../core/firebase.js";
+import { mountPartials } from "../core/partials.js";
 import { initTheme } from "../core/theme.js";
 import { initToast, showToast } from "../core/toast.js";
 import { initForgotPassword } from "../core/auth-reset.js";
@@ -17,22 +18,6 @@ let currentUser = null;
 let userProfile = null;
 let cachedClassMeta = null;
 const loadedStudentTabs = new Set();
-
-initTheme();
-initToast();
-initForgotPassword();
-initGlobalErrorObserver();
-registerServiceWorker();
-initMateriSearch();
-initExamRunnerControls();
-initNilaiHandlers();
-initTugasHandlers(
-  () => currentUser,
-  () => {
-    loadedStudentTabs.delete("sec-nilai");
-    loadTugas(currentUser, userProfile);
-  }
-);
 
 async function getClassMeta() {
   if (cachedClassMeta && cachedClassMeta.id === userProfile?.kelas) return cachedClassMeta;
@@ -103,15 +88,6 @@ export function activateStudentTab(tabId) {
   loadStudentTab(tabId);
 }
 
-document.querySelectorAll(".tab-btn, .mobile-nav-btn").forEach((b) => {
-  b.addEventListener("click", () => activateStudentTab(b.dataset.tab));
-});
-
-document.addEventListener("click", (e) => {
-  const switchBtn = e.target.closest("[data-action='switch-tab']");
-  if (switchBtn?.dataset.tab) activateStudentTab(switchBtn.dataset.tab);
-});
-
 function enterStudentDashboard(user, profile) {
   currentUser = user;
   userProfile = profile;
@@ -153,12 +129,46 @@ function enterStudentDashboard(user, profile) {
   loadStudentTab("tab-materi");
 }
 
-initStudentAuth({
-  onEnterDashboard: enterStudentDashboard,
-  onSignedOut: () => {
-    currentUser = null;
-    userProfile = null;
-    cachedClassMeta = null;
-    loadedStudentTabs.clear();
-  }
+async function boot() {
+  initTheme();
+  initToast();
+  initGlobalErrorObserver();
+  registerServiceWorker();
+  await mountPartials();
+
+  initForgotPassword();
+  initMateriSearch();
+  initExamRunnerControls();
+  initNilaiHandlers();
+  initTugasHandlers(
+    () => currentUser,
+    () => {
+      loadedStudentTabs.delete("sec-nilai");
+      loadTugas(currentUser, userProfile);
+    }
+  );
+
+  document.querySelectorAll(".tab-btn, .mobile-nav-btn").forEach((b) => {
+    b.addEventListener("click", () => activateStudentTab(b.dataset.tab));
+  });
+
+  document.addEventListener("click", (e) => {
+    const switchBtn = e.target.closest("[data-action='switch-tab']");
+    if (switchBtn?.dataset.tab) activateStudentTab(switchBtn.dataset.tab);
+  });
+
+  initStudentAuth({
+    onEnterDashboard: enterStudentDashboard,
+    onSignedOut: () => {
+      currentUser = null;
+      userProfile = null;
+      cachedClassMeta = null;
+      loadedStudentTabs.clear();
+    }
+  });
+}
+
+boot().catch((err) => {
+  console.error(err);
+  showToast("Gagal memuat komponen portal siswa", "err");
 });

@@ -1,45 +1,64 @@
 :root {
-  --bg: #f4f5f7;
-  --paper: #f8fafc;
-  --background: #f4f5f7;
+  /* Canonical Light Editorial Minimal Tokens (design/UI UX.md) */
+  --bg: #fbfbfa;
+  --paper: #fbfbfa;
+  --background: #fbfbfa;
   --surface: #ffffff;
-  --surface-low: #f2f4f6;
-  --surface-container: #eceef0;
-  --surface-high: #e6e8ea;
-  --surface-highest: #e0e3e5;
-  --line: #e2e8f0;
-  --line-soft: #f1f5f9;
-  --border: #e2e8f0;
-  --ink: #0f172a;
-  --ink-2: #5b6169;
-  --ink-3: #8d939b;
-  --primary: #1d4ed8;
-  --primary-hover: #1e40af;
-  --accent: #2563eb;
-  --accent-soft: #eff6ff;
+  --surface-low: #f5f4f1;
+  --surface-container: #efede8;
+  --surface-high: #e8e6e0;
+  --surface-highest: #dfddd6;
+  --line: #e7e5e0;
+  --line-soft: #f0eeea;
+  --border: #e7e5e0;
+
+  --ink: #14161a;
+  --ink-2: #525860;
+  --ink-3: #636972; /* >= 5.2:1 contrast on #fbfbfa */
+
+  --primary: var(--ink);
+  --primary-hover: #262a32;
+  --accent: #0f6b5c;
+  --accent-soft: #e9f1ef;
   --on-primary: #ffffff;
-  --ok: #16a34a;
-  --ok-soft: #f0fdf4;
-  --warn: #d97706;
-  --warn-soft: #fffbeb;
-  --danger: #dc2626;
-  --danger-soft: #fef2f2;
-  --badge-pg: #1d4ed8;
-  --badge-pg-bg: #eff6ff;
-  --badge-bs: #16a34a;
-  --badge-bs-bg: #f0fdf4;
-  --badge-match: #d97706;
-  --badge-match-bg: #fffbeb;
-  --badge-essay: #dc2626;
-  --badge-essay-bg: #fef2f2;
-  --radius-card: 14px;
-  --radius-panel: 18px;
+
+  --ok: #1f7a5c;
+  --ok-soft: #eaf5f0;
+  --warn: #a4672a;
+  --warn-soft: #fdf5ea;
+  --danger: #b3261e;
+  --danger-soft: #fceeed;
+  --err: var(--danger);
+
+  /* Taksonomi Badge 4-Tipe Soal */
+  --badge-pg: var(--accent);
+  --badge-pg-bg: var(--accent-soft);
+  --badge-bs: var(--ok);
+  --badge-bs-bg: var(--ok-soft);
+  --badge-match: var(--warn);
+  --badge-match-bg: var(--warn-soft);
+  --badge-essay: var(--danger);
+  --badge-essay-bg: var(--danger-soft);
+
+  /* Radius & Spacing Scale (design/UI UX.md) */
+  --radius-card: 12px;
+  --radius-panel: 12px;
   --radius-input: 9px;
   --radius-chip: 6px;
   --radius-pill: 999px;
-  --shadow-modal: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
-  --shadow-bento: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-  --backdrop: rgba(15, 23, 42, 0.45);
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 10px;
+  --sp-4: 12px;
+  --sp-5: 14px;
+  --sp-6: 16px;
+  --sp-7: 20px;
+  --sp-8: 26px;
+  --sp-9: 34px;
+
+  --shadow-modal: 0 10px 25px -5px rgba(20, 22, 26, 0.12);
+  --shadow-bento: 0 1px 3px 0 rgba(20, 22, 26, 0.05);
+  --backdrop: rgba(20, 22, 26, 0.45);
   --sidebar-w: 240px;
 }
 
@@ -55,28 +74,34 @@ html[data-theme="dark"], html.dark {
   --line: #252d38;
   --line-soft: #1e252f;
   --border: #252d38;
+
   --ink: #f2f5f7;
   --ink-2: #a3adba;
-  --ink-3: #6f7b8a;
-  --primary: #8ed5ff;
-  --primary-hover: #bae6fd;
-  --accent: #38bdf8;
-  --accent-soft: #0f2942;
-  --on-primary: #00354a;
-  --ok: #22c55e;
+  --ink-3: #8b95a3; /* >= 5.5:1 contrast on #151b23 */
+
+  --primary: var(--ink);
+  --primary-hover: #dce3ea;
+  --accent: #4ec8b0;
+  --accent-soft: #14312c;
+  --on-primary: #0d1117;
+
+  --ok: #34d399;
   --ok-soft: #0b2919;
   --warn: #f59e0b;
   --warn-soft: #2b1f0b;
-  --danger: #ef4444;
+  --danger: #f87171;
   --danger-soft: #2c1215;
-  --badge-pg: #38bdf8;
-  --badge-pg-bg: #0f2942;
-  --badge-bs: #22c55e;
-  --badge-bs-bg: #0b2919;
-  --badge-match: #f59e0b;
-  --badge-match-bg: #2b1f0b;
-  --badge-essay: #ef4444;
-  --badge-essay-bg: #2c1215;
+  --err: var(--danger);
+
+  --badge-pg: var(--accent);
+  --badge-pg-bg: var(--accent-soft);
+  --badge-bs: var(--ok);
+  --badge-bs-bg: var(--ok-soft);
+  --badge-match: var(--warn);
+  --badge-match-bg: var(--warn-soft);
+  --badge-essay: var(--danger);
+  --badge-essay-bg: var(--danger-soft);
+
   --shadow-modal: 0 12px 30px -4px rgba(0, 0, 0, 0.5);
   --shadow-bento: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
   --backdrop: rgba(9, 13, 22, 0.72);

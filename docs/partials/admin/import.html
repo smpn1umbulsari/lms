@@ -1,0 +1,87 @@
+<section id="sec-import" class="tab-pane hidden">
+  <div class="page-header">
+    <div>
+      <div class="flex items-center gap-8 mb-4">
+        <span class="badge badge-pg">Excel &amp; Data</span>
+        <span class="text-sm text-subtle">Pratinjau dulu sebelum disimpan</span>
+      </div>
+      <h1 class="page-title">Data Siswa, Guru &amp; Excel</h1>
+      <p class="page-subtitle">Unggah soal ujian, data siswa per kelas, dan daftar email guru. Perubahan ditinjau sebelum disimpan.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="mt-0">1. Bank Soal Excel</h3>
+    <p class="text-md text-subtle">Kolom: <code>Kode | Tipe | Teks | Opsi A-D | Kunci | Kiri | Kanan | Bobot</code>. Setelah diunggah, soal masuk ke editor ujian siap terbit.</p>
+    <div class="row items-end gap-8 flex-wrap">
+      <div class="flex-2 min-w-220">
+        <label for="imp-file-soal">Berkas Excel (.xlsx)</label>
+        <input id="imp-file-soal" type="file" accept=".xlsx,.xls" class="mb-0">
+      </div>
+      <button id="btn-tpl-soal" type="button" class="btn btn-secondary">Unduh Template</button>
+      <button id="btn-export-soal-xlsx" type="button" class="btn btn-secondary">Unduh Bank Soal</button>
+    </div>
+    <div id="imp-ribbon-soal" class="hidden ribbon-info"></div>
+    <div id="imp-errors-soal" class="hidden err-box"></div>
+    <div id="imp-preview-soal"></div>
+    <div class="mt-12">
+      <button id="btn-imp-save-soal" type="button" class="btn btn-primary" disabled>Masukkan ke Pembuat Soal</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="mt-0">2. Data Siswa Sekolah</h3>
+    <p class="text-md text-subtle">Kolom: <code>NIS | Nama | Kelas</code>. Impor ulang aman: akun siswa yang sudah aktif tidak direset, hanya Nama/Kelas yang diperbarui. Khusus Admin Utama.</p>
+    <div class="row items-end gap-8 flex-wrap">
+      <div class="flex-2 min-w-220">
+        <label for="imp-file-siswa">Berkas Excel (.xlsx)</label>
+        <input id="imp-file-siswa" type="file" accept=".xlsx,.xls" class="mb-0">
+      </div>
+      <button id="btn-tpl-siswa" type="button" class="btn btn-secondary">Unduh Template</button>
+      <button id="btn-export-siswa-xlsx" type="button" class="btn btn-secondary">Unduh Data Siswa</button>
+    </div>
+    <div id="imp-ribbon-siswa" class="hidden ribbon-info"></div>
+    <div id="imp-errors-siswa" class="hidden err-box"></div>
+    <div id="imp-preview-siswa"></div>
+    <div class="mt-12">
+      <button id="btn-imp-save-siswa" type="button" class="btn btn-primary" disabled>Simpan Data Siswa</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="mt-0">3. Daftar Email Guru</h3>
+    <p class="text-md text-subtle">Kolom: <code>Email | Nama | NIP | Mapel | Aktif</code>. Guru masuk dengan email terdaftar akan otomatis aktif sebagai akun Guru.</p>
+    <div class="row items-end gap-8 flex-wrap">
+      <div class="flex-2 min-w-220">
+        <label for="imp-file-guru">Berkas Excel (.xlsx)</label>
+        <input id="imp-file-guru" type="file" accept=".xlsx,.xls" class="mb-0">
+      </div>
+      <button id="btn-tpl-guru" type="button" class="btn btn-secondary">Unduh Template</button>
+      <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Unduh Data Guru</button>
+    </div>
+    <div id="imp-ribbon-guru" class="hidden ribbon-info"></div>
+    <div id="imp-errors-guru" class="hidden err-box"></div>
+    <div id="imp-preview-guru"></div>
+    <div class="mt-12">
+      <button id="btn-imp-save-guru" type="button" class="btn btn-primary" disabled>Simpan Daftar Guru</button>
+    </div>
+  </div>
+
+  <div class="panel superadmin-only hidden panel-warn-left" id="panel-account-tools">
+    <h3 class="mt-0">4. Pemulihan Akun Siswa &amp; Cadangan Data (Khusus Admin Utama)</h3>
+    <p class="text-md text-subtle">Gunakan jika siswa ganti HP/email atau untuk mengunduh cadangan penuh seluruh data sekolah.</p>
+    <div class="row items-end gap-8 flex-wrap">
+      <div class="flex-2 min-w-200">
+        <label for="reset-nis-input">Cek / Lepas Ikatan NIS Siswa</label>
+        <input id="reset-nis-input" placeholder="Masukkan NIS siswa (mis. 1001)" class="mb-0">
+      </div>
+      <button id="btn-reset-nis-check" type="button" class="btn btn-secondary">Cek Status NIS</button>
+      <button id="btn-reset-nis-exec" type="button" class="btn btn-danger" disabled>Lepas Ikatan NIS</button>
+    </div>
+    <div id="reset-nis-info" class="hidden info-pill-row"></div>
+    <div class="panel-divider-soft flex justify-between items-center flex-wrap gap-8">
+      <span class="text-md text-muted">Cadangan Lengkap Database (kelas, siswa, soal, kiriman, jawaban &amp; nilai)</span>
+      <button id="btn-backup-full-json" type="button" class="btn btn-secondary">Unduh Cadangan Lengkap (.json)</button>
+    </div>
+  </div>
+</section>

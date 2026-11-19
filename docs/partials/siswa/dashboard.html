@@ -1,0 +1,187 @@
+<div id="sec-dashboard" class="hidden">
+  <div id="pending-exam-banner" class="hidden"></div>
+
+  <!-- BERANDA SISWA SUMMARY HERO -->
+  <section class="beranda-hero" id="beranda-summary">
+    <div class="greeting-row">
+      <div>
+        <div class="greeting-hi">Selamat belajar,</div>
+        <h1 class="greeting-name" id="hero-student-name">Siswa SMPN 1 Umbulsari</h1>
+      </div>
+      <div id="net-status-badge" class="net-pill net-online">
+        <span id="net-status-icon" class="material-symbols-outlined icon-15">cloud_done</span>
+        <span id="net-status-text">Terhubung</span>
+      </div>
+    </div>
+
+    <div class="cta-hero-card" id="hero-cta-card">
+      <div>
+        <div class="flex items-center gap-8 mb-4">
+          <span class="badge badge-match" id="hero-cta-badge">Agenda Hari Ini</span>
+          <span class="text-sm text-muted" id="hero-cta-meta">Kurikulum Merdeka &middot; Semester Ganjil</span>
+        </div>
+        <h2 class="text-lg font-semibold text-ink" id="hero-cta-title">Pelajari Materi &amp; Cek Jadwal Ujian Kelas Anda</h2>
+      </div>
+      <button type="button" class="btn btn-primary" id="hero-cta-btn" data-action="switch-tab" data-tab="tab-asesmen">
+        <span>Buka Daftar Ujian</span>
+        <span class="material-symbols-outlined icon-17">arrow_forward</span>
+      </button>
+    </div>
+
+    <div class="stat-strip-3" role="region" aria-label="Ringkasan Belajar Siswa">
+      <div class="stat-col-3">
+        <span class="stat-col-lbl">Materi Kelas</span>
+        <span class="stat-col-val" id="st-count-materi">0</span>
+        <span class="stat-col-meta">Modul tersedia</span>
+      </div>
+      <div class="stat-col-3">
+        <span class="stat-col-lbl">Tugas Aktif</span>
+        <span class="stat-col-val text-accent" id="st-count-tugas">0</span>
+        <span class="stat-col-meta">Tugas kelas</span>
+      </div>
+      <div class="stat-col-3">
+        <span class="stat-col-lbl">Jadwal Ujian</span>
+        <span class="stat-col-val text-ok" id="st-count-asesmen">0</span>
+        <span class="stat-col-meta">Kuis &amp; Ujian</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAVIGATION TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="tab-materi" role="tab">
+      <span class="material-symbols-outlined">menu_book</span>
+      <span>Materi</span>
+    </button>
+    <button class="tab-btn" data-tab="tab-tugas" role="tab">
+      <span class="material-symbols-outlined">assignment_turned_in</span>
+      <span>Tugas</span>
+    </button>
+    <button class="tab-btn" data-tab="tab-asesmen" role="tab">
+      <span class="material-symbols-outlined">quiz</span>
+      <span>Ujian</span>
+    </button>
+    <button class="tab-btn" data-tab="sec-nilai" role="tab">
+      <span class="material-symbols-outlined">military_tech</span>
+      <span>Daftar Nilai</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: MATERI PEMBELAJARAN -->
+  <section id="tab-materi" class="tab-content">
+    <div class="flex justify-between items-center mb-14 flex-wrap gap-10">
+      <div class="search-box">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" id="material-search" placeholder="Cari materi pembelajaran..." aria-label="Cari materi pembelajaran">
+      </div>
+      <span class="badge badge-neutral badge-compact">Materi Terbit Kurikulum Merdeka</span>
+    </div>
+    <div id="materi-list" class="grid"></div>
+  </section>
+
+  <!-- TAB 2: TUGAS & PENGUMPULAN -->
+  <section id="tab-tugas" class="tab-content hidden">
+    <div id="tugas-list" class="grid"></div>
+
+    <div id="sub-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="flex justify-between items-center w-full">
+            <h2 id="sub-title" class="dialog-title">Kirim Tugas</h2>
+            <button type="button" class="modal-close-btn" data-action="close-sub-modal" aria-label="Tutup Formulir">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <p id="sub-instruksi" class="text-muted text-13 mb-14"></p>
+          <div id="sub-status" class="notice notice-ok hidden font-semibold mb-12"></div>
+          <label for="sub-teks">Catatan / Jawaban Teks (Opsional)</label>
+          <textarea id="sub-teks" rows="4" placeholder="Tuliskan jawaban atau ringkasan pengerjaan..."></textarea>
+          <label for="sub-link">Tautan Tugas (Google Drive / Docs / Video)</label>
+          <input id="sub-link" type="text" placeholder="https://drive.google.com/..." class="mb-14">
+        </div>
+        <div class="modal-footer">
+          <button id="btn-sub-cancel" type="button" class="btn btn-secondary">Batal</button>
+          <button id="btn-sub-save" type="button" class="btn btn-primary">Kirim Jawaban</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: ASESMEN & UJIAN CBT -->
+  <section id="tab-asesmen" class="tab-content hidden">
+    <div id="asesmen-list" class="grid"></div>
+  </section>
+
+  <!-- TAB 4: REKAP NILAI SAYA -->
+  <section id="sec-nilai" class="tab-content hidden">
+    <div class="panel flex justify-between items-center flex-wrap gap-12">
+      <div>
+        <span class="badge badge-pg mb-4">Transkrip Nilai Akademik</span>
+        <h2 class="mb-2">Rekapitulasi Hasil Belajar Siswa</h2>
+        <p class="text-sm text-muted">Nilai Tugas Mandiri &amp; Evaluasi CBT Terverifikasi</p>
+      </div>
+      <div class="flex gap-6" id="nilai-filter-tabs">
+        <button type="button" class="btn btn-secondary filter-compact" data-action="filter-nilai" data-filter="all">Semua</button>
+        <button type="button" class="btn btn-secondary filter-compact" data-action="filter-nilai" data-filter="tugas">Tugas</button>
+        <button type="button" class="btn btn-secondary filter-compact" data-action="filter-nilai" data-filter="ujian">CBT &amp; Ujian</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-nilai-tugas">
+      <h2>Rekap Nilai Tugas</h2>
+      <div class="table-container">
+        <table class="table-cards-mobile">
+          <thead>
+            <tr>
+              <th>Judul Tugas</th>
+              <th>Nilai</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="nilai-tugas-tbody">
+            <tr><td colspan="3" class="empty-cell">Belum ada nilai</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-nilai-ujian">
+      <h2>Nilai Ujian Resmi (Terverifikasi Guru)</h2>
+      <div class="table-container">
+        <table class="table-cards-mobile">
+          <thead>
+            <tr>
+              <th>Ujian</th>
+              <th>Skor</th>
+            </tr>
+          </thead>
+          <tbody id="nilai-ujian-tbody">
+            <tr><td colspan="2" class="empty-cell">Belum ada nilai ujian resmi</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-nilai-latihan">
+      <div class="flex justify-between items-center flex-wrap gap-8 mb-10">
+        <h2 class="mb-0">Riwayat Latihan Mandiri</h2>
+        <span class="badge badge-neutral">Latihan mandiri &mdash; tidak masuk nilai rapor</span>
+      </div>
+      <div class="table-container">
+        <table class="table-cards-mobile">
+          <thead>
+            <tr>
+              <th>Judul Latihan</th>
+              <th>Skor Latihan</th>
+            </tr>
+          </thead>
+          <tbody id="nilai-latihan-tbody">
+            <tr><td colspan="2" class="empty-cell">Belum ada riwayat latihan mandiri</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

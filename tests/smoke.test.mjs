@@ -61,13 +61,38 @@ try {
     assert(html.includes('name="theme-color"'), "Meta theme-color harus ada");
   });
 
-  // 2. Verify admin.html
+  // 2. Verify admin.html & panduan-guru.html
   await test("smoke: admin.html loads with PWA & dashboard shell", async () => {
     const res = await fetch(`${baseUrl}/admin.html`);
     assert.equal(res.status, 200);
     const html = await res.text();
     assert(html.includes("Portal Guru — LMS SMPN 1 Umbulsari"), "Title portal guru harus ada");
     assert(html.includes('rel="manifest" href="manifest.json"'), "Link manifest harus ada");
+  });
+
+  await test("smoke: panduan-guru.html & HTML partials resolve non-empty", async () => {
+    const guideRes = await fetch(`${baseUrl}/panduan-guru.html`);
+    assert.equal(guideRes.status, 200);
+    const guideHtml = await guideRes.text();
+    assert(guideHtml.includes("Panduan Pemakaian SITURI LMS"), "Panduan guru harus berisi judul");
+
+    const partials = [
+      "partials/admin/ringkasan.html",
+      "partials/admin/materi.html",
+      "partials/admin/tugas.html",
+      "partials/admin/asesmen.html",
+      "partials/admin/grading.html",
+      "partials/admin/import.html",
+      "partials/admin/modals.html",
+      "partials/siswa/dashboard.html",
+      "partials/siswa/exam.html"
+    ];
+    for (const p of partials) {
+      const r = await fetch(`${baseUrl}/${p}`);
+      assert.equal(r.status, 200, `Partial ${p} gagal dimuat`);
+      const text = await r.text();
+      assert(text.trim().length > 50, `Partial ${p} terlalu pendek / kosong`);
+    }
   });
 
   // 3. Verify manifest.json
