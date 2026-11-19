@@ -75,7 +75,7 @@ export function updateActivityFeed(materiData = [], tugasData = [], asesmenData 
           <div>
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap">
               <strong style="font-weight:500; color:var(--ink)">${escAttr(d.judul || q.id)}</strong>
-              <span class="badge badge-bs">CBT ${(d.mode || "latihan").toUpperCase()}</span>
+              <span class="badge badge-bs">${d.mode === "ujian" ? "Ujian Resmi" : "Latihan"}</span>
             </div>
             <div style="font-size:12px; color:var(--ink-2)">Kode: <code>${escAttr(q.id)}</code> · Kelas ${(d.classes || []).join(", ") || "-"}</div>
           </div>

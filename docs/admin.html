@@ -73,18 +73,22 @@
         <span class="material-symbols-outlined">assignment</span>
         <span class="nav-label">Penugasan</span>
       </button>
-      <button class="nav-btn" data-tab="sec-asesmen" title="Asesmen & Bank Soal Builder" aria-label="Asesmen & Bank Soal Builder">
+      <button class="nav-btn" data-tab="sec-asesmen" title="Ujian & Buat Soal" aria-label="Ujian & Buat Soal">
         <span class="material-symbols-outlined">quiz</span>
-        <span class="nav-label">Asesmen & Bank Soal</span>
+        <span class="nav-label">Ujian &amp; Buat Soal</span>
       </button>
       <button class="nav-btn" data-tab="sec-grading" title="Koreksi & Penilaian Siswa" aria-label="Koreksi & Penilaian Siswa">
         <span class="material-symbols-outlined">fact_check</span>
-        <span class="nav-label">Koreksi & Penilaian</span>
+        <span class="nav-label">Koreksi &amp; Nilai</span>
       </button>
-      <button class="nav-btn" data-tab="sec-import" title="Import & Export Excel" aria-label="Import & Export Excel">
+      <button class="nav-btn" data-tab="sec-import" title="Data Siswa, Guru & Excel" aria-label="Data Siswa, Guru & Excel">
         <span class="material-symbols-outlined">upload_file</span>
-        <span class="nav-label">Import / Export</span>
+        <span class="nav-label">Data &amp; Excel</span>
       </button>
+      <a class="nav-btn" href="panduan-guru.html" target="_blank" rel="noopener" title="Buka Panduan Pemakaian Guru">
+        <span class="material-symbols-outlined">help</span>
+        <span class="nav-label">Panduan Guru</span>
+      </a>
     </div>
 
     <div class="sidebar-user">
@@ -109,16 +113,12 @@
     <div class="flex flex-col min-w-0">
       <div class="flex items-center gap-6">
         <strong class="truncate text-ink">SMPN 1 Umbulsari</strong>
-        <span class="badge badge-neutral text-xs" style="font-size:10px; padding:2px 6px">Guru</span>
+        <span id="topbar-role-badge" class="badge badge-neutral text-xs" style="font-size:10px; padding:2px 6px">Guru</span>
       </div>
-      <span id="crumb-section" class="hide-mobile text-xs text-subtle">Ringkasan Dashboard</span>
+      <span id="crumb-section" class="hide-mobile text-xs text-subtle">Ringkasan</span>
     </div>
   </div>
   <div class="appbar-right">
-    <div class="semester-pill hide-mobile">
-      <span class="dot-live"></span>
-      <span>Semester Ganjil 2026/2027</span>
-    </div>
     <button type="button" id="btn-theme-toggle" class="icon-action-btn" aria-label="Ganti Mode Terang / Gelap" title="Ganti Mode Terang / Gelap">
       <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
     </button>
@@ -136,93 +136,7 @@
 </header>
 
 <main>
-  <!-- AUTH BOX (Bento Split Slate) -->
-  <div id="sec-auth" class="auth-wrap">
-    <div class="auth-card">
-      <div class="auth-main">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px">
-          <div style="display:flex; align-items:center; gap:8px">
-            <div class="brand-mark" style="width:28px; height:28px; font-size:13px">U</div>
-            <span style="font-weight:600; font-size:13px">SITURI LMS</span>
-          </div>
-          <span class="badge badge-neutral" style="font-size:11px">Portal Guru · 2026/2027</span>
-        </div>
-        <div class="auth-header">
-          <h1 id="auth-title">Login Guru & Pendidik</h1>
-          <p id="auth-sub">SMPN 1 Umbulsari · Sistem Manajemen Pembelajaran</p>
-        </div>
-        <div class="auth-role-pills" role="tablist" aria-label="Pilih Peran">
-          <button type="button" class="auth-role-btn" id="btn-role-siswa" data-action="set-role" data-role="siswa">
-            <span class="material-symbols-outlined" style="font-size:16px">school</span>
-            <span>Akun Siswa</span>
-          </button>
-          <button type="button" class="auth-role-btn active" id="btn-role-guru" data-action="set-role" data-role="guru">
-            <span class="material-symbols-outlined" style="font-size:16px">psychology</span>
-            <span>Akun Guru</span>
-          </button>
-        </div>
-        <div id="auth-err" class="callout callout-warn hidden" role="alert"></div>
-        <div class="field" style="margin-bottom:12px">
-          <label for="l-email">Email Guru / Admin</label>
-          <input id="l-email" type="email" placeholder="nama@smpn1umbulsari.sch.id" value="" autocomplete="username">
-        </div>
-        <div class="field" style="margin-bottom:12px">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
-            <label for="l-pass" style="margin-bottom:0">Kata Sandi</label>
-            <a href="javascript:void(0)" data-action="forgot-password" style="font-size:11.5px; color:var(--accent)">Lupa sandi?</a>
-          </div>
-          <input id="l-pass" type="password" placeholder="••••••••" value="" autocomplete="current-password">
-        </div>
-        <button id="btn-login" class="btn btn-ink auth-submit">Masuk ke Portal Guru →</button>
-        <div class="auth-demo-chips hidden" id="auth-chips-box">
-          <span style="font-size:11px; color:var(--ink-3); align-self:center">Akun Uji Coba:</span>
-          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="guru@smpn1umbulsari.sch.id" data-pass="admin123">
-            🎓 Guru Pengampu
-          </button>
-          <button type="button" class="auth-demo-chip" data-action="fill-demo" data-email="admin@smpn1umbulsari.sch.id" data-pass="admin123">
-            🛡️ Admin Utama
-          </button>
-        </div>
-        <div class="auth-footer-note">
-          <span style="display:inline-flex; align-items:center; gap:5px; color:var(--ink-3)">
-            <span class="material-symbols-outlined" style="font-size:15px; color:var(--ok)">security</span>
-            Autentikasi Terenkripsi
-          </span>
-          <span style="color:var(--ink-3)">Admin & Pendidik</span>
-        </div>
-      </div>
-      <aside class="auth-aside" aria-label="Informasi Portal Guru">
-        <div>
-          <span class="auth-aside-badge" style="background:var(--ok-soft); color:var(--ok)">
-            <span class="material-symbols-outlined" style="font-size:14px">cloud_done</span>
-            Firebase Spark Optimized
-          </span>
-          <h3 class="auth-aside-title">Panel Pengelolaan Akademik</h3>
-          <p class="auth-aside-desc">Kurikulum Merdeka · Tahun Ajaran 2026/2027</p>
-          <div class="auth-feature-list">
-            <div class="auth-feature-item">
-              <span>Bank Soal AKM (4 Tipe)</span>
-              <span class="badge badge-pg">PG, BS, MATCH, Essay</span>
-            </div>
-            <div class="auth-feature-item">
-              <span>Distribusi Kelas</span>
-              <span class="tabular-nums" style="color:var(--ink); font-weight:600">27 Rombel</span>
-            </div>
-            <div class="auth-feature-item">
-              <span>Penilaian Essay Otomatis/Manual</span>
-              <span style="color:var(--ok); font-weight:500">Siap Digunakan</span>
-            </div>
-          </div>
-        </div>
-        <div style="background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; font-size:11.5px; color:var(--ink-2)">
-          <div style="font-weight:600; color:var(--ink); margin-bottom:2px">Satu Sentuhan Ekspor</div>
-          Unduh rekap nilai ujian dan penugasan dalam format CSV yang kompatibel dengan e-Rapor.
-        </div>
-      </aside>
-    </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER -->
+  <!-- MAIN APP CONTAINER (Autentikasi terpusat di index.html; user belum login otomatis diarahkan) -->
   <div id="app-content" class="hidden">
 
     <!-- SECTION 0: RINGKASAN DASHBOARD GURU (Stitch Screen 0c37ee8800e1490c9bb2e763a3a885c2) -->
@@ -612,54 +526,54 @@
       </div>
     </section>
 
-    <!-- SECTION 3: ASESMEN & UJIAN BUILDER + BANK SOAL (Stitch Screens a95d79285d3c4606b7a46542a61a435c, 05ab23ec449248ebae640d9225552ae9, 1dc3ed53d7584c6ba70c6718bf3c83ae, 0574317d703d4bcb81daffe9643a92f8) -->
+    <!-- SECTION 3: UJIAN & BUAT SOAL -->
     <section id="sec-asesmen" class="tab-pane hidden">
       <div class="page-header">
         <div>
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
-            <span class="badge badge-pg">Modul Pembuat Soal & CBT</span>
-            <span style="font-size:12px; color:var(--ink-3)">4 Tipe Instrumen AKM</span>
+            <span class="badge badge-pg">Pembuat Soal Ujian</span>
+            <span style="font-size:12px; color:var(--ink-3)">4 Tipe Soal</span>
           </div>
-          <h1 class="page-title">Asesmen & Bank Soal Builder</h1>
-          <p class="page-subtitle">Susun paket soal Pilihan Ganda, Benar/Salah, Menjodohkan, dan Essay dengan isolasi kunci otomatis</p>
+          <h1 class="page-title">Ujian &amp; Buat Soal</h1>
+          <p class="page-subtitle">Susun soal Pilihan Ganda, Benar-Salah, Menjodohkan, dan Uraian beserta jadwal pengerjaan siswa</p>
         </div>
         <div class="header-actions">
           <button id="btn-as-preview" type="button" class="btn btn-secondary">
             <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
-            <span>Pratinjau Asesmen</span>
+            <span>Pratinjau Soal</span>
           </button>
           <button type="button" class="btn btn-secondary" data-action="open-q-modal" data-qtype="pg">
             <span class="material-symbols-outlined" style="font-size:18px">add_circle</span>
-            <span>+ Modal Butir Soal</span>
+            <span>+ Tambah Soal Baru</span>
           </button>
           <button id="btn-as-save" type="button" class="btn btn-primary">
             <span class="material-symbols-outlined" style="font-size:18px">publish</span>
-            <span>Simpan & Terbitkan Asesmen</span>
+            <span>Simpan &amp; Terbitkan Ujian</span>
           </button>
         </div>
       </div>
 
       <!-- 1-Row Builder Stats Strip -->
-      <div class="stat-strip" role="region" aria-label="Statistik Builder Soal">
+      <div class="stat-strip" role="region" aria-label="Ringkasan Paket Soal">
         <div class="stat-cell">
-          <div class="stat-lbl"><span>Jumlah Butir Aktif</span></div>
+          <div class="stat-lbl"><span>Jumlah Soal</span></div>
           <div class="stat-val" id="as-stat-count">0</div>
-          <div class="stat-meta">Butir dalam paket ini</div>
+          <div class="stat-meta">Soal dalam paket ini</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-lbl"><span>Akumulasi Bobot</span></div>
+          <div class="stat-lbl"><span>Total Bobot Poin</span></div>
           <div class="stat-val" id="as-stat-weight" style="color:var(--badge-pg)">0</div>
-          <div class="stat-meta">Total poin maksimum</div>
+          <div class="stat-meta">Acuan skor akhir (0–100)</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-lbl"><span>Estimasi Durasi</span></div>
+          <div class="stat-lbl"><span>Durasi</span></div>
           <div class="stat-val" id="as-stat-dur">60</div>
-          <div class="stat-meta">Menit pengerjaan CBT</div>
+          <div class="stat-meta">Menit pengerjaan</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-lbl"><span>Keamanan Kunci</span></div>
+          <div class="stat-lbl"><span>Jenis Paket</span></div>
           <div class="stat-val" style="font-size:20px; color:var(--ok)" id="as-stat-mode">Latihan</div>
-          <div class="stat-meta">Isolasi otomatis mode Ujian</div>
+          <div class="stat-meta">Kunci aman saat Ujian Resmi</div>
         </div>
       </div>
 
@@ -668,37 +582,45 @@
         <div class="panel-head">
           <h2>
             <span class="material-symbols-outlined" style="color:var(--accent)">tune</span>
-            <span>Konfigurasi Lembar Soal & Jadwal Akses</span>
+            <span>Pengaturan Jadwal &amp; Kelas</span>
           </h2>
           <span class="badge badge-bs">Siap Terbit</span>
         </div>
         <div class="row">
           <div>
-            <label for="as-code">Kode Soal (otomatis bila kosong)</label>
-            <input id="as-code" placeholder="q_ipa_01" class="mono-num">
+            <label for="as-code">Kode Ujian (otomatis jika kosong)</label>
+            <input id="as-code" placeholder="misal: u_ipa_01" class="mono-num">
           </div>
           <div>
-            <label for="as-kelas">Kelas Target *</label>
-            <input id="as-kelas" value="c1" placeholder="c1">
+            <label for="as-kelas">Kelas Target * (pisahkan koma)</label>
+            <input id="as-kelas" value="c1" placeholder="misal: 7A, 7B">
           </div>
           <div>
-            <label for="as-mode">Mode Asesmen *</label>
+            <label for="as-mode">Jenis *</label>
             <select id="as-mode">
-              <option value="latihan">Latihan (Auto-Nilai Instan)</option>
-              <option value="ujian">Ujian Resmi (Kunci Terisolasi + Essay Manual)</option>
+              <option value="latihan">Latihan (Nilai Otomatis Langsung)</option>
+              <option value="ujian">Ujian Resmi (Kunci Disimpan Aman)</option>
             </select>
           </div>
         </div>
-        <label for="as-judul">Judul Asesmen / Paket Soal *</label>
-        <input id="as-judul" placeholder="Contoh: Asesmen Sumatif Tengah Semester (STS) - IPA Terpadu">
+        <label for="as-judul">Judul Ujian *</label>
+        <input id="as-judul" placeholder="Contoh: Penilaian Tengah Semester — IPA">
         <div class="row">
           <div>
             <label for="as-durasi">Durasi (Menit)</label>
             <input id="as-durasi" type="number" value="60">
           </div>
           <div>
-            <label for="as-tol">Toleransi Masuk (Menit)</label>
+            <label for="as-tol">Batas Telat Masuk (Menit)</label>
             <input id="as-tol" type="number" value="120">
+          </div>
+          <div>
+            <label for="as-max-attempts">Maks. Percobaan (Remedial)</label>
+            <select id="as-max-attempts">
+              <option value="1">1x (Sekali)</option>
+              <option value="2">2x (Izinkan Remedial)</option>
+              <option value="3">3x</option>
+            </select>
           </div>
           <div>
             <label for="as-open">Waktu Buka *</label>
@@ -715,8 +637,8 @@
       <div class="panel" style="background:var(--accent-soft); border-color:var(--accent)">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px">
           <div>
-            <h2 style="font-size:14px; color:var(--ink)">Tulis & Tambah Butir Instrumen Penilaian</h2>
-            <p style="font-size:12px; color:var(--ink-2)">Tambahkan langsung ke daftar atau gunakan editor modal terstruktur</p>
+            <h2 style="font-size:14px; color:var(--ink)">Tambah Soal ke Paket Ini</h2>
+            <p style="font-size:12px; color:var(--ink-2)">Pilih jenis soal yang ingin ditambahkan</p>
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:8px">
             <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="pg">
@@ -724,36 +646,36 @@
               <span>+ Pilihan Ganda</span>
             </button>
             <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="bs">
-              <span class="badge badge-bs">BS</span>
-              <span>+ Benar/Salah</span>
+              <span class="badge badge-bs">B/S</span>
+              <span>+ Benar-Salah</span>
             </button>
             <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="match">
-              <span class="badge badge-match">MATCH</span>
-              <span>+ Mencocokkan</span>
+              <span class="badge badge-match">Jodoh</span>
+              <span>+ Menjodohkan</span>
             </button>
             <button type="button" class="btn btn-secondary btn-sm" data-action="add-q" data-qtype="essay">
-              <span class="badge badge-essay">ESSAY</span>
-              <span>+ Essay</span>
+              <span class="badge badge-essay">Uraian</span>
+              <span>+ Uraian</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Daftar Butir Soal Container -->
+      <!-- Daftar Soal Container -->
       <div class="panel">
         <div class="panel-head">
           <h2>
             <span class="material-symbols-outlined" style="color:var(--accent)">format_list_numbered</span>
-            <span>Daftar Butir Soal Paket Ini</span>
+            <span>Daftar Soal</span>
           </h2>
           <button type="button" class="btn btn-ghost btn-sm" data-action="open-q-modal" data-qtype="match">
             <span class="material-symbols-outlined" style="font-size:16px">sync_alt</span>
-            <span>Editor Pasangan MATCH</span>
+            <span>Editor Soal Menjodohkan</span>
           </button>
         </div>
         <div id="as-questions-list">
           <div style="text-align:center; padding:20px; color:var(--ink-3); font-size:13px">
-            Belum ada butir soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.
+            Belum ada soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.
           </div>
         </div>
       </div>
@@ -796,16 +718,16 @@
       </div>
     </section>
 
-    <!-- SECTION 4: KOREKSI & PENILAIAN SISWA (Stitch Screen 67ec79db05be4dcd9d3035ef6786f998) -->
+    <!-- SECTION 4: KOREKSI & PENILAIAN SISWA -->
     <section id="sec-grading" class="tab-pane hidden">
       <div class="page-header">
         <div>
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
-            <span class="badge badge-pg">Modul Koreksi Hibrida</span>
-            <span style="font-size:12px; color:var(--ink-3)">Auto-Check PG/BS/Match + Manual Essay</span>
+            <span class="badge badge-pg">Koreksi &amp; Nilai</span>
+            <span style="font-size:12px; color:var(--ink-3)">PG/B-S/Menjodohkan otomatis · Uraian diisi guru</span>
           </div>
-          <h1 class="page-title">Penilaian & Koreksi Ujian</h1>
-          <p class="page-subtitle">Evaluasi lembar jawaban siswa dan terbitkan nilai secara kolektif (Batch Write)</p>
+          <h1 class="page-title">Penilaian &amp; Koreksi Ujian</h1>
+          <p class="page-subtitle">Periksa lembar jawaban siswa, isi nilai Uraian, lalu simpan dan bagikan nilai</p>
         </div>
         <div class="header-actions">
           <select id="rekap-kelas" aria-label="Filter kelas rekap" style="width:auto; margin:0"><option value="">Semua kelas</option></select>
@@ -823,7 +745,7 @@
       <div class="panel">
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:240px">
-            <label for="gr-code">Pilih Paket Ujian / Kuis</label>
+            <label for="gr-code">Pilih Ujian</label>
             <select id="gr-code" style="margin-bottom:0">
               <option value="">-- Memuat daftar ujian... --</option>
             </select>
@@ -837,7 +759,7 @@
           </button>
           <button id="btn-toggle-import-nilai" type="button" class="btn btn-secondary">
             <span class="material-symbols-outlined" style="font-size:18px">upload_file</span>
-            <span>Import Nilai Massal</span>
+            <span>Unggah Nilai Excel</span>
           </button>
         </div>
 
@@ -845,8 +767,8 @@
         <div id="panel-import-nilai" class="hidden" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line)">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px">
             <div>
-              <strong style="font-size:13.5px; color:var(--ink)">Import Nilai Ujian dari Excel / CSV</strong>
-              <div style="font-size:12px; color:var(--ink-3)">Unduh template terisi roster siswa kuis ini, lalu unggah kembali untuk menerbitkan nilai massal.</div>
+              <strong style="font-size:13.5px; color:var(--ink)">Unggah Nilai Ujian dari Excel / CSV</strong>
+              <div style="font-size:12px; color:var(--ink-3)">Unduh template berisi daftar siswa untuk ujian ini, isi nilai di Excel, lalu unggah kembali.</div>
             </div>
             <button id="btn-tpl-nilai" type="button" class="btn btn-secondary btn-sm">
               <span class="material-symbols-outlined" style="font-size:16px">download</span>
@@ -871,8 +793,8 @@
 
         <div class="panel-head">
           <div>
-            <h2>Lembar Koreksi Siswa</h2>
-            <p style="font-size:12px; color:var(--ink-2)" id="gr-subtitle">Periksa skor otomatis sesuai bobot soal dan isi nilai Uraian</p>
+            <h2>Lembar Jawaban Siswa</h2>
+            <p style="font-size:12px; color:var(--ink-2)" id="gr-subtitle">Nilai pilihan ganda otomatis sesuai bobot soal; isi nilai Uraian jika ada</p>
           </div>
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap">
             <select id="gr-filter-kelas" aria-label="Filter kelas koreksi" style="width:auto; min-width:120px; margin-bottom:0"><option value="">Semua Kelas</option></select>
@@ -893,19 +815,19 @@
             </div>
           </div>
 
-          <!-- Right: Grading Summary & Keyboard Shortcuts -->
+          <!-- Right: Grading Summary -->
           <div style="display:flex; flex-direction:column; gap:14px">
             <div class="panel" style="margin-bottom:0; background:var(--paper)">
               <div class="panel-head">
-                <h2>Ringkasan Batch</h2>
+                <h2>Ringkasan Penilaian</h2>
                 <span class="badge badge-bs" id="gr-count-badge">0 Lembar</span>
               </div>
               <p style="font-size:12.5px; color:var(--ink-2); margin-bottom:12px">
-                Skor Pilihan Ganda, Benar/Salah, dan Menjodohkan dihitung otomatis oleh sistem dari <code>quizKeys</code>. Masukkan skor Essay lalu klik tombol publikasi di bawah.
+                Nilai Pilihan Ganda, Benar-Salah, dan Menjodohkan dihitung otomatis oleh sistem sesuai bobot tiap soal. Isi nilai Uraian bila diperlukan lalu tekan tombol simpan di bawah.
               </p>
               <button id="btn-gr-publish" type="button" class="btn btn-primary" style="width:100%">
                 <span class="material-symbols-outlined" style="font-size:18px">publish</span>
-                <span>Publikasikan Nilai Batch ke Siswa</span>
+                <span>Simpan &amp; Bagikan Nilai</span>
               </button>
             </div>
           </div>
@@ -915,73 +837,92 @@
 
     <div id="log" role="status" aria-live="polite">Sistem siap.</div>
   </div>
-<!-- SECTION 5: IMPORT & EXPORT EXCEL (Soal, Siswa, Guru) -->
+
+    <!-- SECTION 5: DATA SISWA, GURU & EXCEL -->
     <section id="sec-import" class="tab-pane hidden">
       <div class="page-header">
         <div>
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px">
-            <span class="badge badge-pg">Excel</span>
-            <span style="font-size:12px; color:var(--ink-3)">SheetJS · parse → preview → simpan</span>
+            <span class="badge badge-pg">Excel &amp; Data</span>
+            <span style="font-size:12px; color:var(--ink-3)">Pratinjau dulu sebelum disimpan</span>
           </div>
-          <h1 class="page-title">Import & Export Excel</h1>
-          <p class="page-subtitle">Unggah bank soal, roster siswa, dan undangan guru sekaligus. Semua data ditampilkan dulu sebelum disimpan.</p>
+          <h1 class="page-title">Data Siswa, Guru &amp; Excel</h1>
+          <p class="page-subtitle">Unggah soal ujian, data siswa per kelas, dan daftar email guru. Perubahan ditinjau sebelum disimpan.</p>
         </div>
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0">1. Bank Soal</h3>
-        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Kode | Tipe | Teks | Opsi A-D | Kunci | Kiri | Kanan | Bobot</code> (Bobot opsional; template memuat sheet Petunjuk). Setelah diparse, soal masuk ke Builder Asesmen — terbitkan lewat tombol simpan yang sudah ada.</p>
+        <h3 style="margin-top:0">1. Bank Soal Excel</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Kode | Tipe | Teks | Opsi A-D | Kunci | Kiri | Kanan | Bobot</code>. Setelah diunggah, soal masuk ke editor ujian siap terbit.</p>
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:220px">
             <label for="imp-file-soal">Berkas Excel (.xlsx)</label>
             <input id="imp-file-soal" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
           </div>
           <button id="btn-tpl-soal" type="button" class="btn btn-secondary">Unduh Template</button>
-          <button id="btn-export-soal-xlsx" type="button" class="btn btn-secondary">Export Bank Soal</button>
+          <button id="btn-export-soal-xlsx" type="button" class="btn btn-secondary">Unduh Bank Soal</button>
         </div>
         <div id="imp-ribbon-soal" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
         <div id="imp-errors-soal" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-soal"></div>
         <div style="margin-top:12px">
-          <button id="btn-imp-save-soal" type="button" class="btn btn-primary" disabled>Isi Builder Asesmen</button>
+          <button id="btn-imp-save-soal" type="button" class="btn btn-primary" disabled>Masukkan ke Pembuat Soal</button>
         </div>
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0">2. Roster Siswa</h3>
-        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>NIS | Nama | Kelas</code>. NIS disimpan sebagai teks (nol depan aman). Impor ulang aman: siswa yang sudah login tidak direset, hanya data berubah yang ditulis. Penyimpanan khusus Admin Utama.</p>
+        <h3 style="margin-top:0">2. Data Siswa Sekolah</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>NIS | Nama | Kelas</code>. Impor ulang aman: akun siswa yang sudah aktif tidak direset, hanya Nama/Kelas yang diperbarui. Khusus Admin Utama.</p>
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:220px">
             <label for="imp-file-siswa">Berkas Excel (.xlsx)</label>
             <input id="imp-file-siswa" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
           </div>
           <button id="btn-tpl-siswa" type="button" class="btn btn-secondary">Unduh Template</button>
-          <button id="btn-export-siswa-xlsx" type="button" class="btn btn-secondary">Export Roster</button>
+          <button id="btn-export-siswa-xlsx" type="button" class="btn btn-secondary">Unduh Data Siswa</button>
         </div>
         <div id="imp-ribbon-siswa" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
         <div id="imp-errors-siswa" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-siswa"></div>
         <div style="margin-top:12px">
-          <button id="btn-imp-save-siswa" type="button" class="btn btn-primary" disabled>Simpan Roster</button>
+          <button id="btn-imp-save-siswa" type="button" class="btn btn-primary" disabled>Simpan Data Siswa</button>
         </div>
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0">3. Undangan Guru</h3>
-        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Email | Nama | NIP | Mapel | Aktif</code>. Email jadi kunci undangan (huruf kecil). Guru mendaftar sendiri, lalu otomatis jadi admin bila undangannya aktif.</p>
+        <h3 style="margin-top:0">3. Daftar Email Guru</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Kolom: <code>Email | Nama | NIP | Mapel | Aktif</code>. Guru masuk dengan email terdaftar akan otomatis aktif sebagai akun Guru.</p>
         <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
           <div style="flex:2; min-width:220px">
             <label for="imp-file-guru">Berkas Excel (.xlsx)</label>
             <input id="imp-file-guru" type="file" accept=".xlsx,.xls" style="margin-bottom:0">
           </div>
           <button id="btn-tpl-guru" type="button" class="btn btn-secondary">Unduh Template</button>
-          <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Export Guru</button>
+          <button id="btn-export-guru-xlsx" type="button" class="btn btn-secondary">Unduh Data Guru</button>
         </div>
         <div id="imp-ribbon-guru" class="hidden" style="margin-top:10px; font-size:12.5px; font-weight:600"></div>
         <div id="imp-errors-guru" class="hidden" style="margin-top:8px; padding:10px; border-radius:8px; background:var(--danger-soft); color:var(--danger)"></div>
         <div id="imp-preview-guru"></div>
         <div style="margin-top:12px">
-          <button id="btn-imp-save-guru" type="button" class="btn btn-primary" disabled>Simpan Undangan</button>
+          <button id="btn-imp-save-guru" type="button" class="btn btn-primary" disabled>Simpan Daftar Guru</button>
+        </div>
+      </div>
+
+      <div class="panel superadmin-only hidden" id="panel-account-tools" style="border-left:4px solid var(--warn)">
+        <h3 style="margin-top:0">4. Pemulihan Akun Siswa &amp; Cadangan Data (Khusus Admin Utama)</h3>
+        <p style="font-size:12.5px; color:var(--ink-3)">Gunakan jika siswa ganti HP/email atau untuk mengunduh cadangan penuh seluruh data sekolah.</p>
+        <div class="row" style="align-items:flex-end; gap:8px; flex-wrap:wrap">
+          <div style="flex:2; min-width:200px">
+            <label for="reset-nis-input">Cek / Lepas Ikatan NIS Siswa</label>
+            <input id="reset-nis-input" placeholder="Masukkan NIS siswa (mis. 1001)" style="margin-bottom:0">
+          </div>
+          <button id="btn-reset-nis-check" type="button" class="btn btn-secondary">Cek Status NIS</button>
+          <button id="btn-reset-nis-exec" type="button" class="btn btn-danger" disabled>Lepas Ikatan NIS</button>
+        </div>
+        <div id="reset-nis-info" class="hidden" style="margin-top:10px; padding:10px; border-radius:8px; background:var(--surface-low); font-size:12.5px"></div>
+        <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+          <span style="font-size:12.5px; color:var(--ink-2)">Cadangan Lengkap Database (kelas, siswa, soal, kiriman, jawaban &amp; nilai)</span>
+          <button id="btn-backup-full-json" type="button" class="btn btn-secondary">Unduh Cadangan Lengkap (.json)</button>
         </div>
       </div>
     </section>
@@ -1004,7 +945,7 @@
   </button>
   <button type="button" class="mobile-nav-btn" data-tab="sec-asesmen">
     <span class="material-symbols-outlined">quiz</span>
-    <span>Asesmen</span>
+    <span>Ujian</span>
   </button>
   <button type="button" class="mobile-nav-btn" data-tab="sec-grading">
     <span class="material-symbols-outlined">fact_check</span>
@@ -1012,7 +953,7 @@
   </button>
   <button type="button" class="mobile-nav-btn" data-tab="sec-import">
     <span class="material-symbols-outlined">upload_file</span>
-    <span>Import</span>
+    <span>Data</span>
   </button>
 </nav>
 

@@ -1,163 +1,95 @@
-// Student Rekap Nilai (Grades & Scorecard) Feature
-import {
-  db,
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  query,
-  where
-} from "../core/firebase.js";
+// Student Rekap Nilai (Pemisahan Tegas: Nilai Resmi Terverifikasi vs Riwayat Latihan Mandiri)
+import { db, doc, getDoc, getDocs, collection, query, where } from "../core/firebase.js";
 import { escAttr } from "../core/dom.js";
+import { scoreOf } from "../admin/export/rekap.js";
+
+function renderTugasNilaiRows(assignments, subSnap) {
+  const subMap = new Map();
+  subSnap.docs.forEach((d) => {
+    const s = d.data();
+    if (s.assignmentId) subMap.set(s.assignmentId, s);
+    subMap.set(d.id, s);
+  });
+  const rows = [];
+  assignments.forEach((t) => {
+    const s = subMap.get(t.id);
+    if (!s) return;
+    const hasNilai = s.nilai !== undefined && s.nilai !== null && s.nilai !== "";
+    rows.push(`
+      <tr>
+        <td data-label="Judul"><strong>${escAttr(t.judul)}</strong></td>
+        <td data-label="Nilai" class="tabular-nums">${hasNilai ? `${s.nilai}/100` : "-"}</td>
+        <td data-label="Status"><span class="badge ${hasNilai ? "badge-ok" : "badge-warn"}">${hasNilai ? "Sudah Dinilai" : "Menunggu Koreksi"}</span></td>
+      </tr>`);
+  });
+  return rows;
+}
 
 export async function loadNilai(currentUser, userProfile) {
   const tugasTbody = document.getElementById("nilai-tugas-tbody");
   const ujianTbody = document.getElementById("nilai-ujian-tbody");
-  if (tugasTbody) {
-    tugasTbody.innerHTML =
-      '<tr><td colspan="3" style="text-align:center; color:var(--ink-3); padding:1rem">Memuat nilai tugas...</td></tr>';
-  }
-  if (ujianTbody) {
-    ujianTbody.innerHTML =
-      '<tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:1rem">Memuat nilai ujian...</td></tr>';
-  }
+  const latihanTbody = document.getElementById("nilai-latihan-tbody");
+  if (tugasTbody) tugasTbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--ink-3); padding:16px">Memuat nilai tugas...</td></tr>';
+  if (ujianTbody) ujianTbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:16px">Memuat nilai ujian...</td></tr>';
 
   let hasError = false;
-
-  // 1. Ambil Nilai Tugas (submissions)
   try {
     const [qSnap, subSnap] = await Promise.all([
       getDocs(query(collection(db, "assignments"), where("classes", "array-contains", userProfile.kelas))),
       getDocs(query(collection(db, "submissions"), where("uid", "==", currentUser.uid)))
     ]);
     const assignments = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    const subMap = new Map();
-    subSnap.docs.forEach((d) => {
-      const s = d.data();
-      if (s.assignmentId) subMap.set(s.assignmentId, s);
-      subMap.set(d.id, s);
-    });
-    const tugasRows = [];
-    assignments.forEach((t) => {
-      const s = subMap.get(t.id) || subMap.get(`${currentUser.uid}__${t.id}`) || null;
-      if (s) {
-        const hasNilai = s.nilai !== undefined && s.nilai !== null && s.nilai !== "";
-        tugasRows.push(`
-          <tr>
-            <td data-label="Judul"><strong>${escAttr(t.judul)}</strong></td>
-            <td data-label="Nilai" class="tabular-nums">${hasNilai ? `${s.nilai}/100` : "-"}</td>
-            <td data-label="Status"><span class="badge ${
-              hasNilai ? "badge-ok" : "badge-warn"
-            }">${hasNilai ? "Sudah dinilai" : "Belum dinilai"}</span></td>
-          </tr>
-        `);
-      }
-    });
-
+    const rows = renderTugasNilaiRows(assignments, subSnap);
     if (tugasTbody) {
-      tugasTbody.innerHTML = tugasRows.length
-        ? tugasRows.join("")
-        : '<tr><td colspan="3" style="text-align:center; color:var(--ink-3); padding:1rem">Belum ada nilai</td></tr>';
+      tugasTbody.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="3" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada nilai tugas</td></tr>';
     }
   } catch (err) {
     hasError = true;
-    console.error("Gagal memuat nilai tugas:", err);
-    if (tugasTbody) {
-      tugasTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--danger); padding:1rem">Gagal memuat nilai tugas: ${escAttr(
-        err.message || "Terjadi kesalahan"
-      )}</td></tr>`;
-    }
+    if (tugasTbody) tugasTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--danger); padding:16px">Gagal memuat nilai tugas: ${escAttr(err.message)}</td></tr>`;
   }
 
-  // 2. Ambil Nilai Ujian (results, progress, attempts)
   try {
-    const metaSnap = await getDoc(doc(db, "classes", userProfile.kelas)).catch(() => null);
-    const quizzesMeta =
-      metaSnap && metaSnap.exists() && metaSnap.data().quizzes ? metaSnap.data().quizzes : {};
+    const [metaSnap, progSnap, resSnap, attSnap] = await Promise.all([
+      getDoc(doc(db, "classes", userProfile.kelas)).catch(() => null),
+      getDoc(doc(db, "progress", currentUser.uid)).catch(() => null),
+      getDocs(query(collection(db, "results"), where("uid", "==", currentUser.uid))),
+      getDocs(query(collection(db, "attempts"), where("uid", "==", currentUser.uid))).catch(() => ({ docs: [] }))
+    ]);
 
-    const progSnap = await getDoc(doc(db, "progress", currentUser.uid)).catch(() => null);
-    const progData = progSnap && progSnap.exists() ? progSnap.data() : null;
-    const quizScores = progData && progData.quizScores ? progData.quizScores : {};
+    const quizzesMeta = metaSnap?.exists() && metaSnap.data().quizzes ? metaSnap.data().quizzes : {};
+    const resultsByQ = new Map();
+    resSnap.docs.forEach((d) => { const r = d.data(); if (r.quizId) resultsByQ.set(r.quizId, r); });
+    const submittedByQ = new Set();
+    attSnap.docs.forEach((d) => { const a = d.data(); if (a.quizId && a.submittedAt != null) submittedByQ.add(a.quizId); });
 
-    let resultsMap = {};
-    try {
-      const rSnap = await getDocs(
-        query(collection(db, "results"), where("uid", "==", currentUser.uid))
-      );
-      rSnap.docs.forEach((d) => {
-        const data = d.data();
-        resultsMap[data.quizId || d.id] = data;
-      });
-    } catch (e) {}
-
-    const quizKeys = Array.from(
-      new Set([
-        ...Object.keys(quizzesMeta),
-        ...Object.keys(resultsMap),
-        ...Object.keys(quizScores)
-      ])
-    );
-
+    const resmiKeys = Array.from(new Set([...Object.keys(quizzesMeta), ...resultsByQ.keys(), ...submittedByQ]));
     const ujianRows = [];
-    for (const qid of quizKeys) {
-      let resData = resultsMap[qid] || null;
-      if (!resData) {
-        const rDoc = await getDoc(doc(db, "results", `${currentUser.uid}_${qid}_1`)).catch(
-          () => null
-        );
-        if (rDoc && rDoc.exists()) resData = rDoc.data();
-      }
-
-      let scoreText = null;
-      if (
-        resData &&
-        (resData.totalScore !== undefined ||
-          resData.score !== undefined ||
-          resData.nilai !== undefined)
-      ) {
-        const val =
-          resData.totalScore !== undefined
-            ? resData.totalScore
-            : resData.score !== undefined
-            ? resData.score
-            : resData.nilai;
-        scoreText = `<span class="badge badge-ok tabular-nums">${val}</span>`;
-      } else if (quizScores[qid] !== undefined) {
-        scoreText = `<span class="badge badge-ok tabular-nums">${quizScores[qid]}%</span>`;
-      } else {
-        const aDoc = await getDoc(doc(db, "attempts", `${currentUser.uid}_${qid}_1`)).catch(
-          () => null
-        );
-        if (aDoc && aDoc.exists()) {
-          scoreText = `<span class="badge badge-warn">Menunggu Koreksi</span>`;
-        }
-      }
-
-      if (scoreText !== null) {
-        const examTitle =
-          (quizzesMeta[qid] && quizzesMeta[qid].judul) || resData?.quizTitle || qid;
-        ujianRows.push(`
-          <tr>
-            <td data-label="Ujian"><strong>${escAttr(examTitle)}</strong></td>
-            <td data-label="Skor">${scoreText}</td>
-          </tr>
-        `);
-      }
+    resmiKeys.forEach((qid) => {
+      const r = resultsByQ.get(qid);
+      const val = scoreOf(r);
+      let badge = "";
+      if (val !== undefined) badge = `<span class="badge badge-ok tabular-nums">${val}/100</span>`;
+      else if (submittedByQ.has(qid)) badge = `<span class="badge badge-warn">Menunggu Koreksi Guru</span>`;
+      else return;
+      const title = quizzesMeta[qid]?.judul || r?.quizTitle || qid;
+      ujianRows.push(`<tr><td data-label="Ujian"><strong>${escAttr(title)}</strong></td><td data-label="Skor">${badge}</td></tr>`);
+    });
+    if (ujianTbody) {
+      ujianTbody.innerHTML = ujianRows.length ? ujianRows.join("") : '<tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada nilai ujian resmi</td></tr>';
     }
 
-    if (ujianTbody) {
-      ujianTbody.innerHTML = ujianRows.length
-        ? ujianRows.join("")
-        : '<tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:1rem">Belum ada nilai</td></tr>';
+    // Tabel terpisah: Riwayat Latihan Mandiri (progress.quizScores — bukan nilai rapor)
+    const quizScores = progSnap?.exists() && progSnap.data().quizScores ? progSnap.data().quizScores : {};
+    const latRows = Object.entries(quizScores).map(([qid, sc]) => {
+      const title = quizzesMeta[qid]?.judul || qid;
+      return `<tr><td data-label="Latihan"><strong>${escAttr(title)}</strong></td><td data-label="Skor Latihan"><span class="badge badge-neutral tabular-nums">${escAttr(sc)}%</span></td></tr>`;
+    });
+    if (latihanTbody) {
+      latihanTbody.innerHTML = latRows.length ? latRows.join("") : '<tr><td colspan="2" style="text-align:center; color:var(--ink-3); padding:16px">Belum ada riwayat latihan mandiri</td></tr>';
     }
   } catch (err) {
     hasError = true;
-    console.error("Gagal memuat nilai ujian:", err);
-    if (ujianTbody) {
-      ujianTbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:var(--danger); padding:1rem">Gagal memuat nilai ujian: ${escAttr(
-        err.message || "Terjadi kesalahan"
-      )}</td></tr>`;
-    }
+    if (ujianTbody) ujianTbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:var(--danger); padding:16px">Gagal memuat nilai ujian: ${escAttr(err.message)}</td></tr>`;
   }
 
   return !hasError;
@@ -166,23 +98,24 @@ export async function loadNilai(currentUser, userProfile) {
 export function filterNilaiSection(type) {
   const pTugas = document.getElementById("panel-nilai-tugas");
   const pUjian = document.getElementById("panel-nilai-ujian");
+  const pLatihan = document.getElementById("panel-nilai-latihan");
   if (type === "all") {
     pTugas?.classList.remove("hidden");
     pUjian?.classList.remove("hidden");
+    pLatihan?.classList.remove("hidden");
   } else if (type === "tugas") {
     pTugas?.classList.remove("hidden");
     pUjian?.classList.add("hidden");
+    pLatihan?.classList.add("hidden");
   } else if (type === "ujian") {
     pTugas?.classList.add("hidden");
     pUjian?.classList.remove("hidden");
+    pLatihan?.classList.remove("hidden");
   }
 }
 
 export function initNilaiHandlers() {
   document.querySelectorAll("[data-action='filter-nilai']").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterNilaiSection(btn.dataset.filter || "all");
-    });
+    btn.addEventListener("click", () => filterNilaiSection(btn.dataset.filter || "all"));
   });
 }
-

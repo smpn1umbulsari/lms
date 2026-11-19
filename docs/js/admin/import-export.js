@@ -6,6 +6,7 @@ import { bindImportPanel } from "./import/panel.js";
 import { parseSoal } from "./import/soal-importer.js";
 import { parseSiswa, parseGuru } from "./import/user-importer.js";
 import { previewRoster, saveRoster, statusBadge } from "./import/roster-save.js";
+import { initAccountTools } from "./import/account-tools.js";
 import {
   downloadTemplateSoal,
   downloadTemplateSiswa,
@@ -142,4 +143,5 @@ export async function initImportExport() {
   on("btn-export-siswa-xlsx", () => exportSiswaXLSX(ctx));
   on("btn-export-guru-xlsx", () => exportGuruXLSX(ctx));
   on("btn-export-soal-xlsx", () => exportSoalXLSX(ctx));
+  initAccountTools(fb);
 }

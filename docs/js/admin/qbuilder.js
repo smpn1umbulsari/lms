@@ -95,10 +95,12 @@ export function renderQBuilder() {
     el.innerHTML = `<div style="text-align:center; padding:20px; color:var(--ink-3); font-size:13px">Belum ada butir soal. Klik salah satu tombol tipe soal di atas untuk mulai menyusun.</div>`;
     return;
   }
+  const badgeLabels = { pg: "PG", bs: "B/S", match: "Jodoh", essay: "Uraian" };
   el.innerHTML = questionsList
     .map((q, idx) => {
       let specFields = "";
       const badgeCls = `badge-${q.tipe}`;
+      const badgeLbl = badgeLabels[q.tipe] || q.tipe.toUpperCase();
       if (q.tipe === "pg") {
         const opts = ["A", "B", "C", "D"]
           .map(
@@ -142,7 +144,7 @@ export function renderQBuilder() {
           <div style="display:flex; align-items:center; gap:8px">
             <span class="time-pill" style="min-width:34px">0${idx + 1}</span>
             <strong>No. ${idx + 1}</strong>
-            <span class="badge ${badgeCls}">${q.tipe.toUpperCase()}</span>
+            <span class="badge ${badgeCls}">${badgeLbl}</span>
             <span style="font-size:12px; color:var(--ink-3)">Bobot: ${q.bobot || 25} Poin</span>
           </div>
           <button type="button" class="btn btn-danger btn-sm" data-action="delete-q" data-idx="${idx}">Hapus</button>

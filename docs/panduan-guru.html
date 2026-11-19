@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f6b5c">
+<title>Panduan Pemakaian — SITURI LMS SMPN 1 Umbulsari</title>
+<link rel="stylesheet" href="css/base/tokens.css">
+<link rel="stylesheet" href="css/base/reset.css">
+<link rel="stylesheet" href="css/base/utilities.css">
+<link rel="stylesheet" href="css/components/button.css">
+<link rel="stylesheet" href="css/components/card.css">
+<style>
+  .guide-wrap { max-width: 860px; margin: 24px auto; padding: 0 20px 40px; }
+  .guide-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 14px 0 22px; }
+  .step-box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .step-num { display: inline-flex; width: 24px; height: 24px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 12px; align-items: center; justify-content: center; margin-bottom: 6px; }
+  .step-box h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
+  .step-box p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+  .cmd { display: block; background: var(--surface-low); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-family: ui-monospace, monospace; font-size: 12px; margin-top: 6px; overflow-x: auto; }
+  @media print { .no-print { display: none !important; } .guide-wrap { margin: 0; max-width: 100%; } }
+</style>
+</head>
+<body>
+<main class="guide-wrap">
+  <header class="guide-head">
+    <div>
+      <span class="badge badge-pg">Buku Saku 2 Halaman</span>
+      <h1 style="font-size:22px; font-weight:700; margin:6px 0 4px">Panduan Pemakaian SITURI LMS</h1>
+      <p style="font-size:13px; color:var(--ink-2)">SMPN 1 Umbulsari · Untuk Guru Pengampu &amp; Operator Sekolah</p>
+    </div>
+    <div class="no-print" style="display:flex; gap:8px">
+      <a href="index.html" class="btn btn-secondary btn-sm">Kembali ke Login</a>
+      <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Cetak / Simpan PDF</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <h2>Alur Singkat KBM &amp; Penilaian (Guru)</h2>
+    <svg viewBox="0 0 760 76" width="100%" height="76" role="img" aria-label="Diagram alur guru: Masuk, Materi, Ujian, Koreksi, Rekap" style="margin-top:8px">
+      <g font-family="Inter,system-ui,sans-serif" font-size="12" text-anchor="middle" fill="#14161a">
+        <rect x="4" y="14" width="128" height="44" rx="9" fill="#e9f1ef" stroke="#0f6b5c"/>
+        <text x="68" y="40" font-weight="600">1. Masuk Portal</text>
+        <path d="M134 36h22" stroke="#0f6b5c" stroke-width="2" marker-end="url(#arr)"/>
+        <rect x="158" y="14" width="132" height="44" rx="9" fill="#ffffff" stroke="#e7e5e0"/>
+        <text x="224" y="40" font-weight="600">2. Materi &amp; Tugas</text>
+        <path d="M292 36h22" stroke="#0f6b5c" stroke-width="2"/>
+        <rect x="316" y="14" width="132" height="44" rx="9" fill="#ffffff" stroke="#e7e5e0"/>
+        <text x="382" y="40" font-weight="600">3. Buat Ujian</text>
+        <path d="M450 36h22" stroke="#0f6b5c" stroke-width="2"/>
+        <rect x="474" y="14" width="132" height="44" rx="9" fill="#ffffff" stroke="#e7e5e0"/>
+        <text x="540" y="40" font-weight="600">4. Koreksi Uraian</text>
+        <path d="M608 36h22" stroke="#0f6b5c" stroke-width="2"/>
+        <rect x="632" y="14" width="124" height="44" rx="9" fill="#14161a"/>
+        <text x="694" y="40" fill="#ffffff" font-weight="600">5. Unduh e-Rapor</text>
+      </g>
+    </svg>
+  </section>
+
+  <h2 style="font-size:15px; font-weight:700; margin-bottom:4px">Bagian A — Langkah Harian Guru Pengampu</h2>
+  <div class="step-grid">
+    <article class="step-box">
+      <div class="step-num">1</div>
+      <h3>Masuk Lewat Halaman Depan</h3>
+      <p>Buka alamat portal sekolah. Masukkan <strong>email guru</strong> dan kata sandi. Sistem langsung membawa Anda ke Portal Guru bila email sudah didaftarkan Operator.</p>
+    </article>
+    <article class="step-box">
+      <div class="step-num">2</div>
+      <h3>Bagikan Materi &amp; Tugas</h3>
+      <p>Buka menu <strong>Materi Pelajaran</strong> atau <strong>Tugas Siswa</strong>, tekan tombol tambah, pilih kelas (mis. 7A, 7B), lalu tempel tautan YouTube/Drive atau catatan materi.</p>
+    </article>
+    <article class="step-box">
+      <div class="step-num">3</div>
+      <h3>Susun Soal Ujian</h3>
+      <p>Di menu <strong>Ujian &amp; Buat Soal</strong>, isi judul, kelas, jam buka/tutup, dan tambah soal Pilihan Ganda, Benar-Salah, Menjodohkan, atau Uraian. Bisa juga unggah Excel.</p>
+    </article>
+    <article class="step-box">
+      <div class="step-num">4</div>
+      <h3>Nilai Kiriman Tugas</h3>
+      <p>Buka menu <strong>Tugas Siswa</strong> &rarr; klik <strong>Lihat Kiriman</strong> pada tugas terkait. Nama dan kelas siswa langsung tampil beserta isi jawaban. Isi nilai 0–100 lalu simpan.</p>
+    </article>
+    <article class="step-box">
+      <div class="step-num">5</div>
+      <h3>Koreksi Uraian Ujian</h3>
+      <p>Di menu <strong>Koreksi &amp; Nilai</strong>, pilih nama ujian dari daftar (tidak perlu hafal kode) &rarr; tekan <strong>Muat Lembar Ujian</strong>. Soal PG/BS/Jodoh otomatis dihitung sesuai bobot.</p>
+    </article>
+    <article class="step-box">
+      <div class="step-num">6</div>
+      <h3>Simpan &amp; Unduh Rekap Rapor</h3>
+      <p>Isi nilai Uraian (kolom kosong = belum dinilai, tidak otomatis 20), tekan <strong>Simpan &amp; Bagikan Nilai</strong>, lalu unduh Excel/CSV terpadu (40% Tugas + 60% Ujian).</p>
+    </article>
+  </div>
+
+  <h2 style="font-size:15px; font-weight:700; margin-bottom:4px">Bagian B — Panduan 1 Menit Operator / Admin Utama</h2>
+  <div class="panel">
+    <ol style="padding-left:18px; line-height:1.7; font-size:13px; color:var(--ink-2)">
+      <li><strong>Siapkan Data Siswa &amp; Guru:</strong> Buka menu <strong>Data Siswa &amp; Guru (Excel)</strong>, unduh template, isi kolom <code>NIS | Nama | Kelas</code>, lalu simpan data siswa ke sistem.</li>
+      <li><strong>Buat Akun Login Ratusan Siswa Sekaligus (Tanpa Klik Satu-Satu):</strong> Jalankan 1 perintah di terminal komputer sekolah, lalu cetak kartu login siswa:
+        <code class="cmd">npm run provision:accounts -- Data_Siswa.xlsx</code>
+        <code class="cmd">npx firebase auth:import out/auth-import.json --hash-algo=PBKDF2_SHA256 --rounds=100000</code>
+      </li>
+      <li><strong>Bagikan Kartu Login:</strong> Buka berkas <code>out/Kartu_Login_Siswa.html</code> di browser lalu cetak untuk dibagikan ke wali kelas. Siswa cukup masuk memakai NIS + Sandi Awal.</li>
+      <li><strong>Siswa Ganti HP / Lupa Akun:</strong> Masuk menu <strong>Data Siswa &amp; Guru &rarr; Pemulihan Akun Siswa (Lepas NIS)</strong>, cari NIS siswa, lalu tekan <strong>Lepas Ikatan NIS</strong>.</li>
+    </ol>
+  </div>
+</main>
+</body>
+</html>

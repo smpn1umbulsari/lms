@@ -6,14 +6,16 @@
   "type": "module",
   "scripts": {
     "check:size": "node tools/check-size.mjs",
+    "provision:accounts": "node tools/provision-accounts.mjs",
     "test:scoring": "node spike/scoring.test.mjs",
     "test:import": "node spike/import.test.mjs",
     "test:prng": "node spike/quiz-utils.test.mjs",
     "test:export": "node spike/export.test.mjs",
     "test:queue": "node spike/submission-queue.test.mjs",
     "test:attempt-queue": "node spike/attempt-queue.test.mjs",
+    "test:provision": "node spike/provision.test.mjs",
     "test:smoke": "node tests/smoke.test.mjs",
-    "test": "npm run check:size && npm run test:scoring && npm run test:import && npm run test:prng && npm run test:export && npm run test:queue && npm run test:attempt-queue && npm run test:smoke"
+    "test": "npm run check:size && npm run test:scoring && npm run test:import && npm run test:prng && npm run test:export && npm run test:queue && npm run test:attempt-queue && npm run test:provision && npm run test:smoke"
   },
   "keywords": [
     "lms",

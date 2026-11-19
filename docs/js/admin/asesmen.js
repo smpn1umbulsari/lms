@@ -123,6 +123,8 @@ export async function editAsesmen(code) {
       qData.duration !== undefined ? qData.duration : 60;
     document.getElementById("as-tol").value =
       qData.toleransiMulai !== undefined ? qData.toleransiMulai : 120;
+    const maxAtEl = document.getElementById("as-max-attempts");
+    if (maxAtEl) maxAtEl.value = String(qData.maxAttempts || 1);
 
     const toDTLocal = (ts) => {
       if (!ts) return "";
